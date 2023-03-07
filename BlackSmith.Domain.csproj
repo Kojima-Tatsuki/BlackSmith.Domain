@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Debug copy $(TargetDir)$(ProjectName).dll $(SolutionDir)Assets\Plugins&#xD;&#xA;if $(ConfigurationName) == Debug copy $(TargetDir)$(ProjectName).pdb $(SolutionDir)Assets\Plugins" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="UniRx" Version="5.4.1" />
+    <PackageReference Include="UniTask" Version="2.3.3" />
+  </ItemGroup>
+
+</Project>
