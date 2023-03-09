@@ -18,6 +18,7 @@ namespace BlackSmith.Domain.Player
         public HealthPoint HealthPoint { get; private protected set; }
 
         // プレイヤーレベルとキャラクターレベルで分ける必要性が感じられない
+        // NPCもプレイヤーと同様にレベルアップする仕組みなら問題が発生しない
         ICharacterLevel ICharacterEntity.Level => levelParameters.Level;
         public PlayerLevel Level => levelParameters.Level;
         public AttackValue Attack => new AttackValue(levelParameters);
@@ -27,21 +28,21 @@ namespace BlackSmith.Domain.Player
 
         // イベントの発行を行うためのもの
         // インターフェースで提供されるべき
-        private readonly PlayerEventPublisher? eventPublisher;
+        private readonly IHealthEventObserver? HealthEventObserver;
 
         /// <summary>
         /// プレイヤーエンティティのインスタンス化を行う
         /// </summary>
         /// <remarks>再利用する際は、ファクトリーで変更メソッドを呼び出す？</remarks>
         /// <param name="id"></param>
-        internal PlayerEntity(PlayerCreateCommand command, PlayerEventPublisher? eventPublisher = null)
+        internal PlayerEntity(PlayerCreateCommand command, IHealthEventObserver? healthEventObserber = null)
         {
             ID = command.ID;
             Name = command.name;
             HealthPoint = command.health;
             levelParameters = command.levelParams;
 
-            this.eventPublisher = eventPublisher;
+            HealthEventObserver = healthEventObserber;
         }
 
         /// <summary> 名前の変更を行う </summary>
@@ -55,11 +56,11 @@ namespace BlackSmith.Domain.Player
         {
             HealthPoint = HealthPoint.TakeDamage(damage);
 
-            eventPublisher?.SetChangedPlayerHealth(new PlayerHealthChangedEvent(ID, HealthPoint));
+            HealthEventObserver?.SetChangedPlayerHealth(new PlayerHealthChangedEvent(ID, HealthPoint));
 
             if (HealthPoint.IsDead())
             {
-                eventPublisher?.SetOnPlayerDead(new PlayerOnDeadEvent(ID));
+                HealthEventObserver?.SetOnPlayerDead(new PlayerOnDeadEvent(ID));
             }
 
             return HealthPoint;
@@ -69,7 +70,7 @@ namespace BlackSmith.Domain.Player
         {
             HealthPoint.HealHealth(value);
 
-            eventPublisher?.SetChangedPlayerHealth(new PlayerHealthChangedEvent(ID, HealthPoint));
+            HealthEventObserver?.SetChangedPlayerHealth(new PlayerHealthChangedEvent(ID, HealthPoint));
 
             return HealthPoint;
         }
@@ -93,7 +94,7 @@ namespace BlackSmith.Domain.Player
         {
             var result = "";
             result += $"Name : {Name.Value}\n";
-            result += $"ID : {ID.ToString()}\n";
+            result += $"ID : {ID}\n";
             result += $"Level : {Level.Value}";
 
             return result;

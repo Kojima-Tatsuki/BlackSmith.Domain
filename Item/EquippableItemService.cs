@@ -7,9 +7,16 @@ using BlackSmith.Domain.Item.Equipment;
 
 namespace BlackSmith.Domain.Item.Service
 {
-    class EquipmentEnchanceService
+    // ドメインサービス. Usecasekから呼び出すことを想定するため、public
+    public class EquipmentEnchanceService
     {
-        // 強化を行う
+        /// <summary>
+        /// 強化を行う
+        /// </summary>
+        /// <param name="item">強化対象のアイテム</param>
+        /// <param name="enchanceType">追加付与を試みるパラメータ</param>
+        /// <param name="parameters">強化を試みるプレイヤーのステータス</param>
+        /// <returns>強化結果</returns>
         public EnchanceResult Enchance(EquippableItem item, EnchancementParameter.EnchanceType enchanceType, DependentParametersForEnhancement parameters)
         {
             var random = new Random();
@@ -20,12 +27,15 @@ namespace BlackSmith.Domain.Item.Service
 
             if (success)
             {
+                // 強化を行うロジックはアイテムにある
                 var enchance = item.EnchancementParameter.AddEnchance(enchanceType);
 
                 return new EnchanceResult(
                     EnchanceResultType.Success,
                     item.EditEnchancementParam(enchance));
             }
+
+            // 強化に失敗しても、武器の付与パラメータが減少することはない
 
             return new EnchanceResult(EnchanceResultType.Endure, item);
         }

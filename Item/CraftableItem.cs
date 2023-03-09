@@ -5,6 +5,8 @@ using BlackSmith.Domain.Player;
 
 namespace BlackSmith.Domain.Item
 {
+    // Interfaceで定義しているものは、Enumで実装を置き換えることを考慮し続ける
+
     /// <summary>素材となることができるアイテム</summary>
     public interface IMaterial : IItem
     {
@@ -26,7 +28,8 @@ namespace BlackSmith.Domain.Item
         // レシピには順序の概念が存在する
         public readonly IReadOnlyList<IMaterial> Materials;
 
-        public CraftingRecipe(ICraftable craftable, IReadOnlyList<IMaterial> materials)
+        // レシピオブジェクトの作成は、このライブラリに限る
+        internal CraftingRecipe(ICraftable craftable, IReadOnlyList<IMaterial> materials)
         {
             Craftable = craftable;
             Materials = materials;

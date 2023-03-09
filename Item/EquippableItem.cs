@@ -156,6 +156,12 @@ namespace BlackSmith.Domain.Item.Equipment
 
         public int GetEnchancedCount => Sharpness + Quickness + Accuracy + Heaviness + Durability;
 
+        // ここのswitch 処理は簡略化可能な気がする
+        /// <summary>
+        /// 強化を行う. 強化は必ず成功する.
+        /// </summary>
+        /// <param name="type">強化するパラメータの種類</param>
+        /// <returns>強化結果</returns>
         public EnchancementParameter AddEnchance(EnchanceType type)
         {
             var sharpness = Sharpness;

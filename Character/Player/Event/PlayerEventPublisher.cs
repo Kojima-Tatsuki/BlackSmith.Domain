@@ -1,13 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using UniRx;
+﻿using UniRx;
 
 namespace BlackSmith.Domain.Player.Event
 {
-    /// <summary>
-    /// プレイヤーエンティティのイベントを発行する
-    /// </summary>
-    public class PlayerEventPublisher
+    // イベントの購読用
+    public interface IHealthEventObservable
+    {
+        UniRx.IObservable<PlayerHealthChangedEvent> OnPlayerHealthChanged { get; }
+        UniRx.IObservable<PlayerOnDeadEvent> OnPlayerDead { get; }
+    }
+
+    // イベントの発行用
+    internal interface IHealthEventObserver
+    {
+        void SetChangedPlayerHealth(PlayerHealthChangedEvent changedEvent);
+
+        void SetOnPlayerDead(PlayerOnDeadEvent deadEvent);
+    }
+
+    // ドメインサービスとして提供される
+    // publicクラスとして定義する必要性があるかは疑問
+    /// <summary>プレイヤーエンティティのイベントを提供する</summary>
+    public class PlayerEventPublisher : IHealthEventObservable, IHealthEventObserver
     {
         /// <summary>
         /// プレイヤーの体力が変更された時に発行する
@@ -28,12 +41,12 @@ namespace BlackSmith.Domain.Player.Event
             onPlayerDeadSubject = new Subject<PlayerOnDeadEvent>();
         }
 
-        internal void SetChangedPlayerHealth(PlayerHealthChangedEvent changedEvent)
+        void IHealthEventObserver.SetChangedPlayerHealth(PlayerHealthChangedEvent changedEvent)
         {
             onPlayerHealthChanged.OnNext(changedEvent);
         }
 
-        internal void SetOnPlayerDead(PlayerOnDeadEvent deadEvent)
+        void IHealthEventObserver.SetOnPlayerDead(PlayerOnDeadEvent deadEvent)
         {
             onPlayerDeadSubject.OnNext(deadEvent);
         }

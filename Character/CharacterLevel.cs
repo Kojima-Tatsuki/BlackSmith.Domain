@@ -3,6 +3,7 @@ using BlackSmith.Domain.CharacterObjects.Interface;
 
 namespace BlackSmith.Domain.Character
 {
+    // Expを利用しないため、レベルに変動を起こさせない
     public class CharacterLevel : ICharacterLevel
     {
         int ICharacterLevel.Value => Value;

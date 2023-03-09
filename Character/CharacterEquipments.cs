@@ -1,8 +1,6 @@
 ﻿using System;
 using BlackSmith.Domain.CharacterObjects;
 
-#nullable enable
-
 namespace BlackSmith.Domain.Character
 {
     /// <summary> キャラクターの装備を格納するクラス </summary>

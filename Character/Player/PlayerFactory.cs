@@ -3,6 +3,7 @@ using BlackSmith.Domain.CharacterObjects;
 
 namespace BlackSmith.Domain.Player
 {
+    // プレイヤー含むキャラクターとして振る舞わせるなら、名前は変えるべき
     /// <summary>
     /// プレイヤーエンティティの再構築を行うオブジェクト
     /// </summary>
@@ -38,10 +39,12 @@ namespace BlackSmith.Domain.Player
         }
     }
 
-    /// <summary>
-    /// プレイヤーの再構築を行う際に引数に指定して使う
-    /// </summary>
-    public class PlayerCreateCommand
+    // 外部公開するためのプリミティブと、再利用の為の機能が混在している
+    // 外部公開のためのオブジェクトが必要かは考えるべき
+    // Entityの公開範囲設定で制御する案もある
+
+    /// <summary>プレイヤーの再構築を行う際に引数に指定して使う</summary>
+    public record PlayerCreateCommand
     {
         public PlayerID ID { get; }
         internal PlayerName name { get; }

@@ -21,15 +21,15 @@ namespace BlackSmith.Domain.Item
             this.itemName = new ItemName(itemName);
         }
 
-        public bool Equals(IItem other)
+        public bool Equals(IItem? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return Equals(Name, other.Name); // IDで比較
+            return Equals(Name, other.Name); // 名前で比較
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;

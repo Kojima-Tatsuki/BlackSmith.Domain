@@ -8,13 +8,13 @@ namespace BlackSmith.Domain.Player
     internal class Experience
     {
         // 1Lv -> 2Lv になる為に倒す敵の数
-        private readonly int InitKillRequirement = 5;
+        private static readonly int InitKillRequirement = 5;
 
         // 1Lv -> 2Lv になる為に必要な経験値量
-        private readonly int InitExpRequirement = 100;
+        private static readonly int InitExpRequirement = 100;
 
         // 1レベル上の敵を倒した時に貰える経験値の倍率
-        private readonly float LevelDifferenceMultiplier = 1.2f;
+        private static readonly float LevelDifferenceMultiplier = 1.2f;
 
         internal int Value { get; }
 
@@ -75,6 +75,11 @@ namespace BlackSmith.Domain.Player
             // A : LevelDifferenceMultiplier
             // log_A ((1 / exp) * (1 - A) / I)
             return (int)Math.Log(1 - (cumExp.Value / InitExpRequirement * (1 - LevelDifferenceMultiplier)), LevelDifferenceMultiplier) + 1;
+        }
+
+        internal static Experience FromLevel(int level)
+        {
+            return new Experience((int)-((LevelDifferenceMultiplier - 1) * Math.Pow(LevelDifferenceMultiplier, 1 - level)) / InitExpRequirement);
         }
     }
 }
