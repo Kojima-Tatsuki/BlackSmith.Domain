@@ -15,8 +15,4 @@
     <PackageReference Include="UniTask" Version="2.3.3" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="doc\Field\" />
-  </ItemGroup>
-
 </Project>
