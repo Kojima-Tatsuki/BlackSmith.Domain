@@ -11,6 +11,12 @@
   </Target>
 
   <ItemGroup>
+    <Compile Remove="Test\**" />
+    <EmbeddedResource Remove="Test\**" />
+    <None Remove="Test\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="UniRx" Version="5.4.1" />
     <PackageReference Include="UniTask" Version="2.3.3" />
   </ItemGroup>
