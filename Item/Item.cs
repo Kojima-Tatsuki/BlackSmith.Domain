@@ -88,7 +88,12 @@ namespace BlackSmith.Domain.Item
     /// <remarks>Dictionaryのコンストラクタの引数として渡すと、処理が早くなる</remarks>
     class ItemComparer : IEqualityComparer<Item>
     {
-        public bool Equals(Item x, Item y) => x.Equals(y);
+        public bool Equals(Item? x, Item? y)
+        {
+            if (x == null || y == null)
+                return false;
+            return x.Equals(y);
+        }
 
         public int GetHashCode(Item obj) => obj.GetHashCode();
     }
