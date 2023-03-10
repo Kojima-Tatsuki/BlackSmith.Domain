@@ -23,7 +23,17 @@ namespace BlackSmith.Domain.Field
         public IReadOnlyCollection<CharacterID> CharacterIds => Chunk.CharacterIds;
         internal Chunk Chunk { get; private set; }
 
-        public Field(FieldID id, string name, IReadOnlyCollection<CharacterID> ids)
+        public static Field ValueOf(FieldID id, string name, IReadOnlyCollection<CharacterID> ids)
+        {
+            return new Field(id, name, ids);
+        }
+
+        public static Field NameOf(string name)
+        {
+            return new Field(new FieldID(), name, new List<CharacterID>());
+        }
+
+        private Field(FieldID id, string name, IReadOnlyCollection<CharacterID> ids)
         {
             ID = id;
             Name = name;
@@ -52,9 +62,9 @@ namespace BlackSmith.Domain.Field
 
     public class FieldID : BasicID
     {
-        public FieldID() : base(Guid.NewGuid()) { }
+        internal FieldID() : base(Guid.NewGuid()) { }
 
-        public FieldID(Guid id) : base(id) { }
+        internal FieldID(Guid id) : base(id) { }
     }
 
     // この区分けが必要かは検討すべき

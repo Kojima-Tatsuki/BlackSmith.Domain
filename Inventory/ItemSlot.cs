@@ -94,7 +94,7 @@ namespace BlackSmith.Domain.Inventory
             return new ItemCountNumber(Value - count.Value);
         }
 
-        public bool Equals(ItemCountNumber other)
+        public bool Equals(ItemCountNumber? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -102,7 +102,7 @@ namespace BlackSmith.Domain.Inventory
             return Value == other.Value;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;

@@ -5,7 +5,7 @@ namespace BlackSmith.Domain.Player
 {
     public class PlayerID : CharacterID
     {
-        public PlayerID(Guid id) : base(id)
+        internal PlayerID(Guid id) : base(id)
         {
         }
     }
