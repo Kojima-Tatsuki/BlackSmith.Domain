@@ -37,7 +37,7 @@ namespace BlackSmith.Domain.Player
         /// <param name="id"></param>
         internal PlayerEntity(PlayerCreateCommand command, IHealthEventObserver? healthEventObserber = null)
         {
-            ID = command.ID;
+            ID = command.id;
             Name = command.name;
             HealthPoint = command.health;
             levelParameters = command.levelParams;

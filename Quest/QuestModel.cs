@@ -8,8 +8,14 @@ namespace BlackSmith.Domain.Quest
 {
     class QuestModel
     {
-        public string QuestName;
+        public string QuestName { get; init; }
 
-        public string Discription;
+        public string Discription { get; init; }
+
+        public QuestModel(string questName, string discription)
+        {
+            QuestName = questName;
+            Discription = discription;
+        }
     }
 }

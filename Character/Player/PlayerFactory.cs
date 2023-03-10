@@ -14,7 +14,7 @@ namespace BlackSmith.Domain.Player
         /// </summary>
         /// <param name="command">使用するコマンド</param>
         /// <returns>再構築したエンティティ</returns>
-        public PlayerEntity Create(PlayerCreateCommand command)
+        public static PlayerEntity Create(PlayerCreateCommand command)
         {
             if (command is null)
                 throw new ArgumentNullException(nameof(command));
@@ -27,7 +27,7 @@ namespace BlackSmith.Domain.Player
         /// </summary>
         /// <param name="name">作成するプレイヤーの名前</param>
         /// <returns>作成したエンティティ</returns>
-        public PlayerEntity Create(PlayerName name)
+        public static PlayerEntity Create(PlayerName name)
         {
             var id = new PlayerID(Guid.NewGuid());
             var levelParams = new PlayerLevelDepentdentParameters();
@@ -46,12 +46,13 @@ namespace BlackSmith.Domain.Player
     /// <summary>プレイヤーの再構築を行う際に引数に指定して使う</summary>
     public record PlayerCreateCommand
     {
-        public PlayerID ID { get; }
+        internal PlayerID id { get; }
         internal PlayerName name { get; }
         internal HealthPoint health { get; }
         internal PlayerLevelDepentdentParameters levelParams { get; }
 
         #region 外部公開するプリミティブ型
+        public string Id => id.ToString();
         public string Name => name.Value;
         /// <summary> 体力の現在値と最大値, item1が現在値, item2が最大値 </summary>
         public (int current, int max) Health => health.GetValues();
@@ -61,13 +62,13 @@ namespace BlackSmith.Domain.Player
         #endregion
 
         public PlayerCreateCommand(
-            Guid id,
+            string id,
             string name,
             int currentHealth, int maxHealth,
             int exp, int str, int agi
             )
         {
-            this.ID = new PlayerID(id);
+            this.id = new PlayerID(new Guid(id));
             this.name = new PlayerName(name);
 
             health = new HealthPoint(
@@ -86,7 +87,7 @@ namespace BlackSmith.Domain.Player
             HealthPoint health,
             PlayerLevelDepentdentParameters levelParams)
         {
-            this.ID = id;
+            this.id = id;
             this.name = name;
             this.health = health;
             this.levelParams = levelParams;
@@ -95,7 +96,7 @@ namespace BlackSmith.Domain.Player
         public override string ToString()
         {
             return 
-                $"ID : {ID}\n" +
+                $"ID : {id}\n" +
                 $"Name : {Name}\n" +
                 $"Health : {Health.current} / {Health.max}\n" +
                 $"Exp(Lv) : {Exp}({levelParams.Level.Value})\n" +

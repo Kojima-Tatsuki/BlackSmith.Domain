@@ -43,7 +43,7 @@ namespace BlackSmith.Domain.Input
             Value = value;
         }
 
-        public bool Equals(ActionName other)
+        public bool Equals(ActionName? other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -51,7 +51,7 @@ namespace BlackSmith.Domain.Input
             return string.Equals(this.Value, other.Value);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return false;
