@@ -19,4 +19,8 @@
     <ProjectReference Include="..\BlackSmith.Domain\BlackSmith.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Usecase\" />
+  </ItemGroup>
+
 </Project>
