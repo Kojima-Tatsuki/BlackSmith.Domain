@@ -21,4 +21,9 @@
     <PackageReference Include="UniTask" Version="2.3.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Usecase\Character\Enemy\" />
+    <Folder Include="Usecase\Character\NPC\" />
+  </ItemGroup>
+
 </Project>
