@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using BlackSmith.Domain.Character;
 using Cysharp.Threading.Tasks;
 
 namespace BlackSmith.Domain.PassiveEffect
 {
     // 継続するエフェクト
-    abstract class ContinuouslyEffect
+    public interface ContinuouslyEffect
     {
-        public float ContinueTime { get; }
+        float ContinueTime { get; }
 
-        public abstract UniTask DoEffect();
+        UniTask DoEffect(CharacterID targetId);
     }
 
     // 継続時間の存在しないエフェクト
-    class InstantEffect
+    public interface InstantEffect
     {
 
     }
