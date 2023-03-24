@@ -1,7 +1,7 @@
 ﻿using System;
-using BlackSmith.Domain.Player;
+using BlackSmith.Domain.Character.Player;
 
-namespace BlackSmith.Domain.CharacterObjects
+namespace BlackSmith.Domain.CharacterObject
 {
     /// <summary>
     /// 攻撃力

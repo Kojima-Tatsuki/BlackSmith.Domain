@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using BlackSmith.Repository.Interface;
-using BlackSmith.Usecase.Interface;
-using BlackSmith.Domain.CharacterObjects;
-using BlackSmith.Domain.Player;
+﻿using BlackSmith.Usecase.Interface;
+using BlackSmith.Domain.Character.Player;
 
-#nullable enable
-
-namespace BlackSmith.Usecase.Player
+namespace BlackSmith.Usecase.Character.Player
 {
     /// <summary>
     /// Presenter層にPlayerEntityDataを渡すクラス
@@ -21,13 +14,11 @@ namespace BlackSmith.Usecase.Player
 
         private readonly ISessionPlayerIdRepository sessionRepository;
 
-        public PlayerEntityDataProvider()
+        public PlayerEntityDataProvider(IPlayerRepository playerRepository, ISessionPlayerIdRepository sessionPlayerIdRepository)
         {
-            var provider = DIContainer.Instance.ServiceProvider;
+            repository = playerRepository;
 
-            repository = provider.GetRequiredService<IPlayerRepository>();
-            
-            sessionRepository = provider.GetRequiredService<ISessionPlayerIdRepository>();
+            sessionRepository = sessionPlayerIdRepository;
 
             instructor = new PlayerRepositoryInstructor(repository);
         }

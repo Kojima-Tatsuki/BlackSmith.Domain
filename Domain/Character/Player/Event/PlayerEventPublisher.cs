@@ -1,6 +1,6 @@
 ﻿using UniRx;
 
-namespace BlackSmith.Domain.Player.Event
+namespace BlackSmith.Domain.Character.Player.Event
 {
     // イベントの購読用
     public interface IHealthEventObservable

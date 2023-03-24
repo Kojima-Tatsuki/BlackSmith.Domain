@@ -2,7 +2,7 @@ using System;
 
 #nullable enable
 
-namespace BlackSmith.Domain.CharacterObjects
+namespace BlackSmith.Domain.CharacterObject
 {
     /// <summary> ‘•”õ, Entity‚ÌƒNƒ‰ƒX </summary>
     internal class Equipment

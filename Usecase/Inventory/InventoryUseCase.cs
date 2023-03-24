@@ -1,9 +1,6 @@
 ﻿using BlackSmith.Domain.Inventory;
 using BlackSmith.Domain.Item;
-using BlackSmith.Repository.Interface;
-using Microsoft.Extensions.DependencyInjection;
-
-#nullable enable
+using BlackSmith.Usecase.Interface;
 
 namespace BlackSmith.Usecase.Inventory
 {
@@ -24,11 +21,9 @@ namespace BlackSmith.Usecase.Inventory
         private readonly IInventoryRepository inventoryRepository;
         private readonly InventoryFactory inventoryFactory;
 
-        public InventoryUsecase()
+        public InventoryUsecase(IInventoryRepository inventoryRepository)
         {
-            var provider = DIContainer.Instance.ServiceProvider;
-
-            inventoryRepository = provider.GetRequiredService<IInventoryRepository>();
+            this.inventoryRepository = inventoryRepository;
             inventoryFactory = new InventoryFactory();
         }
 

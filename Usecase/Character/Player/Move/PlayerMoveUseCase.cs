@@ -1,8 +1,6 @@
 ﻿using BlackSmith.Domain.Input;
 
-#nullable enable
-
-namespace BlackSmith.Usecase.Player.Move
+namespace BlackSmith.Usecase.Character.Player.Move
 {
     public interface IPlayerMoveUsecase
     {

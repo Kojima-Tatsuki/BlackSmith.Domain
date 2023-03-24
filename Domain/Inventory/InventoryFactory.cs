@@ -1,8 +1,7 @@
 using System;
-using BlackSmith.Domain.Inventory;
 using BlackSmith.Domain.Item;
 
-namespace BlackSmith.Usecase.Inventory
+namespace BlackSmith.Domain.Inventory
 {
     public class InventoryFactory
     {

@@ -1,9 +1,7 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using BlackSmith.Domain.Player;
-using BlackSmith.Repository.Interface;
+﻿using BlackSmith.Domain.Character.Player;
+using BlackSmith.Usecase.Interface;
 
-namespace BlackSmith.Usecase.Player
+namespace BlackSmith.Usecase.Character.Player
 {
     /// <summary>
     /// プレイヤーのステータスに変更を与える際に用いるユースケース
@@ -12,11 +10,9 @@ namespace BlackSmith.Usecase.Player
     {
         private readonly PlayerRepositoryInstructor instructor;
 
-        public RewritePlayerStatusUsecase()
+        public RewritePlayerStatusUsecase(IPlayerRepository playerRepository)
         {
-            var provider = DIContainer.Instance.ServiceProvider;
-
-            var repository = provider.GetRequiredService<IPlayerRepository>();
+            var repository = playerRepository;
 
             instructor = new PlayerRepositoryInstructor(repository);
         }

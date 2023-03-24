@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using Cysharp.Threading.Tasks;
-using BlackSmith.Domain.Player;
-using BlackSmith.Repository.Interface;
+﻿using Cysharp.Threading.Tasks;
 using BlackSmith.Usecase.Interface;
+using BlackSmith.Domain.Character.Player;
 
-namespace BlackSmith.Usecase.Player
+namespace BlackSmith.Usecase.Character.Player
 {
     /// <summary>
     /// プレイヤーの作成、削除を行うユースケース
@@ -19,12 +15,10 @@ namespace BlackSmith.Usecase.Player
 
         private readonly IAccountApi accountApi;
 
-        public AdjustPlayerUsecase()
+        public AdjustPlayerUsecase(IPlayerRepository playerRepository, IAccountApi accountApi)
         {
-            var provider = DIContainer.Instance.ServiceProvider;
-
-            repository = provider.GetRequiredService<IPlayerRepository>();
-            accountApi = provider.GetRequiredService<IAccountApi>();
+            repository = playerRepository;
+            this.accountApi = accountApi;
 
             playerFactory = new PlayerFactoryInstructor(repository);
         }

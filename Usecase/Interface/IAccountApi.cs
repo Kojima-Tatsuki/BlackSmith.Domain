@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
-using Cysharp.Threading.Tasks;
-using BlackSmith.Domain.Player;
+﻿using Cysharp.Threading.Tasks;
+using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Usecase.Interface
 {
@@ -14,9 +12,16 @@ namespace BlackSmith.Usecase.Interface
 
     public class UserAccount
     {
-        public string UserId { get; } // Gs2が作成するID
-        public string Password { get; } // Gs2が作成するパスワード
+        public string UserId { get; init; } // Gs2が作成するID
+        public string Password { get; init; } // Gs2が作成するパスワード
 
-        public PlayerName UserName { get; } // Userが指定する名前
+        public PlayerName UserName { get; init; } // Userが指定する名前
+
+        public UserAccount(string id, string password, string userName)
+        {
+            UserId = id;
+            Password = password;
+            UserName = new(userName);
+        }
     }
 }

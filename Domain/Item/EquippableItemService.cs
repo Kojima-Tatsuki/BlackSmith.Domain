@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BlackSmith.Domain.Item.Equipment;
 
-namespace BlackSmith.Domain.Item.Service
+namespace BlackSmith.Domain.Item
 {
     // ドメインサービス. Usecasekから呼び出すことを想定するため、public
     public class EquipmentEnchanceService

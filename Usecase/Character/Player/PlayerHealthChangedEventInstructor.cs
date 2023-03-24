@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reactive;
-using Microsoft.Extensions.DependencyInjection;
-using BlackSmith.Domain.Player.Event;
+﻿using UniRx;
 using BlackSmith.Usecase.Interface;
+using BlackSmith.Domain.Character.Player.Event;
 
-namespace BlackSmith.Usecase.Player
+namespace BlackSmith.Usecase.Character.Player
 {
     public class PlayerHealthChangedEventInstructor
     {
@@ -13,17 +10,15 @@ namespace BlackSmith.Usecase.Player
 
         private readonly IOnPlayerHealthChangedEventHundler healthChangedEventHundler;
 
-        public PlayerHealthChangedEventInstructor()
+        public PlayerHealthChangedEventInstructor(PlayerEventPublisher playerEventPublisher, IOnPlayerHealthChangedEventHundler changedEventHundler)
         {
-            var provider = DIContainer.Instance.ServiceProvider;
-
-            publisher = provider.GetRequiredService<PlayerEventPublisher>();
-            healthChangedEventHundler = provider.GetRequiredService<IOnPlayerHealthChangedEventHundler>();
+            publisher = playerEventPublisher;
+            healthChangedEventHundler = changedEventHundler;
 
             publisher.OnPlayerHealthChanged
                 .Subscribe(changedEvent => healthChangedEventHundler
                 .OnChangedHealthPoint(
-                    changedEvent.HealthPoint.GetValues().current, 
+                    changedEvent.HealthPoint.GetValues().current,
                     changedEvent.HealthPoint.GetValues().max));
         }
     }

@@ -1,7 +1,7 @@
 ﻿using System;
-using BlackSmith.Domain.CharacterObjects.Interface;
+using BlackSmith.Domain.Character.Interface;
 
-namespace BlackSmith.Domain.Player
+namespace BlackSmith.Domain.Character.Player
 {
     /// <summary>
     /// キャラクターのレベル

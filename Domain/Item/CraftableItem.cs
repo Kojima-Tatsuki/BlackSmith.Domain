@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BlackSmith.Domain.Player;
+using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Domain.Item
 {

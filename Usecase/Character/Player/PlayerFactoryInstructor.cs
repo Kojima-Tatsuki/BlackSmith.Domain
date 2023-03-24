@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using BlackSmith.Domain;
-using BlackSmith.Domain.Player;
-using BlackSmith.Repository.Interface;
+﻿using BlackSmith.Domain.Character.Player;
+using BlackSmith.Usecase.Interface;
 
-namespace BlackSmith.Usecase.Player
+namespace BlackSmith.Usecase.Character.Player
 {
     // PlayerEntityの作成と、リポジトリへの更新を行うUseacase
     internal class PlayerFactoryInstructor
@@ -23,9 +20,7 @@ namespace BlackSmith.Usecase.Player
         /// <returns></returns>
         internal PlayerEntity CreatePlayerEntity(PlayerName name)
         {
-            var factory = new PlayerFactory();
-
-            var player = factory.Create(name);
+            var player = PlayerFactory.Create(name);
 
             playerRepositoty.Register(player);
 
@@ -52,7 +47,7 @@ namespace BlackSmith.Usecase.Player
 
         internal PlayerID GetPlayerID()
         {
-            var id = repository.GetId(); 
+            var id = repository.GetId();
 
             if (id is null)
                 throw new NullReferenceException("現在、ゲーム中のプレイヤーは存在しません");

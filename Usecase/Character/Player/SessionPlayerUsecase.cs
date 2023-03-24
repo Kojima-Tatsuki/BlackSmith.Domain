@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
-using BlackSmith.Domain.Player;
-using BlackSmith.Repository.Interface;
+﻿using BlackSmith.Domain.Character.Player;
+using BlackSmith.Usecase.Interface;
 
 #nullable enable
 
-namespace BlackSmith.Usecase.Player
+namespace BlackSmith.Usecase.Character.Player
 {
     /// <summary>
     /// 操作するプレイヤーのデータを設定する
@@ -17,17 +14,15 @@ namespace BlackSmith.Usecase.Player
 
         private readonly ISessionPlayerIdRepository onGameRepository;
 
-        public SessionPlayerUsecase()
+        public SessionPlayerUsecase(IPlayerRepository playerRepository, ISessionPlayerIdRepository sessionPlayerIdRepository)
         {
-            var provider = DIContainer.Instance.ServiceProvider;
-
-            repositoty = provider.GetRequiredService<IPlayerRepository>();
-            onGameRepository = provider.GetRequiredService<ISessionPlayerIdRepository>();
+            repositoty = playerRepository;
+            onGameRepository = sessionPlayerIdRepository;
         }
 
         public void Login(PlayerID id)
         {
-            if(!IsValidID(id))
+            if (!IsValidID(id))
                 throw new ArgumentException($"不正なIDが入力されました, ID : {id}");
 
             onGameRepository.UpdateId(id);

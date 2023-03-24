@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackSmith.Domain.CharacterObjects.Interface
+namespace BlackSmith.Domain.Character.Interface
 {
     public interface ICharacterLevel
     {

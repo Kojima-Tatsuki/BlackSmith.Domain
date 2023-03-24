@@ -2,7 +2,7 @@
 
 #nullable enable
 
-namespace BlackSmith.Domain.Player
+namespace BlackSmith.Domain.Character.Player
 {
     public class PlayerName
     {

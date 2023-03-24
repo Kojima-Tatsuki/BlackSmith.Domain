@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BlackSmith.Domain.Player
+namespace BlackSmith.Domain.Character.Player
 {
     /// <summary>
     /// 経験値量
@@ -61,7 +61,7 @@ namespace BlackSmith.Domain.Player
         /// <returns></returns>
         internal Experience RequiredCumulativeExp(int level)
         {
-            return new Experience((int)((InitExpRequirement * (1 - Math.Pow(LevelDifferenceMultiplier, level - 1)) / 1) - LevelDifferenceMultiplier));
+            return new Experience((int)(InitExpRequirement * (1 - Math.Pow(LevelDifferenceMultiplier, level - 1)) / 1 - LevelDifferenceMultiplier));
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace BlackSmith.Domain.Player
             // I : InitExpRequirement
             // A : LevelDifferenceMultiplier
             // log_A ((1 / exp) * (1 - A) / I)
-            return (int)Math.Log(1 - (cumExp.Value / InitExpRequirement * (1 - LevelDifferenceMultiplier)), LevelDifferenceMultiplier) + 1;
+            return (int)Math.Log(1 - cumExp.Value / InitExpRequirement * (1 - LevelDifferenceMultiplier), LevelDifferenceMultiplier) + 1;
         }
 
         internal static Experience FromLevel(int level)

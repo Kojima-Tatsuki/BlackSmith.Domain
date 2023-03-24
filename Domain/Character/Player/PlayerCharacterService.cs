@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using BlackSmith.Domain.CharacterObjects;
+using BlackSmith.Domain.CharacterObject;
 
-namespace BlackSmith.Domain.Player
+namespace BlackSmith.Domain.Character.Player
 {
     internal class PlayerCharacterService
     {

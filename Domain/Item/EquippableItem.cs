@@ -1,5 +1,5 @@
-﻿using BlackSmith.Domain.Item.Equipment;
-using BlackSmith.Domain.Player;
+﻿using BlackSmith.Domain.Character.Player;
+using BlackSmith.Domain.Item.Equipment;
 using System;
 
 namespace BlackSmith.Domain.Item

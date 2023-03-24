@@ -1,9 +1,9 @@
 using System;
-using BlackSmith.Domain.CharacterObjects.Interface;
+using BlackSmith.Domain.Character.Interface;
 
 #nullable enable
 
-namespace BlackSmith.Domain.CharacterObjects
+namespace BlackSmith.Domain.CharacterObject
 {
     /// <summary>
     /// ダメージ量を表すクラス

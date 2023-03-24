@@ -2,7 +2,7 @@
 
 #nullable enable
 
-namespace BlackSmith.Domain.Player
+namespace BlackSmith.Domain.Character.Player
 {
     /// <summary>
     /// レベルを元に変動するパラメータを格納する
@@ -71,8 +71,8 @@ namespace BlackSmith.Domain.Player
                     $"agi : {agi}");
 
             return new PlayerLevelDepentdentParameters(
-                Level, 
-                new Strength(STR.Value + str), 
+                Level,
+                new Strength(STR.Value + str),
                 new Agility(AGI.Value + agi));
         }
 

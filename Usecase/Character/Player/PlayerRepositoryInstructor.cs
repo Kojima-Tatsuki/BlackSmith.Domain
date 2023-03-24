@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using BlackSmith.Domain.Player;
-using BlackSmith.Repository.Interface;
+﻿using BlackSmith.Domain.Character.Player;
+using BlackSmith.Usecase.Interface;
 
-namespace BlackSmith.Usecase.Player
+namespace BlackSmith.Usecase.Character.Player
 {
     internal class PlayerRepositoryInstructor
     {

@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using BlackSmith.Domain.Player;
+﻿using BlackSmith.Domain.Character.Player;
 
-#nullable enable
-
-namespace BlackSmith.Repository.Interface
+namespace BlackSmith.Usecase.Interface
 {
     /// <summary>
     /// すべてのプレイヤーエンティティを保管するリポジトリ

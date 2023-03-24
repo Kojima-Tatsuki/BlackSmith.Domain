@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace BlackSmith.Domain.Item
+namespace BlackSmith.Test.Domain.Item
 {
     /// <summary>
     /// Itemの設計を一時的にるためのテストクラス
@@ -28,7 +28,7 @@ namespace BlackSmith.Domain.Item
     {
         public IReadOnlyCollection<ItemEffectType> ItemEffects { get; }
 
-        public enum ItemEffectType 
+        public enum ItemEffectType
         {
             Poison
         }

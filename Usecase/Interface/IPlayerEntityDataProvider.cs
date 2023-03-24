@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BlackSmith.Usecase.Player;
-
-#nullable enable
+﻿using BlackSmith.Usecase.Character.Player;
 
 namespace BlackSmith.Usecase.Interface
 {

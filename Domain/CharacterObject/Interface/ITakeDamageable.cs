@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BlackSmith.Domain.CharacterObjects;
+using BlackSmith.Domain.CharacterObject;
 
-namespace BlackSmith.Domain.Character.Interface
+namespace BlackSmith.Domain.CharacterObject.Interface
 {
     public interface ITakeDamageable
     {

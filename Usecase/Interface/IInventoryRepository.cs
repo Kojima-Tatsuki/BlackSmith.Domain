@@ -1,8 +1,6 @@
 ﻿using BlackSmith.Domain.Inventory;
 
-#nullable enable
-
-namespace BlackSmith.Repository.Interface
+namespace BlackSmith.Usecase.Interface
 {
     public interface IInventoryRepository
     {

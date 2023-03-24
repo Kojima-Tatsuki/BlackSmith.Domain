@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackSmith.Domain.Test.Character
+namespace BlackSmith.Test.Domain.Character
 {
     [TestClass]
     public class LevelTest

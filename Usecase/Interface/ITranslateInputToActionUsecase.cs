@@ -1,9 +1,6 @@
 ﻿using BlackSmith.Domain.Input;
-using System.Collections.Generic;
 
-#nullable enable
-
-namespace BlackSmith.Usecase.Input
+namespace BlackSmith.Usecase.Interface
 {
     public interface ITranslateInputToActionUsecase
     {

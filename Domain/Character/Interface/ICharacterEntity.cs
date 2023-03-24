@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using BlackSmith.Domain.CharacterObjects;
-using BlackSmith.Domain.CharacterObjects.Interface;
+using BlackSmith.Domain.CharacterObject;
+using BlackSmith.Domain.CharacterObject.Interface;
 
 namespace BlackSmith.Domain.Character.Interface
 {

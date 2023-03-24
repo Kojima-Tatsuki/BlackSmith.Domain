@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackSmith.Domain.Player.Event
+namespace BlackSmith.Domain.Character.Player.Event
 {
     /// <summary>
     /// ドメインイベントの基底クラス

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using BlackSmith.Domain.CharacterObjects;
+using BlackSmith.Domain.CharacterObject;
 
-namespace BlackSmith.Domain.Player.Event
+namespace BlackSmith.Domain.Character.Player.Event
 {
     public class PlayerHealthChangedEvent : PlayerEventBase
     {
         public HealthPoint HealthPoint { get; }
 
-        internal PlayerHealthChangedEvent(PlayerID id, HealthPoint health): base(id)
+        internal PlayerHealthChangedEvent(PlayerID id, HealthPoint health) : base(id)
         {
             HealthPoint = health;
         }

@@ -1,9 +1,8 @@
-﻿using BlackSmith.Domain.CharacterObjects;
-using BlackSmith.Domain.Player.Event;
+﻿using BlackSmith.Domain.Character.Player.Event;
 using BlackSmith.Domain.Character.Interface;
-using BlackSmith.Domain.CharacterObjects.Interface;
+using BlackSmith.Domain.CharacterObject;
 
-namespace BlackSmith.Domain.Player
+namespace BlackSmith.Domain.Character.Player
 {
     // Facade, 窓口のようなイメージで扱う
     /// <summary>プレイヤーのエンティティ</summary>

@@ -1,6 +1,6 @@
-﻿using BlackSmith.Domain.CharacterObjects.Interface;
+﻿using BlackSmith.Domain.Character.Interface;
 
-namespace BlackSmith.Domain.CharacterObjects
+namespace BlackSmith.Domain.CharacterObject
 {
     /// <summary>
     /// =Value= This class is used to represent HP.
@@ -69,7 +69,7 @@ namespace BlackSmith.Domain.CharacterObjects
         {
             var hp = Value.Value - damage.Value;
 
-            if (hp < 0) 
+            if (hp < 0)
                 hp = 0; // HPが0を下回らないようにする
 
             return new HealthPoint(new HealthPointValue(hp), MaximumValue);

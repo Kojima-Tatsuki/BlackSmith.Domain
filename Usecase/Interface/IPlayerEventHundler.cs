@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using BlackSmith.Usecase.Player;
-
-namespace BlackSmith.Usecase.Interface
+﻿namespace BlackSmith.Usecase.Interface
 {
     public interface IPlayerEventHundler
     {

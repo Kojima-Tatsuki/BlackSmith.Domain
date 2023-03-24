@@ -1,7 +1,7 @@
 ﻿using System;
-using BlackSmith.Domain.CharacterObjects;
+using BlackSmith.Domain.CharacterObject;
 
-namespace BlackSmith.Domain.Player
+namespace BlackSmith.Domain.Character.Player
 {
     // プレイヤー含むキャラクターとして振る舞わせるなら、名前は変えるべき
     /// <summary>
@@ -95,7 +95,7 @@ namespace BlackSmith.Domain.Player
 
         public override string ToString()
         {
-            return 
+            return
                 $"ID : {id}\n" +
                 $"Name : {Name}\n" +
                 $"Health : {Health.current} / {Health.max}\n" +
