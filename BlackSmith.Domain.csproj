@@ -4,15 +4,27 @@
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>BlackSmith</RootNamespace>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Debug copy $(TargetDir)$(ProjectName).dll $(SolutionDir)Assets\Plugins&#xD;&#xA;if $(ConfigurationName) == Debug copy $(TargetDir)$(ProjectName).pdb $(SolutionDir)Assets\Plugins" />
+    <Exec Command="if $(ConfigurationName) == Debug copy $(TargetDir)$(ProjectName).dll" />
   </Target>
+
+  <ItemGroup>
+    <Compile Remove="Test\**" />
+    <EmbeddedResource Remove="Test\**" />
+    <None Remove="Test\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="UniRx" Version="5.4.1" />
     <PackageReference Include="UniTask" Version="2.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Usecase\Character\Enemy\" />
+    <Folder Include="Usecase\Character\NPC\" />
   </ItemGroup>
 
 </Project>
