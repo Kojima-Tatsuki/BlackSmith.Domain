@@ -1,5 +1,6 @@
 ﻿using BlackSmith.Domain.Input;
 using BlackSmith.Usecase.Interface;
+using System.Collections.Generic;
 
 namespace BlackSmith.Usecase.Input
 {

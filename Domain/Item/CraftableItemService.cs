@@ -1,4 +1,6 @@
-﻿using BlackSmith.Domain.Character.Player;
+﻿using System;
+using System.Collections.Generic;
+using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Domain.Item
 {

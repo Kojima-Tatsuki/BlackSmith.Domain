@@ -1,6 +1,7 @@
 ﻿using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Usecase.Interface;
+using System;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -9,8 +10,8 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class CharacterDamageUsecase
     {
-        private IPlayerRepository PlayerRepositoty { get; init; }
-        private IOnPlayerHealthChangedEventHundler ChangedEventHundler { get; init; }
+        private IPlayerRepository PlayerRepositoty { get; }
+        private IOnPlayerHealthChangedEventHundler ChangedEventHundler { get; }
 
         public CharacterDamageUsecase(IPlayerRepository playerRepository, IOnPlayerHealthChangedEventHundler changedEventHundler)
         {

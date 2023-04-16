@@ -1,6 +1,7 @@
 ﻿using BlackSmith.Domain.Character.Player.Event;
 using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.CharacterObject;
+using System;
 
 namespace BlackSmith.Domain.Character.Player
 {

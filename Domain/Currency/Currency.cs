@@ -1,4 +1,6 @@
-﻿namespace BlackSmith.Domain.Currency
+﻿using System;
+
+namespace BlackSmith.Domain.Currency
 {
     /// <summary> お金 </summary>
     public class Currency
