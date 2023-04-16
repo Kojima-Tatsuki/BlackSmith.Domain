@@ -1,4 +1,7 @@
-﻿namespace BlackSmith.Domain.Inventory
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+namespace BlackSmith.Domain.Inventory
 {
     using Currency;
 

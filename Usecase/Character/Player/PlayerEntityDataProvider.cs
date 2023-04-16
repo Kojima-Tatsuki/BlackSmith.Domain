@@ -1,4 +1,6 @@
-﻿using BlackSmith.Usecase.Interface;
+﻿using System;
+using System.Collections.Generic;
+using BlackSmith.Usecase.Interface;
 using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Usecase.Character.Player

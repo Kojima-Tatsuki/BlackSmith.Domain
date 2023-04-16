@@ -1,4 +1,5 @@
 ﻿using BlackSmith.Usecase.Character.Player;
+using System.Collections.Generic;
 
 namespace BlackSmith.Usecase.Interface
 {

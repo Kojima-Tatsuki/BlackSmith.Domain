@@ -1,4 +1,6 @@
-﻿using BlackSmith.Domain.Character;
+﻿using System;
+using System.Collections.Generic;
+using BlackSmith.Domain.Character;
 
 namespace BlackSmith.Domain.Field
 {
