@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿#if UNITY
+using System.ComponentModel;
+
 namespace System.Runtime.CompilerServices
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -6,3 +8,4 @@ namespace System.Runtime.CompilerServices
     {
     }
 }
+#endif

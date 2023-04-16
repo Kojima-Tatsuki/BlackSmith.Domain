@@ -13,6 +13,8 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>Sona</Authors>
     <Copyright></Copyright>
+    <BaseOutputPath>.bin\</BaseOutputPath>
+    <BaseIntermediateOutputPath>.obj\</BaseIntermediateOutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -28,9 +30,9 @@
   </Target>
 
   <ItemGroup>
-    <Compile Remove="Test\**" />
-    <EmbeddedResource Remove="Test\**" />
-    <None Remove="Test\**" />
+	  <Compile Remove="Test\**" />
+	  <EmbeddedResource Remove="Test\**" />
+	  <None Remove="Test\**" />
   </ItemGroup>
 
   <ItemGroup>
