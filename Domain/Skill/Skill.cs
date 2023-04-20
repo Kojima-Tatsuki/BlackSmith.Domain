@@ -14,17 +14,15 @@ namespace BlackSmith.Domain.Skill
 
         private SkillAcquisitionConditions AcquisitionConditions { get; }
 
-        public Skill(SkillName skillName, SkillExperience exp)
+        public Skill(SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions)
         {
             SkillName = skillName ?? throw new ArgumentNullException(nameof(skillName));
-
             Proficiency = new SkillProficiency(exp) ?? throw new ArgumentNullException(nameof(exp));
+            AcquisitionConditions = acquisitionConditions ?? throw new ArgumentNullException(nameof(acquisitionConditions));
         }
 
         /// <summary>スキルが取得できるか</summary>
         public bool CanSkillAcquisition(SkillAcquisitionConditions requireParaeters) => AcquisitionConditions.CanSkillAcquisition(requireParaeters);
-
-
     }
 
     /// <summary>スキル名</summary>
