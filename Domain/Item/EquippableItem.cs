@@ -4,7 +4,14 @@ using System;
 
 namespace BlackSmith.Domain.Item
 {
-    public class EquippableItem : Item
+    public interface IEquipableItem : IItem
+    {
+        IEquipableItem Enchant(EnchancementParameter parameter);
+
+        IEquipableItem Repair();
+    }
+
+    public class EquippableItem : Item, IEquipableItem
     {
         public EquipmentType EquipType { get; }
 
@@ -28,7 +35,7 @@ namespace BlackSmith.Domain.Item
             RequireParameter = command.Require;
         }
 
-        public EquippableItem EditEnchancementParam(EnchancementParameter parameter)
+        public IEquipableItem Enchant(EnchancementParameter parameter)
         {
             return new EquippableItem(
                 new CreateCommand(
@@ -40,6 +47,11 @@ namespace BlackSmith.Domain.Item
                     AdditionalParameter,
                     RequireParameter
                     ));
+        }
+
+        public IEquipableItem Repair()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>強化時の成功確率</summary>
