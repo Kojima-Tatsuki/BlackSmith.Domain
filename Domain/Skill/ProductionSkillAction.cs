@@ -9,7 +9,8 @@ namespace BlackSmith.Domain.Skill
     /// <summary>作成行動</summary>
     public class CreateSkillAction
     {
-
+        // ここに作成処理を実装するかは議論
+        // 改善、修繕も同様
     }
 
     /// <summary>改善行動</summary>

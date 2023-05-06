@@ -6,6 +6,10 @@ using BlackSmith.Domain.Inventory;
 
 namespace BlackSmith.Usecase.Inventory
 {
+    /// <summary>
+    /// <see cref="CraftCommand"/>を用いてアイテムを作成する機能を提供する.<br/>
+    /// 作成にあたり、作成条件などはアイテムに関してのみ存在する.
+    /// </summary>
     public class ItemCraftUsecase
     {
         /// <summary>アイテムの作成を行う</summary>
