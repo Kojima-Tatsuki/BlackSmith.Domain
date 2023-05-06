@@ -6,12 +6,16 @@ using BlackSmith.Domain.Inventory;
 
 namespace BlackSmith.Usecase.Inventory
 {
+    /// <summary>
+    /// <see cref="CraftCommand"/>を用いてアイテムを作成する機能を提供する.<br/>
+    /// 作成にあたり、作成条件などはアイテムに関してのみ存在する.
+    /// </summary>
     public class ItemCraftUsecase
     {
         /// <summary>アイテムの作成を行う</summary>
         /// <param name="command">作成のコマンド</param>
         /// <returns>作成し、追加されたアイテム</returns>
-        public ICraftable Craft(CraftCommand command)
+        public ICraftableItem Craft(CraftCommand command)
         {
             if (command is null)
                 throw new ArgumentNullException(nameof(command));
@@ -46,11 +50,11 @@ namespace BlackSmith.Usecase.Inventory
 
         public class CraftCommand
         {
-            public readonly IReadOnlyList<IMaterial> Materials;
+            public readonly IReadOnlyList<ICraftMaterialItem> Materials;
             public readonly CraftingRecipe Recipe;
             public readonly IInventoryService FromInventory, ToInventory;
 
-            public CraftCommand(IReadOnlyList<IMaterial> materials, CraftingRecipe recipe, IInventoryService fromInventory, IInventoryService toInventory)
+            public CraftCommand(IReadOnlyList<ICraftMaterialItem> materials, CraftingRecipe recipe, IInventoryService fromInventory, IInventoryService toInventory)
             {
                 Materials = materials ?? throw new ArgumentNullException(nameof(materials));
                 Recipe = recipe ?? throw new ArgumentNullException(nameof(recipe));
