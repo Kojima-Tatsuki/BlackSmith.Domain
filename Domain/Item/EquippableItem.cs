@@ -6,7 +6,7 @@ namespace BlackSmith.Domain.Item
 {
     public interface IEquipableItem : IItem
     {
-        IEquipableItem Enchant(EnchancementParameter parameter);
+        IEquipableItem Enchant(EnhancementParameter parameter);
 
         IEquipableItem Repair();
     }
@@ -17,9 +17,9 @@ namespace BlackSmith.Domain.Item
 
         public EquipmentAttack Attack { get; }
 
-        public EquipmentDeffence Deffence { get; }
+        public EquipmentDefence Defence { get; }
 
-        public EnchancementParameter EnchancementParameter { get; }
+        public EnhancementParameter EnhancementParameter { get; }
 
         public AdditionalParameter AdditionalParameter { get; }
 
@@ -28,21 +28,22 @@ namespace BlackSmith.Domain.Item
         public EquippableItem(CreateCommand command) : base(command.Name)
         {
             Attack = command.Attack;
-            Deffence = command.Deffence;
+            Defence = command.Defence;
             EquipType = command.Type;
-            EnchancementParameter = command.Enchancement;
+            EnhancementParameter = command.Enhancement;
             AdditionalParameter = command.Additional;
             RequireParameter = command.Require;
         }
 
-        public IEquipableItem Enchant(EnchancementParameter parameter)
+        IEquipableItem IEquipableItem.Enchant(EnhancementParameter parameter) => Enchant(parameter);
+        public EquippableItem Enchant(EnhancementParameter parameter)
         {
             return new EquippableItem(
                 new CreateCommand(
                     Name,
                     EquipType,
                     Attack,
-                    Deffence,
+                    Defence,
                     parameter,
                     AdditionalParameter,
                     RequireParameter
@@ -56,13 +57,13 @@ namespace BlackSmith.Domain.Item
 
         /// <summary>強化時の成功確率</summary>
         /// <returns>確率は 0.0 ~ 1.0 で返される</returns>
-        public float GetSuccessProbabilityWhenEnchancement(DependentParametersForEnhancement parameters)
+        public float GetSuccessProbabilityWhenEnhancement(DependentParametersForEnhancement parameters)
         {
             var baseLevel = Math.Max(RequireParameter.Level.Value - 5, 0);
 
             var diff = Math.Min(parameters.PlayerLevel.Value - baseLevel, 5);
 
-            var result = MathF.Min(90 - 10 * EnchancementParameter.GetEnchancedCount + diff, 100) / 100;
+            var result = MathF.Min(90 - 10 * EnhancementParameter.GetEnchancedCount + diff, 100) / 100;
 
             return result;
         }
@@ -72,8 +73,8 @@ namespace BlackSmith.Domain.Item
             public string Name { get; }
             public EquipmentType Type { get; }
             public EquipmentAttack Attack { get; }
-            public EquipmentDeffence Deffence { get; }
-            public EnchancementParameter Enchancement { get; }
+            public EquipmentDefence Defence { get; }
+            public EnhancementParameter Enhancement { get; }
             public AdditionalParameter Additional { get; }
             public RequireParameter Require { get; }
 
@@ -81,17 +82,17 @@ namespace BlackSmith.Domain.Item
                 string name,
                 EquipmentType type,
                 EquipmentAttack attack,
-                EquipmentDeffence deffence,
-                EnchancementParameter enchancement,
+                EquipmentDefence deffence,
+                EnhancementParameter enchancement,
                 AdditionalParameter additional,
                 RequireParameter require)
             {
                 Name = name;
                 Type = type;
                 Attack = attack;
-                Deffence = deffence;
+                Defence = deffence;
                 Additional = additional;
-                Enchancement = enchancement;
+                Enhancement = enchancement;
                 Require = require;
             }
         }
@@ -130,17 +131,17 @@ namespace BlackSmith.Domain.Item.Equipment
     }
 
     /// <summary>装備防御力</summary>
-    public class EquipmentDeffence
+    public class EquipmentDefence
     {
         public int Value { get; }
-        public EquipmentDeffence(int value)
+        public EquipmentDefence(int value)
         {
             Value = value;
         }
     }
 
     /// <summary>装備を強化した際に付与されるパラメータ</summary>
-    public class EnchancementParameter
+    public class EnhancementParameter
     {
         public int Sharpness { get; } // 鋭さ
         public int Quickness { get; } // 速さ
@@ -148,7 +149,7 @@ namespace BlackSmith.Domain.Item.Equipment
         public int Heaviness { get; } // 重さ
         public int Durability { get; } // 丈夫さ
 
-        public EnchancementParameter()
+        public EnhancementParameter()
         {
             Sharpness = 0;
             Quickness = 0;
@@ -157,7 +158,7 @@ namespace BlackSmith.Domain.Item.Equipment
             Durability = 0;
         }
 
-        public EnchancementParameter(int sharpness, int quickness, int accuracy, int heaviness, int durability)
+        public EnhancementParameter(int sharpness, int quickness, int accuracy, int heaviness, int durability)
         {
             Sharpness = sharpness;
             Quickness = quickness;
@@ -174,7 +175,7 @@ namespace BlackSmith.Domain.Item.Equipment
         /// </summary>
         /// <param name="type">強化するパラメータの種類</param>
         /// <returns>強化結果</returns>
-        public EnchancementParameter AddEnchance(EnchanceType type)
+        public EnhancementParameter AddEnhance(EnhanceType type)
         {
             var sharpness = Sharpness;
             var quickness = Quickness;
@@ -184,29 +185,29 @@ namespace BlackSmith.Domain.Item.Equipment
 
             switch (type)
             {
-                case EnchanceType.Sharpness:
+                case EnhanceType.Sharpness:
                     sharpness++;
                     break;
-                case EnchanceType.Quickness:
+                case EnhanceType.Quickness:
                     quickness++;
                     break;
-                case EnchanceType.Accuracy:
+                case EnhanceType.Accuracy:
                     accuracy++;
                     break;
-                case EnchanceType.Heaviness:
+                case EnhanceType.Heaviness:
                     heaviness++;
                     break;
-                case EnchanceType.Durability:
+                case EnhanceType.Durability:
                     durability++;
                     break;
                 default:
                     break;
             }
 
-            return new EnchancementParameter(sharpness, quickness, accuracy, heaviness, durability);
+            return new EnhancementParameter(sharpness, quickness, accuracy, heaviness, durability);
         }
 
-        public enum EnchanceType
+        public enum EnhanceType
         {
             Sharpness,
             Quickness,
@@ -231,7 +232,7 @@ namespace BlackSmith.Domain.Item.Equipment
     public class AdditionalParameter
     {
         public int Attack { get; }
-        public int Deffence { get; }
+        public int Defence { get; }
         public int STR { get; }
         public int AGI { get; }
     }
