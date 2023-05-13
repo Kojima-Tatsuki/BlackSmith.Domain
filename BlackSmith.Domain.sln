@@ -1,9 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.4.33403.182
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlackSmith.Domain", "BlackSmith.Domain.csproj", "{923DF676-061B-4CD4-BAD4-DEF5D0EB64B3}"
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlackSmith.Domain", "BlackSmith.Domain.csproj", "{DB152AEB-8746-5871-F5DF-86ED6D100112}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlackSmith.Test", ".Test\BlackSmith.Domain.Test\BlackSmith.Test.csproj", "{BC95D8CF-EE84-4875-ADE5-5E8DC525A888}"
 EndProject
@@ -13,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{923DF676-061B-4CD4-BAD4-DEF5D0EB64B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{923DF676-061B-4CD4-BAD4-DEF5D0EB64B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{923DF676-061B-4CD4-BAD4-DEF5D0EB64B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{923DF676-061B-4CD4-BAD4-DEF5D0EB64B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB152AEB-8746-5871-F5DF-86ED6D100112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB152AEB-8746-5871-F5DF-86ED6D100112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB152AEB-8746-5871-F5DF-86ED6D100112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB152AEB-8746-5871-F5DF-86ED6D100112}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BC95D8CF-EE84-4875-ADE5-5E8DC525A888}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BC95D8CF-EE84-4875-ADE5-5E8DC525A888}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC95D8CF-EE84-4875-ADE5-5E8DC525A888}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -24,8 +22,5 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A03DF47E-0E5D-4032-9016-F4C71A5CD450}
 	EndGlobalSection
 EndGlobal

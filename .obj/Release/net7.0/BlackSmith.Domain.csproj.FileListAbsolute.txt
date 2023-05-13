@@ -1,0 +1,10 @@
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.obj\Release\net7.0\BlackSmith.Domain.csproj.AssemblyReference.cache
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.obj\Release\net7.0\BlackSmith.Domain.GeneratedMSBuildEditorConfig.editorconfig
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.obj\Release\net7.0\BlackSmith.Domain.AssemblyInfoInputs.cache
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.obj\Release\net7.0\BlackSmith.Domain.AssemblyInfo.cs
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.obj\Release\net7.0\BlackSmith.Domain.csproj.CoreCompileInputs.cache
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.bin\Release\net7.0\BlackSmith.Domain.deps.json
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.bin\Release\net7.0\BlackSmith.Domain.dll
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.obj\Release\net7.0\BlackSmith.Domain.dll
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.obj\Release\net7.0\refint\BlackSmith.Domain.dll
+E:\item\UnityProjects\BlackSmithLibrary\BlackSmith.Domain\.obj\Release\net7.0\ref\BlackSmith.Domain.dll

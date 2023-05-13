@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "dgSpecHash": "YKrZdhaVjosScoHmuUv6mxnxrLPW/e976/jKFuLLL+dRELTCWwAQNV+jH2yV8flFKcp9lIIkZdva4OZ4VXofgg==",
+  "success": true,
+  "projectFilePath": "E:\\item\\UnityProjects\\BlackSmithLibrary\\BlackSmith.Domain\\Test\\BlackSmith.Domain.Test\\BlackSmith.Test.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\c611901396\\.nuget\\packages\\coverlet.collector\\3.2.0\\coverlet.collector.3.2.0.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\microsoft.codecoverage\\17.5.0\\microsoft.codecoverage.17.5.0.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\microsoft.net.test.sdk\\17.5.0\\microsoft.net.test.sdk.17.5.0.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\microsoft.testplatform.objectmodel\\17.5.0\\microsoft.testplatform.objectmodel.17.5.0.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\microsoft.testplatform.testhost\\17.5.0\\microsoft.testplatform.testhost.17.5.0.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\mstest.testadapter\\3.0.2\\mstest.testadapter.3.0.2.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\mstest.testframework\\3.0.2\\mstest.testframework.3.0.2.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\nuget.frameworks\\5.11.0\\nuget.frameworks.5.11.0.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\system.reflection.metadata\\1.6.0\\system.reflection.metadata.1.6.0.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\system.threading.tasks.extensions\\4.5.4\\system.threading.tasks.extensions.4.5.4.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\unirx\\5.4.1\\unirx.5.4.1.nupkg.sha512",
+    "C:\\Users\\c611901396\\.nuget\\packages\\unitask\\2.3.3\\unitask.2.3.3.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "パッケージ 'UniRx 5.4.1' はプロジェクトのターゲット フレームワーク 'net7.0' ではなく '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' を使用して復元されました。このパッケージは、使用しているプロジェクトとの完全な互換性がない可能性があります。",
+      "libraryId": "UniRx",
+      "targetGraphs": [
+        "net7.0"
+      ]
+    }
+  ]
+}
