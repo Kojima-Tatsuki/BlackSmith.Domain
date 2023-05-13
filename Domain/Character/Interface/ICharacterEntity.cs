@@ -1,16 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Domain.CharacterObject.Interface;
 
 namespace BlackSmith.Domain.Character.Interface
 {
-    public interface ICharacterEntity : ITakeDamageable
+    public interface ICharacterEntity
     {
-        public HealthPoint HealthPoint { get; }
+        PlayerID ID { get; }
+        ICharacterLevel Level { get; }
 
-        public ICharacterLevel Level { get; }
-        public AttackValue Attack { get; }
-        public DefenseValue Defense { get; }
+        PlayerName Name { get; }
+
+        void ChangeName(PlayerName name);
     }
 }

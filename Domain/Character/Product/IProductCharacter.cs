@@ -8,5 +8,6 @@ namespace BlackSmith.Domain.Character.Product
 {
     public interface IProductCharacter
     {
+
     }
 }

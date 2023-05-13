@@ -30,19 +30,17 @@
   </Target>
 
   <ItemGroup>
+	  <Compile Remove="src\**" />
 	  <Compile Remove="Test\**" />
+	  <EmbeddedResource Remove="src\**" />
 	  <EmbeddedResource Remove="Test\**" />
+	  <None Remove="src\**" />
 	  <None Remove="Test\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="UniRx" Version="5.4.1" />
     <PackageReference Include="UniTask" Version="2.3.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="src\Usecase\Character\Enemy\" />
-    <Folder Include="src\Usecase\Character\NPC\" />
   </ItemGroup>
 
   <ItemGroup>
