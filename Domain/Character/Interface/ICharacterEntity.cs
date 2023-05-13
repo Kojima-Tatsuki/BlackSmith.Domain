@@ -11,6 +11,6 @@ namespace BlackSmith.Domain.Character.Interface
 
         public ICharacterLevel Level { get; }
         public AttackValue Attack { get; }
-        public DefenceValue Defence { get; }
+        public DefenseValue Defense { get; }
     }
 }

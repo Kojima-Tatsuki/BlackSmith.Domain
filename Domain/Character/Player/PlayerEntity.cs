@@ -22,7 +22,7 @@ namespace BlackSmith.Domain.Character.Player
         ICharacterLevel ICharacterEntity.Level => levelParameters.Level;
         public PlayerLevel Level => levelParameters.Level;
         public AttackValue Attack => new AttackValue(levelParameters);
-        public DefenceValue Defence => new DefenceValue(levelParameters);
+        public DefenseValue Defense => new DefenseValue(levelParameters);
 
         private protected PlayerLevelDepentdentParameters levelParameters;
 

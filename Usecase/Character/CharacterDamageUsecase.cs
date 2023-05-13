@@ -10,12 +10,12 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class CharacterDamageUsecase
     {
-        private IPlayerRepository PlayerRepositoty { get; }
+        private IPlayerRepository PlayerRepository { get; }
         private IOnPlayerHealthChangedEventHundler ChangedEventHundler { get; }
 
         public CharacterDamageUsecase(IPlayerRepository playerRepository, IOnPlayerHealthChangedEventHundler changedEventHundler)
         {
-            PlayerRepositoty = playerRepository;
+            PlayerRepository = playerRepository;
             ChangedEventHundler = changedEventHundler;
         }
 
@@ -26,8 +26,8 @@ namespace BlackSmith.Usecase.Character
         /// <param name="recieverId">受け手のキャラクターID</param>
         public void TakeDamagePlayerByPlayer(PlayerID attackerId, PlayerID recieverId)
         {
-            var attacker = PlayerRepositoty.FindByID(attackerId);
-            var reciever = PlayerRepositoty.FindByID(recieverId);
+            var attacker = PlayerRepository.FindByID(attackerId);
+            var reciever = PlayerRepository.FindByID(recieverId);
 
             if (attacker is null)
                 throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {attackerId}");
@@ -36,11 +36,11 @@ namespace BlackSmith.Usecase.Character
 
             var levelGap = new LevelGapOfAttackerAndReceiver(reciever.Level, attacker.Level);
 
-            var damage = new DamageValue(levelGap, attacker.Attack, reciever.Defence);
+            var damage = new DamageValue(levelGap, attacker.Attack, reciever.Defense);
 
             reciever.TakeDamage(damage);
 
-            PlayerRepositoty.UpdateCharacter(reciever);
+            PlayerRepository.UpdateCharacter(reciever);
         }
     }
 }
