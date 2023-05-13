@@ -15,7 +15,7 @@ namespace BlackSmith.Domain.CharacterObject
 
         internal int Value { get; }
 
-        public DamageValue(LevelGapOfAttackerAndReceiver levelGap, AttackValue attack, DefenceValue defence)
+        public DamageValue(LevelGapOfAttackerAndReceiver levelGap, AttackValue attack, DefenseValue defence)
         {
             var a = attack.Value;
             var d = defence.Value;

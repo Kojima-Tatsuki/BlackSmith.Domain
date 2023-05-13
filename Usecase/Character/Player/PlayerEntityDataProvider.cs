@@ -98,7 +98,7 @@ namespace BlackSmith.Usecase.Character.Player
             CurrentHealth = health.current;
             MaxHealth = health.max;
             Attack = entity.Attack.Value;
-            Defence = entity.Defence.Value;
+            Defence = entity.Defense.Value;
         }
     }
 }

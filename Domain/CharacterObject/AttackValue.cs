@@ -10,7 +10,7 @@ namespace BlackSmith.Domain.CharacterObject
     {
         public int Value { get; }
 
-        internal AttackValue(PlayerLevelDepentdentParameters levelParams)
+        internal AttackValue(PlayerLevelDependentParameters levelParams)
         {
             Value = (levelParams.STR.Value + levelParams.AGI.Value) * 2;
         }

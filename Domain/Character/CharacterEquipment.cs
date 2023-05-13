@@ -4,7 +4,7 @@ using BlackSmith.Domain.CharacterObject;
 namespace BlackSmith.Domain.Character
 {
     /// <summary> キャラクターの装備を格納するクラス </summary>
-    internal class CharacterEquipments
+    internal class CharacterEquipment
     {
         public CharacterID ID { get; }
 
@@ -13,7 +13,7 @@ namespace BlackSmith.Domain.Character
         public HandsEquipment? Hands { get; private set; }
         public LegEquipment? Leg { get; private set; }
 
-        public CharacterEquipments(CharacterID id)
+        public CharacterEquipment(CharacterID id)
         {
             if (id is null) throw new ArgumentNullException(nameof(id));
 

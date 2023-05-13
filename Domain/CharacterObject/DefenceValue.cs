@@ -6,16 +6,16 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// –hŒä—Í
     /// </summary>
-    public class DefenceValue
+    public class DefenseValue
     {
         public int Value { get; }
 
-        internal DefenceValue(PlayerLevelDepentdentParameters levelParams)
+        internal DefenseValue(PlayerLevelDependentParameters levelParams)
         {
             Value = (levelParams.STR.Value + levelParams.AGI.Value) * 2;
         }
 
-        internal DefenceValue(int value)
+        internal DefenseValue(int value)
         {
             if (!IsVaild(value))
                 throw new ArgumentException($"–hŒä—Í‚É‚Í1ˆÈã‚Ì’l‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢, value : {value}");

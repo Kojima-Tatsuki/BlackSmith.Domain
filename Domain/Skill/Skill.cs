@@ -1,30 +1,28 @@
-﻿using BlackSmith.Domain.Character.Player;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Domain.Skill
 {
     /// <summary>スキル</summary>
-    class Skill
+    public class Skill
     {
-        public SkillName SkillName { get; }
+        internal SkillName SkillName { get; }
 
         /// <summary>スキル熟練度</summary>
-        public SkillProficiency Proficiency { get; private protected set; }
+        internal SkillProficiency Proficiency { get; }
 
-        private SkillAcquisitionConditions AcquisitionConditions { get; }
+        internal SkillAcquisitionConditions AcquisitionConditions { get; }
 
-        public Skill(SkillName skillName, SkillExperience exp)
+        internal Skill(SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions)
         {
             SkillName = skillName ?? throw new ArgumentNullException(nameof(skillName));
-
             Proficiency = new SkillProficiency(exp) ?? throw new ArgumentNullException(nameof(exp));
+            AcquisitionConditions = acquisitionConditions ?? throw new ArgumentNullException(nameof(acquisitionConditions));
         }
 
         /// <summary>スキルが取得できるか</summary>
-        public bool CanSkillAcquisition(SkillAcquisitionConditions requireParaeters) => AcquisitionConditions.CanSkillAcquisition(requireParaeters);
-
-
+        internal bool CanSkillAcquisition(SkillAcquisitionConditions requireParaeters) => AcquisitionConditions.CanSkillAcquisition(requireParaeters);
     }
 
     /// <summary>スキル名</summary>
@@ -94,10 +92,19 @@ namespace BlackSmith.Domain.Skill
     class SkillAcquisitionConditions
     {
         public PlayerLevel Level { get; }
+        public Strength Strength { get; }
+        public Agility Agility { get; }
 
-        public SkillAcquisitionConditions(PlayerLevel level)
+        internal SkillAcquisitionConditions(PlayerLevel level, Strength strength, Agility agility)
         {
             Level = level;
+            Strength = strength;
+            Agility = agility;
+        }
+
+        internal static SkillAcquisitionConditions FromDependentParams(PlayerLevelDependentParameters parameters)
+        {
+            return new SkillAcquisitionConditions(parameters.Level, parameters.STR, parameters.AGI);
         }
 
         public bool CanSkillAcquisition(SkillAcquisitionConditions condition)
