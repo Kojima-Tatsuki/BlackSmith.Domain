@@ -4,21 +4,21 @@ using BlackSmith.Domain.Character.Player;
 namespace BlackSmith.Domain.CharacterObject
 {
     /// <summary>
-    /// æ”»æ’ƒåŠ›
+    /// –hŒä—Í
     /// </summary>
-    public class AttackValue
+    public class DefenseValue
     {
         public int Value { get; }
 
-        internal AttackValue(PlayerLevelDependentParameters levelParams)
+        internal DefenseValue(PlayerLevelDependentParameters levelParams)
         {
             Value = (levelParams.STR.Value + levelParams.AGI.Value) * 2;
         }
 
-        internal AttackValue(int value)
+        internal DefenseValue(int value)
         {
             if (!IsVaild(value))
-                throw new ArgumentException($"æ”»æ’ƒåŠ›ã«ã¯1ä»¥ä¸Šã®å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„, value : {value}");
+                throw new ArgumentException($"–hŒä—Í‚É‚Í1ˆÈã‚Ì’l‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢, value : {value}");
 
             Value = value;
         }
@@ -30,7 +30,6 @@ namespace BlackSmith.Domain.CharacterObject
 
             return true;
         }
-
         public override string ToString()
         {
             return Value.ToString();

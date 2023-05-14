@@ -8,6 +8,6 @@ namespace BlackSmith.Domain.Character.Interface
 {
     public interface ICharacterLevel
     {
-        internal int Value { get; }
+        public int Value { get; }
     }
 }

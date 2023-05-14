@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BlackSmith.Domain.CharacterObject;
 
 namespace BlackSmith.Domain.Character

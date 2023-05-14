@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using BlackSmith.Domain.Character.Interface;
 
 namespace BlackSmith.Domain.Character.Player
@@ -9,7 +9,6 @@ namespace BlackSmith.Domain.Character.Player
     /// <remarks>Expでもってすべての計算を行っている</remarks>
     public class PlayerLevel : ICharacterLevel
     {
-        int ICharacterLevel.Value => Value;
         public int Value { get; }
 
         public int MaxValue { get; } = 100;
