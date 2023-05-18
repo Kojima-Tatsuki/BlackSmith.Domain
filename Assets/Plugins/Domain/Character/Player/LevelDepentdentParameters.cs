@@ -8,7 +8,7 @@ namespace BlackSmith.Domain.Character.Player
     /// レベルを元に変動するパラメータを格納する
     /// </summary>
     /// <remarks>Value Object</remarks>
-    internal class PlayerLevelDependentParameters
+    internal class LevelDependentParameters
     {
         /// <summary>
         /// 現在のプレイヤーのレベル
@@ -27,7 +27,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <summary>
         /// 初期値でもってインスタンス化を行う
         /// </summary>
-        internal PlayerLevelDependentParameters()
+        internal LevelDependentParameters()
         {
             Level = new PlayerLevel();
             STR = new Strength(1);
@@ -40,7 +40,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <param name="level"></param>
         /// <param name="str"></param>
         /// <param name="agi"></param>
-        internal PlayerLevelDependentParameters(PlayerLevel level, Strength str, Agility agi)
+        internal LevelDependentParameters(PlayerLevel level, Strength str, Agility agi)
         {
             Level = level;
             STR = str;
@@ -62,7 +62,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <param name="str">筋力に加算するポイント数</param>
         /// <param name="agi">俊敏力に加算するポイント数</param>
         /// <returns>加算後のステータス</returns>
-        internal PlayerLevelDependentParameters AddParamPoint(int str, int agi)
+        internal LevelDependentParameters AddParamPoint(int str, int agi)
         {
             if (GetRemainingParamPoint() < str + agi)
                 throw new ArgumentException($"指定された上昇量が加算できる値を超えています, " +
@@ -70,7 +70,7 @@ namespace BlackSmith.Domain.Character.Player
                     $"str : {str}, " +
                     $"agi : {agi}");
 
-            return new PlayerLevelDependentParameters(
+            return new LevelDependentParameters(
                 Level,
                 new Strength(STR.Value + str),
                 new Agility(AGI.Value + agi));

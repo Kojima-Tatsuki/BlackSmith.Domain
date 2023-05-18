@@ -5,7 +5,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>
     /// 経験値量
     /// </summary>
-    internal class Experience
+    public class Experience
     {
         // 1Lv -> 2Lv になる為に倒す敵の数
         private static readonly int InitKillRequirement = 5;
@@ -16,7 +16,7 @@ namespace BlackSmith.Domain.Character.Player
         // 1レベル上の敵を倒した時に貰える経験値の倍率
         private static readonly float LevelDifferenceMultiplier = 1.2f;
 
-        internal int Value { get; }
+        public int Value { get; }
 
         internal Experience(int value = 0)
         {
