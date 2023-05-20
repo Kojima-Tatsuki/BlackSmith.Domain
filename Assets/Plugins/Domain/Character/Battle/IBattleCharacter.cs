@@ -12,7 +12,7 @@ namespace BlackSmith.Domain.Character.Battle
 {
     public interface IBattleCharacter : ITakeDamageable
     {
-        ICharacterLevel Level { get; }
+        CharacterLevel Level { get; }
 
         HealthPoint HealthPoint { get; }
 

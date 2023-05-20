@@ -11,7 +11,7 @@ namespace BlackSmith.Domain.Character.Battle
 {
     internal class CharacterBattleModule
     {
-        internal ICharacterLevel Level { get; }
+        internal CharacterLevel Level { get; }
 
         internal HealthPoint HealthPoint { get; }
 
@@ -20,7 +20,7 @@ namespace BlackSmith.Domain.Character.Battle
         internal AttackValue Attack { get; }
         internal DefenseValue Defense { get; }
 
-        internal CharacterBattleModule(ICharacterLevel level, HealthPoint health, LevelDependentParameters levelDepParams)
+        internal CharacterBattleModule(CharacterLevel level, HealthPoint health, LevelDependentParameters levelDepParams)
         {
             Level = level;
             HealthPoint = health;

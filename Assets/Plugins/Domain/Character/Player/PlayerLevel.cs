@@ -7,10 +7,8 @@ namespace BlackSmith.Domain.Character.Player
     /// キャラクターのレベル
     /// </summary>
     /// <remarks>Expでもってすべての計算を行っている</remarks>
-    public class PlayerLevel : ICharacterLevel
+    public class PlayerLevel : CharacterLevel
     {
-        public int Value { get; }
-
         public int MaxValue { get; } = 100;
 
         /// <summary>
@@ -18,11 +16,9 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         public Experience CumulativeExp { get; }
 
-        internal PlayerLevel(Experience exp = null!)
+        internal PlayerLevel(Experience exp = null!) : base(Experience.CurrentLevel(exp ?? new Experience()))
         {
             CumulativeExp = exp ?? new Experience();
-
-            Value = CumulativeExp.CurrentLevel(CumulativeExp);
         }
 
         /// <summary>

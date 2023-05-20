@@ -48,7 +48,7 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <param name="level">敵のレベル</param>
         /// <returns>取得経験値量</returns>
-        internal Experience ReceveExp(int level)
+        internal static Experience ReceveExp(int level)
         {
             return new Experience((int)Math.Round(InitExpRequirement / InitKillRequirement * Math.Pow(LevelDifferenceMultiplier, level - 1)));
         }
@@ -59,7 +59,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <remarks>累計取得経験値量</remarks>
         /// <param name="level"></param>
         /// <returns></returns>
-        internal Experience RequiredCumulativeExp(int level)
+        internal static Experience RequiredCumulativeExp(int level)
         {
             return new Experience((int)(InitExpRequirement * (1 - Math.Pow(LevelDifferenceMultiplier, level - 1)) / 1 - LevelDifferenceMultiplier));
         }
@@ -69,7 +69,7 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <param name="cumExp">累計取得経験値量</param>
         /// <returns>現在のレベル</returns>
-        internal int CurrentLevel(Experience cumExp)
+        internal static int CurrentLevel(Experience cumExp)
         {
             // I : InitExpRequirement
             // A : LevelDifferenceMultiplier
