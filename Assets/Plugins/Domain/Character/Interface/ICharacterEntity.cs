@@ -9,7 +9,7 @@ namespace BlackSmith.Domain.Character.Interface
     public interface ICharacterEntity
     {
         PlayerID ID { get; }
-        ICharacterLevel Level { get; }
+        CharacterLevel Level { get; }
 
         PlayerName Name { get; }
 

@@ -4,9 +4,8 @@ using BlackSmith.Domain.Character.Interface;
 namespace BlackSmith.Domain.Character
 {
     // Expを利用しないため、レベルに変動を起こさせない
-    public class CharacterLevel : ICharacterLevel
+    public class CharacterLevel
     {
-        int ICharacterLevel.Value => Value;
         public int Value { get; }
 
         internal CharacterLevel(int level)

@@ -1,4 +1,5 @@
 ﻿using System;
+using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Interface;
 
 namespace BlackSmith.Domain.CharacterObject
@@ -49,7 +50,7 @@ namespace BlackSmith.Domain.CharacterObject
         /// 最大値をレベルから算出してインスタンス化を行う
         /// </summary>
         /// <param name="level">算出に用いるレベル</param>
-        internal HealthPoint(ICharacterLevel level)
+        internal HealthPoint(CharacterLevel level)
         {
             // 攻撃力の6倍の体力を作りたい
             var maxValue = level.Value * 10;

@@ -12,8 +12,8 @@ namespace BlackSmith.Domain.Character.Player
         public PlayerID ID { get; }
         public PlayerName Name { get; private set; }
 
-        ICharacterLevel ICharacterEntity.Level => Level;
-        ICharacterLevel IBattleCharacter.Level => Level;
+        CharacterLevel ICharacterEntity.Level => Level;
+        CharacterLevel IBattleCharacter.Level => Level;
         public PlayerLevel Level { get; private set; }
 
         /// <summary>

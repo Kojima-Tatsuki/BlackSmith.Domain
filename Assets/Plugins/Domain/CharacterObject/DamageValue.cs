@@ -1,4 +1,5 @@
 using System;
+using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Interface;
 
 #nullable enable
@@ -61,16 +62,16 @@ namespace BlackSmith.Domain.CharacterObject
     /// </summary>
     public class LevelGapOfAttackerAndReceiver
     {
-        private readonly ICharacterLevel receiver;
+        private readonly CharacterLevel receiver;
 
-        private readonly ICharacterLevel attacker;
+        private readonly CharacterLevel attacker;
 
         /// <summary>
         /// インスタンス化を行う
         /// </summary>
         /// <param name="receiver">受け手のレベル</param>
         /// <param name="attacker">攻め手のレベル</param>
-        public LevelGapOfAttackerAndReceiver(ICharacterLevel receiver, ICharacterLevel attacker)
+        public LevelGapOfAttackerAndReceiver(CharacterLevel receiver, CharacterLevel attacker)
         {
             this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
             this.attacker = attacker ?? throw new ArgumentNullException(nameof(attacker));
