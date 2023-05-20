@@ -16,7 +16,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <summary>
         /// 累計獲得経験値
         /// </summary>
-        internal Experience CumulativeExp { get; }
+        public Experience CumulativeExp { get; }
 
         internal PlayerLevel(Experience exp = null!)
         {

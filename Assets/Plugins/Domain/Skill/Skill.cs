@@ -102,7 +102,7 @@ namespace BlackSmith.Domain.Skill
             Agility = agility;
         }
 
-        internal static SkillAcquisitionConditions FromDependentParams(PlayerLevelDependentParameters parameters)
+        internal static SkillAcquisitionConditions FromDependentParams(LevelDependentParameters parameters)
         {
             return new SkillAcquisitionConditions(parameters.Level, parameters.STR, parameters.AGI);
         }
