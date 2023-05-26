@@ -34,5 +34,7 @@ namespace BlackSmith.Domain.CharacterObject
         {
             return Value.ToString();
         }
+
+        public static DefenseValue operator +(DefenseValue a, DefenseValue b) => new DefenseValue(a.Value + b.Value);
     }
 }

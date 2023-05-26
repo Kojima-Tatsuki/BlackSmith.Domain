@@ -26,7 +26,7 @@ namespace BlackSmith.Domain.Character.Player
             ID = command.id;
             Name = command.name;
             Level = new PlayerLevel(new Experience(command.Exp));
-            BattleModule = new(command.levelParams.Level, new HealthPoint(new(command.Health.current), new(command.Health.max)), command.levelParams);
+            BattleModule = new(new HealthPoint(new(command.Health.current), new(command.Health.max)), command.levelParams, new BattleEquipmentModule(null, null));
 
             HealthEventObserver = healthEventObserver;
         }
