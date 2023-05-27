@@ -3,6 +3,7 @@ using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.CharacterObject;
 using System;
 using BlackSmith.Domain.Character.Battle;
+using BlackSmith.Domain.CharacterObject.Interface;
 
 namespace BlackSmith.Domain.Character.Player
 {
@@ -21,19 +22,17 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <remarks>再利用する際は、ファクトリーで変更メソッドを呼び出す？</remarks>
         /// <param name="id"></param>
-        internal PlayerEntity(PlayerCreateCommand command, IHealthEventObserver? healthEventObserver = null)
+        internal PlayerEntity(PlayerCreateCommand command)
         {
             ID = command.id;
             Name = command.name;
             Level = new PlayerLevel(new Experience(command.Exp));
             BattleModule = new(new HealthPoint(new(command.Health.current), new(command.Health.max)), command.levelParams, new BattleEquipmentModule(null, null));
-
-            HealthEventObserver = healthEventObserver;
         }
 
         /// <summary> 名前の変更を行う </summary>
         /// <param name="name">変更する名前</param>
-        public void ChangeName(PlayerName name)
+        void ICharacterEntity.ChangeName(PlayerName name)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
         }
@@ -41,33 +40,20 @@ namespace BlackSmith.Domain.Character.Player
         #region BattleModule
         private CharacterBattleModule BattleModule { get; set; }
 
-        // イベントの発行を行うためのもの
-        // インターフェースで提供されるべき
-        private readonly IHealthEventObserver? HealthEventObserver;
-
         public HealthPoint HealthPoint => BattleModule.HealthPoint;
         public AttackValue Attack => BattleModule.Attack;
         public DefenseValue Defense => BattleModule.Defense;
 
-        public HealthPoint TakeDamage(DamageValue damage)
+        HealthPoint ITakeDamageable.TakeDamage(DamageValue damage)
         {
             BattleModule = BattleModule.TakeDamage(damage);
-
-            HealthEventObserver?.SetChangedPlayerHealth(new PlayerHealthChangedEvent(ID, BattleModule.HealthPoint));
-
-            if (BattleModule.HealthPoint.IsDead())
-            {
-                HealthEventObserver?.SetOnPlayerDead(new PlayerOnDeadEvent(ID));
-            }
 
             return BattleModule.HealthPoint;
         }
 
-        public HealthPoint HealHealth(int value)
+        HealthPoint ITakeDamageable.HealHealth(int value)
         {
             BattleModule = BattleModule.HealHealth(value);
-
-            HealthEventObserver?.SetChangedPlayerHealth(new PlayerHealthChangedEvent(ID, BattleModule.HealthPoint));
 
             return BattleModule.HealthPoint;
         }

@@ -6,7 +6,7 @@ using BlackSmith.Domain.CharacterObject.Interface;
 
 namespace BlackSmith.Domain.Character.Interface
 {
-    public interface ICharacterEntity
+    internal interface ICharacterEntity
     {
         PlayerID ID { get; }
         CharacterLevel Level { get; }

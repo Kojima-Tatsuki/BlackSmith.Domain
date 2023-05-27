@@ -1,7 +1,8 @@
-﻿using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character.Interface;
+using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
 
-namespace BlackSmith.Usecase.Character.Player
+namespace BlackSmith.Usecase.Character
 {
     /// <summary>
     /// プレイヤーのステータスに変更を与える際に用いるユースケース
@@ -26,11 +27,11 @@ namespace BlackSmith.Usecase.Character.Player
         {
             var name = new PlayerName(newName);
 
-            var entity = instructor.GetPlayerEntity(id);
+            var entity = instructor.GetPlayerEntity(id) as ICharacterEntity;
 
             entity.ChangeName(name);
 
-            instructor.UpdatePlayerEntity(entity);
+            instructor.UpdatePlayerEntity(entity as PlayerEntity);
         }
 
         public static bool IsValidPlayerName(string name)

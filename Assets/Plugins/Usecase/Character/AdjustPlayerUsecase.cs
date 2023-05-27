@@ -2,7 +2,7 @@
 using BlackSmith.Usecase.Interface;
 using BlackSmith.Domain.Character.Player;
 
-namespace BlackSmith.Usecase.Character.Player
+namespace BlackSmith.Usecase.Character
 {
     /// <summary>
     /// プレイヤーの作成、削除を行うユースケース
@@ -13,12 +13,9 @@ namespace BlackSmith.Usecase.Character.Player
 
         private readonly IPlayerRepository repository;
 
-        private readonly IAccountApi accountApi;
-
-        public AdjustPlayerUsecase(IPlayerRepository playerRepository, IAccountApi accountApi)
+        public AdjustPlayerUsecase(IPlayerRepository playerRepository)
         {
             repository = playerRepository;
-            this.accountApi = accountApi;
 
             playerFactory = new PlayerFactoryInstructor(repository);
         }
@@ -28,12 +25,9 @@ namespace BlackSmith.Usecase.Character.Player
         /// </summary>
         /// <param name="name">作成するプレイヤーの名前</param>
         /// <returns>作成したプレイヤーエンティティのデータ</returns>
-        public async UniTask<PlayerEntityData> CreatePlayerAccount(string playerName)
+        public PlayerEntityData CreatePlayerAccount(string playerName)
         {
             var name = new PlayerName(playerName);
-
-            // Gs2に接続する必要がある
-            await accountApi.CreateAccountAsync(name);
 
             var entity = playerFactory.CreatePlayerEntity(name);
 

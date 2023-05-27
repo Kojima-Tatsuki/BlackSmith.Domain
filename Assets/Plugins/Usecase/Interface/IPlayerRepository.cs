@@ -20,16 +20,4 @@ namespace BlackSmith.Usecase.Interface
 
         void Delete(PlayerID id);
     }
-
-    /// <summary>
-    /// ゲーム中のプレイヤーのIDを保管するリポジトリ
-    /// </summary>
-    public interface ISessionPlayerIdRepository
-    {
-        void UpdateId(PlayerID id);
-
-        PlayerID? GetId();
-
-        void Logout(PlayerID id);
-    }
 }

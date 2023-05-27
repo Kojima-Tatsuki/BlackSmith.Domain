@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BlackSmith.Usecase.Character.Player
+namespace BlackSmith.Usecase.Character
 {
-    internal class CharacterEquipmentUsecase
+    public class CharacterEquipmentUsecase
     {
         // PlayerEntityの更新
         // 装備インベントリの更新(あれば) を行う

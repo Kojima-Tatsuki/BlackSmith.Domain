@@ -7,7 +7,7 @@ using BlackSmith.Domain.CharacterObject;
 
 namespace BlackSmith.Domain.CharacterObject.Interface
 {
-    public interface ITakeDamageable
+    internal interface ITakeDamageable
     {
         /// <summary>
         /// 体力を減らす、ダメージを与える

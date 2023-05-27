@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
 
-namespace BlackSmith.Usecase.Character.Player
+namespace BlackSmith.Usecase.Character
 {
     internal class PlayerRepositoryInstructor
     {

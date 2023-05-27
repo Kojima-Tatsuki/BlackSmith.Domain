@@ -3,29 +3,29 @@ using System.Collections.Generic;
 using BlackSmith.Usecase.Interface;
 using BlackSmith.Domain.Character.Player;
 
-namespace BlackSmith.Usecase.Character.Player
+namespace BlackSmith.Usecase.Character
 {
     /// <summary>
     /// Presenter層にPlayerEntityDataを渡すクラス
     /// </summary>
-    public class PlayerEntityDataProvider : IPlayerEntityDataProvider
+    public class PlayerEntityDataProvidUsecase
     {
         private readonly PlayerRepositoryInstructor instructor;
 
         private readonly IPlayerRepository repository;
 
-        private readonly ISessionPlayerIdRepository sessionRepository;
-
-        public PlayerEntityDataProvider(IPlayerRepository playerRepository, ISessionPlayerIdRepository sessionPlayerIdRepository)
+        public PlayerEntityDataProvidUsecase(IPlayerRepository playerRepository)
         {
             repository = playerRepository;
-
-            sessionRepository = sessionPlayerIdRepository;
 
             instructor = new PlayerRepositoryInstructor(repository);
         }
 
-        IReadOnlyCollection<PlayerEntityData> IPlayerEntityDataProvider.GetAllPlayerDatas()
+        /// <summary>
+        /// すべてのプレイヤーのデータを返す
+        /// </summary>
+        /// <returns>すべてのプレイヤーのデータ</returns>
+        public IReadOnlyCollection<PlayerEntityData> GetAllPlayerDatas()
         {
             var entities = instructor.GetAllPlayerEntities();
 
@@ -39,14 +39,8 @@ namespace BlackSmith.Usecase.Character.Player
             return result;
         }
 
-        PlayerEntityData? IPlayerEntityDataProvider.GetPlayerData()
+        public PlayerEntityData? GetPlayerData(PlayerID id)
         {
-            var id = sessionRepository.GetId();
-
-            // 現在ゲーム中のプレイヤーが存在しないとき
-            if (id is null)
-                return null;
-
             if (!repository.IsExist(id))
                 throw new Exception("存在しないIDがゲーム中のIDとして設定されています");
 
