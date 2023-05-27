@@ -1,4 +1,5 @@
 using System;
+using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Domain.CharacterObject
@@ -10,30 +11,46 @@ namespace BlackSmith.Domain.CharacterObject
     {
         public int Value { get; }
 
-        internal AttackValue(LevelDependentParameters levelParams)
+        private int FromLevelAttack { get; }
+        private int WeaponAttack { get; }
+        private int ArmorAttack { get; }
+
+        internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule)
         {
-            Value = (levelParams.STR.Value + levelParams.AGI.Value) * 2;
+            FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2);
+            WeaponAttack = CheckVaild(equipmentModule.Weapon?.Attack.Value ?? 0);
+            ArmorAttack = CheckVaild(equipmentModule.Armor?.Attack?.Value ?? 0);
+
+            Value = CheckVaild(FromLevelAttack + WeaponAttack + ArmorAttack);
         }
 
-        internal AttackValue(int value)
-        {
-            if (!IsVaild(value))
-                throw new ArgumentException($"攻撃力には1以上の値を入力してください, value : {value}");
-
-            Value = value;
-        }
-
-        private bool IsVaild(int value)
+        private int CheckVaild(int value)
         {
             if (value <= 0)
-                return false;
+                throw new ArgumentOutOfRangeException($"攻撃力には1以上の値を入力してください, value : {value}");
 
-            return true;
+            return value;
         }
 
-        public override string ToString()
+        public override string ToString() => Value.ToString();
+
+        internal AttackDetailModel GetDetail()
         {
-            return Value.ToString();
+            return new AttackDetailModel(FromLevelAttack, WeaponAttack, ArmorAttack);
+        }
+    }
+
+    public class AttackDetailModel
+    {
+        public int Level { get; }
+        public int Weapon { get; }
+        public int Armor { get; }
+
+        internal AttackDetailModel(int level, int weapon, int armor)
+        {
+            Level = level;
+            Weapon = weapon;
+            Armor = armor;
         }
     }
 }
