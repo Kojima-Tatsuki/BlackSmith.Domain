@@ -27,7 +27,11 @@ namespace BlackSmith.Domain.Character.Player
             ID = command.id;
             Name = command.name;
             Level = new PlayerLevel(new Experience(command.Exp));
-            BattleModule = new(new HealthPoint(new(command.Health.current), new(command.Health.max)), command.levelParams, new BattleEquipmentModule(null, null));
+            BattleModule = new CharacterBattleModule(
+                new HealthPoint(new(command.Health.current), new(command.Health.max)), 
+                command.levelParams, 
+                new BattleEquipmentModule(null, null), 
+                new BlattleStatusEffectModule());
         }
 
         /// <summary> 名前の変更を行う </summary>
