@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace BlackSmith.Domain.Character.Battle
 {
-    public interface IBattleCharacter : ITakeDamageable
+    internal interface IBattleCharacter : ITakeDamageable
     {
         CharacterLevel Level { get; }
 

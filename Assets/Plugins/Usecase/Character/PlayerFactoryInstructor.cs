@@ -2,7 +2,7 @@
 using BlackSmith.Usecase.Interface;
 using System;
 
-namespace BlackSmith.Usecase.Character.Player
+namespace BlackSmith.Usecase.Character
 {
     // PlayerEntityの作成と、リポジトリへの更新を行うUseacase
     internal class PlayerFactoryInstructor
@@ -26,34 +26,6 @@ namespace BlackSmith.Usecase.Character.Player
             playerRepositoty.Register(player);
 
             return player;
-        }
-    }
-
-    /// <summary>
-    /// ゲーム中のPlayerEntityのPlayerIDを操作する
-    /// </summary>
-    internal class OnGamePlayerIDRepositoryInstructor
-    {
-        private readonly ISessionPlayerIdRepository repository;
-
-        internal OnGamePlayerIDRepositoryInstructor(ISessionPlayerIdRepository repository)
-        {
-            this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        }
-
-        internal void UpdatePlayerId(PlayerID id)
-        {
-            repository.UpdateId(id);
-        }
-
-        internal PlayerID GetPlayerID()
-        {
-            var id = repository.GetId();
-
-            if (id is null)
-                throw new NullReferenceException("現在、ゲーム中のプレイヤーは存在しません");
-
-            return id;
         }
     }
 }
