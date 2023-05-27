@@ -27,8 +27,10 @@ namespace BlackSmith.Domain.Character.Battle
             HealthPoint = health;
             LevelDependentParameters = levelDepParams;
             Level = LevelDependentParameters.Level;
-            Attack = new AttackValue(levelDepParams) + EquipmentModule.Attack;
-            Defense = new DefenseValue(levelDepParams) + EquipmentModule.Defense;
+            EquipmentModule = equipmentModule;
+
+            Attack = new AttackValue(levelDepParams, equipmentModule);
+            Defense = new DefenseValue(levelDepParams, equipmentModule);
         }
 
         internal CharacterBattleModule TakeDamage(DamageValue damage)

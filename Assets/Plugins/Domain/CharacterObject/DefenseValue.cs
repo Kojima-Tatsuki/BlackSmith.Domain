@@ -1,4 +1,5 @@
 using System;
+using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Domain.CharacterObject
@@ -10,31 +11,49 @@ namespace BlackSmith.Domain.CharacterObject
     {
         public int Value { get; }
 
-        internal DefenseValue(LevelDependentParameters levelParams)
+        private int FromLevelAttack { get; }
+        private int WeaponAttack { get; }
+        private int ArmorAttack { get; }
+
+        internal DefenseValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule)
         {
-            Value = (levelParams.STR.Value + levelParams.AGI.Value) * 2;
+            FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2);
+            WeaponAttack = CheckVaild(equipmentModule.Weapon?.Defense?.Value ?? 0);
+            ArmorAttack = CheckVaild(equipmentModule.Armor?.Defense?.Value ?? 0);
+
+            Value = CheckVaild(FromLevelAttack + WeaponAttack + ArmorAttack);
         }
 
-        internal DefenseValue(int value)
-        {
-            if (!IsVaild(value))
-                throw new ArgumentException($"ñhå‰óÕÇ…ÇÕ1à»è„ÇÃílÇì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢, value : {value}");
-
-            Value = value;
-        }
-
-        private bool IsVaild(int value)
+        private int CheckVaild(int value)
         {
             if (value <= 0)
-                return false;
+                throw new ArgumentOutOfRangeException($"ñhå‰óÕÇ…ÇÕ1à»è„ÇÃílÇì¸óÕÇµÇƒÇ≠ÇæÇ≥Ç¢, value : {value}");
 
-            return true;
+            return value;
         }
+
         public override string ToString()
         {
             return Value.ToString();
         }
 
-        public static DefenseValue operator +(DefenseValue a, DefenseValue b) => new DefenseValue(a.Value + b.Value);
+        internal DefenseDetailModel GetDetail()
+        {
+            return new DefenseDetailModel(FromLevelAttack, WeaponAttack, ArmorAttack);
+        }
+    }
+
+    public class DefenseDetailModel
+    {
+        public int Level { get; }
+        public int Weapon { get; }
+        public int Armor { get; }
+
+        internal DefenseDetailModel(int level, int weapon, int armor)
+        {
+            Level = level;
+            Weapon = weapon;
+            Armor = armor;
+        }
     }
 }
