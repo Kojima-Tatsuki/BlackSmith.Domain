@@ -40,7 +40,7 @@ namespace BlackSmith.Usecase.Character.Battle
 
             receiver.TakeDamage(damage);
 
-            PlayerRepository.UpdateCharacter(receiver as PlayerEntity);
+            PlayerRepository.UpdateCharacter((receiver as PlayerEntity) ?? throw new InvalidOperationException(nameof(receiver)));
         }
     }
 }

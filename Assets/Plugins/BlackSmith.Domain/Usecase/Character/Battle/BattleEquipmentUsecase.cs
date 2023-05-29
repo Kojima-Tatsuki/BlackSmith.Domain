@@ -1,5 +1,4 @@
-﻿using BlackSmith.Domain.Character.Player;
-using BlackSmith.Domain.CharacterObject;
+﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Inventory;
 using BlackSmith.Domain.Item;
 using BlackSmith.Usecase.Interface;
@@ -19,7 +18,7 @@ namespace BlackSmith.Usecase.Character.Battle
             InventoryRepository = inventoryRepository;
         }
 
-        public void ChengeEquipment(PlayerID playerId, InventoryID inventoryId, EquippableItem equipment, EquippableItem remove)
+        public void ChengeEquipment(CharacterID playerId, InventoryID inventoryId, EquippableItem equipment, EquippableItem remove)
         {
             var player = PlayerRepository.FindByID(playerId) ?? throw new InvalidOperationException(nameof(playerId));
             var inventoryService = InventoryRepository.FindByID(inventoryId) ?? throw new InvalidOperationException(nameof(inventoryId));
@@ -47,7 +46,7 @@ namespace BlackSmith.Usecase.Character.Battle
                 throw new InvalidOperationException("インベントリとBattleModuleから新たに装着したアイテムが一致しません");
         }
 
-        public void RemoveEquipment(PlayerID playerId, InventoryID inventoryId, EquippableItem remove)
+        public void RemoveEquipment(CharacterID playerId, InventoryID inventoryId, EquippableItem remove)
         {
             var player = PlayerRepository.FindByID(playerId) ?? throw new InvalidOperationException(nameof(playerId));
             var inventoryService = InventoryRepository.FindByID(inventoryId) ?? throw new InvalidOperationException(nameof(inventoryId));
