@@ -12,7 +12,7 @@ namespace BlackSmith.Domain.Quest
 
         public string Discription { get; init; }
 
-        public QuestModel(string questName, string discription)
+        internal QuestModel(string questName, string discription)
         {
             QuestName = questName;
             Discription = discription;

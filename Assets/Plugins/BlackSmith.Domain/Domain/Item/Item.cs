@@ -14,7 +14,7 @@ namespace BlackSmith.Domain.Item
         public string Name => itemName.Value;
         private protected readonly ItemName itemName;
 
-        public Item(string itemName)
+        internal Item(string itemName)
         {
             if (itemName is null) throw new ArgumentNullException(nameof(itemName));
 
@@ -47,7 +47,7 @@ namespace BlackSmith.Domain.Item
     /// <summary>アイテムを一意に定めることのできる識別子</summary>
     public class ItemID : BasicID
     {
-        public ItemID(Guid id) : base(id)
+        internal ItemID(Guid id) : base(id)
         {
         }
     }

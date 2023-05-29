@@ -26,11 +26,11 @@ namespace BlackSmith.Domain.Skill
     }
 
     /// <summary>スキル名</summary>
-    class SkillName
+    public class SkillName
     {
         public string Value { get; }
 
-        public SkillName(string value)
+        internal SkillName(string value)
         {
             if (!IsValid(value))
                 throw new AggregateException(nameof(value));
@@ -38,7 +38,7 @@ namespace BlackSmith.Domain.Skill
             Value = value;
         }
 
-        private bool IsValid(string value)
+        internal static bool IsValid(string value)
         {
             if (value is null)
                 return false;
@@ -54,7 +54,7 @@ namespace BlackSmith.Domain.Skill
     /// レベルの様に扱う, 内部にSkillExpを持つ
     /// 障害がない限りスキルレベルとも呼称する
     /// </remarks>
-    class SkillProficiency
+    public class SkillProficiency
     {
         /// <summary>
         /// 熟練度 1-1000
@@ -82,14 +82,14 @@ namespace BlackSmith.Domain.Skill
         /// </summary>
         /// <param name="exp">加算する経験値量</param>
         /// <returns>加算後のスキル熟練度</returns>
-        public SkillProficiency AddExp(SkillExperience exp)
+        internal SkillProficiency AddExp(SkillExperience exp)
         {
             return new SkillProficiency(CumulativeExp.Add(exp));
         }
     }
 
     /// <summary>スキルの取得条件</summary>
-    class SkillAcquisitionConditions
+    public class SkillAcquisitionConditions
     {
         public PlayerLevel Level { get; }
         public Strength Strength { get; }
@@ -107,7 +107,7 @@ namespace BlackSmith.Domain.Skill
             return new SkillAcquisitionConditions(parameters.Level, parameters.STR, parameters.AGI);
         }
 
-        public bool CanSkillAcquisition(SkillAcquisitionConditions condition)
+        internal bool CanSkillAcquisition(SkillAcquisitionConditions condition)
         {
             if (condition.Level.Value < Level.Value)
                 return false;
@@ -117,7 +117,7 @@ namespace BlackSmith.Domain.Skill
     }
 
     /// <summary>スキル経験値</summary>
-    class SkillExperience
+    public class SkillExperience
     {
         public int Value { get; }
 
@@ -129,7 +129,7 @@ namespace BlackSmith.Domain.Skill
             Value = value;
         }
 
-        private bool IsValid(int value)
+        internal static bool IsValid(int value)
         {
             if (value < 0)
                 return false;
@@ -137,14 +137,14 @@ namespace BlackSmith.Domain.Skill
             return true;
         }
 
-        public SkillExperience Add(SkillExperience other)
+        internal SkillExperience Add(SkillExperience other)
         {
             return new SkillExperience(Value + other.Value);
         }
     }
 
     /// <summary>スキル経験値計算機</summary>
-    class SkillExpCalculator
+    internal class SkillExpCalculator
     {
         // 1Lv -> 2Lv になるために行う動作の回数
         private readonly int InitRequireCount = 15;
@@ -160,7 +160,7 @@ namespace BlackSmith.Domain.Skill
         /// </summary>
         /// <param name="level">現在の熟練度</param>
         /// <returns>必要な経験値量</returns>
-        public SkillExperience NeedToNextLevel(int level)
+        internal SkillExperience NeedToNextLevel(int level)
         {
             return new SkillExperience((int)(InitRequireExp * Math.Pow(LevelDifferenceMultiplier, level - 1)));
         }
@@ -170,7 +170,7 @@ namespace BlackSmith.Domain.Skill
         /// </summary>
         /// <param name="level">現在のレベル</param>
         /// <returns>取得できる経験値</returns>
-        public SkillExperience ReceveExp(int level)
+        internal SkillExperience ReceveExp(int level)
         {
             return new SkillExperience((int)Math.Round(InitRequireExp / InitRequireCount * Math.Pow(LevelDifferenceMultiplier, level - 1)));
         }
@@ -180,7 +180,7 @@ namespace BlackSmith.Domain.Skill
         /// </summary>
         /// <param name="level">現在の熟練度</param>
         /// <returns>累計経験値量</returns>
-        public SkillExperience RequiredCumulativeExp(int level)
+        internal SkillExperience RequiredCumulativeExp(int level)
         {
             return new SkillExperience((int)((InitRequireExp * (1 - Math.Pow(LevelDifferenceMultiplier, level - 1)) / 1) - LevelDifferenceMultiplier));
         }
@@ -190,7 +190,7 @@ namespace BlackSmith.Domain.Skill
         /// </summary>
         /// <param name="cumExp">累計獲得経験値</param>
         /// <returns>熟練度</returns>
-        public int CurrentProficiency(SkillExperience cumExp)
+        internal int CurrentProficiency(SkillExperience cumExp)
         {
             return (int)Math.Log(1 - (cumExp.Value / InitRequireExp * (1 - LevelDifferenceMultiplier)), LevelDifferenceMultiplier) + 1;
         }

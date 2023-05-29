@@ -20,7 +20,7 @@ namespace BlackSmith.Domain.Input
         /// </summary>
         /// <param name="type">入力されたキー</param>
         /// <param name="dateTime">入力された時間</param>
-        public InputCode(InputType type, DateTime dateTime)
+        internal InputCode(InputType type, DateTime dateTime)
         {
             Value = type;
             DateTime = dateTime;

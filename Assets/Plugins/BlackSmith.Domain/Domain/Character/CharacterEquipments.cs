@@ -13,7 +13,7 @@ namespace BlackSmith.Domain.Character
         public HandsEquipment? Hands { get; private set; }
         public LegEquipment? Leg { get; private set; }
 
-        public CharacterEquipments(CharacterID id)
+        internal CharacterEquipments(CharacterID id)
         {
             if (id is null) throw new ArgumentNullException(nameof(id));
 
@@ -25,7 +25,7 @@ namespace BlackSmith.Domain.Character
             Leg = null!;
         }
 
-        public void Equip(Equipment equipment)
+        internal void Equip(Equipment equipment)
         {
             if (equipment is null) throw new ArgumentNullException(nameof(equipment));
             var location = equipment.Location;
@@ -61,14 +61,14 @@ namespace BlackSmith.Domain.Character
             }
         }
 
-        public Equipment UnEquip(EquipmentLocation location)
+        internal Equipment UnEquip(EquipmentLocation location)
         {
             if (location is null) throw new ArgumentNullException(nameof(location));
 
             return new NullEquipment();
         }
 
-        public bool IsEmptyEquipment(EquipmentLocation location)
+        internal bool IsEmptyEquipment(EquipmentLocation location)
         {
             var result = false;
 

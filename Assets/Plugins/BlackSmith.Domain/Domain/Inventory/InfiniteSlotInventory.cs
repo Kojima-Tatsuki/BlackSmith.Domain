@@ -34,7 +34,7 @@ namespace BlackSmith.Domain.Inventory
 
             var num = new ItemCountNumber(count);
 
-            if (IsContain(item))
+            if (Contains(item))
             {
                 ItemSlots[item] = ItemSlots[item].AddItem(item, num);
             }
@@ -54,7 +54,7 @@ namespace BlackSmith.Domain.Inventory
 
             var num = new ItemCountNumber(count);
 
-            if (!IsContain(item))
+            if (!Contains(item))
                 throw new NullReferenceException("このインベントリにはそのようなアイテムは存在しません");
 
             if (num > ItemSlots[item].Count)
@@ -65,7 +65,7 @@ namespace BlackSmith.Domain.Inventory
             return item;
         }
 
-        public bool IsContain(IItem item)
+        public bool Contains(IItem item)
         {
             return ItemSlots.ContainsKey(item);
         }
@@ -88,7 +88,7 @@ namespace BlackSmith.Domain.Inventory
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
-            if (!IsContain(item))
+            if (!Contains(item))
                 return new ItemCountNumber(0);
 
             return ItemSlots[item].Count;

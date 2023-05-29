@@ -21,7 +21,7 @@ namespace BlackSmith.Domain.Character.Player.Event
         /// </summary>
         public DateTime TimeOfEnevetPublished { get; }
 
-        public PlayerEventBase(CharacterID id)
+        internal PlayerEventBase(CharacterID id)
         {
             ID = id;
 

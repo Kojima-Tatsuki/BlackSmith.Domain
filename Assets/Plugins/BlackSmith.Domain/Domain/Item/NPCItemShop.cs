@@ -69,14 +69,14 @@ namespace BlackSmith.Domain.Item
     /// NPCのアイテム販売店
     /// </summary>
     /// <remarks>在庫は無限大、価格は一定</remarks>
-    public class NPCItemShop : IItemExhibitable
+    internal class NPCItemShop : IItemExhibitable
     {
         /// <summary>
         /// 販売中のアイテムのリスト
         /// </summary>
         private readonly Dictionary<Item, Currency> exhibitItems;
 
-        public NPCItemShop(IReadOnlyCollection<ItemAndPrice> list)
+        internal NPCItemShop(IReadOnlyCollection<ItemAndPrice> list)
         {
             exhibitItems = new Dictionary<Item, Currency>(new ItemComparer());
 
@@ -140,7 +140,7 @@ namespace BlackSmith.Domain.Item
 
             public Currency Currency { get; }
 
-            public ItemAndPrice(Item item, Currency currency)
+            internal ItemAndPrice(Item item, Currency currency)
             {
                 Item = item ?? throw new ArgumentNullException(nameof(item));
 

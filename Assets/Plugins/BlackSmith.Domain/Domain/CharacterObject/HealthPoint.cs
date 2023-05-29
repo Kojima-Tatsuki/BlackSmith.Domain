@@ -100,7 +100,7 @@ namespace BlackSmith.Domain.CharacterObject
         /// 体力が残っているかを返す
         /// </summary>
         /// <returns>以下であれば真を返す</returns>
-        public bool IsDead()
+        internal bool IsDead()
         {
             if (Value.Value <= 0)
                 return true;

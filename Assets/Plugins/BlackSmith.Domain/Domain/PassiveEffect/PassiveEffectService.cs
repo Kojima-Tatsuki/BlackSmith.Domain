@@ -4,9 +4,9 @@ using UniRx;
 
 namespace BlackSmith.Domain.PassiveEffect
 {
-    public class PassiveEffectService
+    internal class PassiveEffectService
     {
-        public async UniTask PlayContinuouslyEffect(CharacterID targetId, ContinuouslyEffect effect)
+        internal async UniTask PlayContinuouslyEffect(CharacterID targetId, ContinuouslyEffect effect)
         {
             await effect.DoEffect(targetId);
         }

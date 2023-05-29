@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BlackSmith.Domain.Character.Product
 {
-    public interface IProductCharacter
+    internal interface IProductCharacter
     {
 
     }

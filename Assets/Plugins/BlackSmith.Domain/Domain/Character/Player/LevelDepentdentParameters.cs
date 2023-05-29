@@ -13,7 +13,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <summary>
         /// 現在のプレイヤーのレベル
         /// </summary>
-        internal PlayerLevel Level { get; }
+        public PlayerLevel Level { get; }
 
         public Strength STR { get; }
 
@@ -93,7 +93,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>
     /// 筋力
     /// </summary>
-    internal class Strength
+    public class Strength
     {
         public int Value => value.Value;
         private readonly BasePlayerParameter value;
@@ -105,7 +105,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>
     /// 俊敏性
     /// </summary>
-    internal class Agility
+    public class Agility
     {
         public int Value => value.Value;
         private readonly BasePlayerParameter value;
@@ -121,7 +121,7 @@ namespace BlackSmith.Domain.Character.Player
     {
         public int Value { get; }
 
-        public BasePlayerParameter(int value)
+        internal BasePlayerParameter(int value)
         {
             if (!IsValid(value))
                 throw new ArgumentException($"valueに不正な値が入力されました, value: {value}");
@@ -129,7 +129,7 @@ namespace BlackSmith.Domain.Character.Player
             Value = value;
         }
 
-        public static bool IsValid(int value)
+        private static bool IsValid(int value)
         {
             if (value < 1)
                 return false;

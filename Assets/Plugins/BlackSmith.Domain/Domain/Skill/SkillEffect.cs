@@ -8,7 +8,7 @@ namespace BlackSmith.Domain.Skill
     /// <summary>
     /// <see cref="SkillAction"/>にてインスタンス化される
     /// </summary>
-    internal class SkillEffect
+    public class SkillEffect
     {
         public string EffectName { get; }
 
@@ -18,7 +18,7 @@ namespace BlackSmith.Domain.Skill
 
         public SkillActivator Activator { get; }
 
-        public SkillEffect(string effectName, EffectExecutionConditions executionConditions)
+        internal SkillEffect(string effectName, EffectExecutionConditions executionConditions)
         {
             EffectName = effectName;
             ExecutionConditions = executionConditions;
@@ -39,7 +39,7 @@ namespace BlackSmith.Domain.Skill
 
         public FieldCondition Field { get; }
 
-        public EffectExecutionConditions(Guid id, FieldCondition fieldCondition)
+        internal EffectExecutionConditions(Guid id, FieldCondition fieldCondition)
         {
             SkillExecutionConditionsId = id;
             Field = fieldCondition;
@@ -54,12 +54,12 @@ namespace BlackSmith.Domain.Skill
     /// <summary>スキルの発動対象</summary>
     public class SkillTarget
     {
-        CharacterID TargetId { get; }
+        public CharacterID TargetId { get; }
     }
 
     /// <summary>スキルの実行者</summary>
     public class SkillActivator
     {
-        CharacterID ActivatorId { get; }
+        public CharacterID ActivatorId { get; }
     }
 }
