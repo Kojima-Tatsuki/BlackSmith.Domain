@@ -12,7 +12,7 @@ namespace BlackSmith.Domain.Character.Player
     // Facade, 窓口のようなイメージで扱う
     public class PlayerEntity : ICharacterEntity, IBattleCharacter
     {
-        public PlayerID ID { get; }
+        public CharacterID ID { get; }
         public PlayerName Name { get; private set; }
 
         CharacterLevel ICharacterEntity.Level => Level;

@@ -1,4 +1,5 @@
-﻿using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character;
+using BlackSmith.Domain.Character.Player;
 using System.Collections.Generic;
 
 namespace BlackSmith.Usecase.Interface
@@ -12,12 +13,12 @@ namespace BlackSmith.Usecase.Interface
 
         void UpdateCharacter(PlayerEntity character);
 
-        PlayerEntity? FindByID(PlayerID id);
+        PlayerEntity? FindByID(CharacterID id);
 
         IReadOnlyCollection<PlayerEntity> GetAllPlayers();
 
-        bool IsExist(PlayerID id);
+        bool IsExist(CharacterID id);
 
-        void Delete(PlayerID id);
+        void Delete(CharacterID id);
     }
 }

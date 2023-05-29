@@ -1,3 +1,4 @@
+using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
@@ -23,7 +24,7 @@ namespace BlackSmith.Usecase.Character.Battle
         /// </summary>
         /// <param name="attackerId">攻め手のキャラクターID</param>
         /// <param name="receiverId">受け手のキャラクターID</param>
-        public void TakeDamagePlayerByPlayer(PlayerID attackerId, PlayerID receiverId)
+        public void TakeDamagePlayerByPlayer(CharacterID attackerId, CharacterID receiverId)
         {
             var attacker = PlayerRepository.FindByID(attackerId);
             var receiver = PlayerRepository.FindByID(receiverId) as IBattleCharacter;

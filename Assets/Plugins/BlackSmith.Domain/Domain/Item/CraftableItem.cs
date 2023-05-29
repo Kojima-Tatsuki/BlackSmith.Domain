@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Domain.Item
@@ -16,7 +17,7 @@ namespace BlackSmith.Domain.Item
     /// <summary>素材アイテムを使用して作成ができるアイテム</summary>
     public interface ICraftableItem : IItem
     {
-        PlayerID CreatedBy { get; } // 制作者ID
+        CharacterID CreatedBy { get; } // 制作者ID
         IReadOnlyCollection<ICraftMaterialItem> GetRequireMaterials();
     }
 
