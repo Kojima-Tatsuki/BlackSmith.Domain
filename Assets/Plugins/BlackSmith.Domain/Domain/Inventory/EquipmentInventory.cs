@@ -10,13 +10,13 @@ namespace BlackSmith.Domain.Inventory
     using Item;
 
     /// <summary>装備中のアイテムを格納するインベントリ</summary>
-    public class EquipmentInventory : IOneByInventoryService<EquippableItem>
+    internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
     {
-        private InventoryID ID { get; }
+        internal InventoryID ID { get; }
 
         private readonly Dictionary<EquipmentType, EquippableItem> Equipments;
 
-        public EquipmentInventory(InventoryID id)
+        internal EquipmentInventory(InventoryID id)
         {
             ID = id ?? throw new ArgumentNullException(nameof(id));
 
@@ -35,7 +35,7 @@ namespace BlackSmith.Domain.Inventory
 
         public EquippableItem RemoveItem(EquippableItem item)
         {
-            if (!IsContain(item))
+            if (!Contains(item))
                 throw new ArgumentException("指定のアイテムは装備されていません");
 
             Equipments.Remove(item.EquipType);
@@ -65,7 +65,7 @@ namespace BlackSmith.Domain.Inventory
                 Equipments.Select(typeAndItem => new KeyValuePair<EquippableItem, int>(typeAndItem.Value, 1)));
         }
 
-        public bool IsContain(EquippableItem item)
+        public bool Contains(EquippableItem item)
         {
             if (!IsOccupiedType(item.EquipType))
                 return false;

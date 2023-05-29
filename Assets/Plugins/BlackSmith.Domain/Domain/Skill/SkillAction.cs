@@ -15,7 +15,7 @@ namespace BlackSmith.Domain.Skill
 
         public ActionExecutionConditions ExecutionConditions { get; }
 
-        public SkillAction(ActionID id, ActionExecutionConditions executionConditions)
+        internal SkillAction(ActionID id, ActionExecutionConditions executionConditions)
         {
             ActionID = id;
             ExecutionConditions = executionConditions;
@@ -30,6 +30,6 @@ namespace BlackSmith.Domain.Skill
 
     public class ActionID : BasicID
     {
-        public ActionID(Guid id): base(id) { }
+        internal ActionID(Guid id): base(id) { }
     }
 }

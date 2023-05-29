@@ -35,7 +35,7 @@ namespace BlackSmith.Domain.Character.Player.Event
         public System.IObservable<PlayerOnDeadEvent> OnPlayerDead => onPlayerDeadSubject;
         private readonly Subject<PlayerOnDeadEvent> onPlayerDeadSubject;
 
-        public PlayerEventPublisher()
+        internal PlayerEventPublisher()
         {
             onPlayerHealthChanged = new Subject<PlayerHealthChangedEvent>();
             onPlayerDeadSubject = new Subject<PlayerOnDeadEvent>();

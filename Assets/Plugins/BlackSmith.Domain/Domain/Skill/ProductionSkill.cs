@@ -8,7 +8,7 @@ using BlackSmith.Domain.Character.Player;
 namespace BlackSmith.Domain.Skill
 {
     // このスキル自体に意味はないスキル使用条件で用いられるのみ
-    public class ProductionSkill : IProductionSkill
+    internal class ProductionSkill : IProductionSkill
     {
         SkillName ISkill.Name => BaseSkill.SkillName;
 

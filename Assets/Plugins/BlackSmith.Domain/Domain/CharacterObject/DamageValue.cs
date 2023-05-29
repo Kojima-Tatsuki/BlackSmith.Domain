@@ -14,9 +14,9 @@ namespace BlackSmith.Domain.CharacterObject
         /// <summary> レベル差関数用の補正値 </summary>
         private const double LevelGapCorrectionValue = 1.2599210498948731;
 
-        internal int Value { get; }
+        public int Value { get; }
 
-        public DamageValue(LevelGapOfAttackerAndReceiver levelGap, AttackValue attack, DefenseValue defence)
+        internal DamageValue(LevelGapOfAttackerAndReceiver levelGap, AttackValue attack, DefenseValue defence)
         {
             var a = attack.Value;
             var d = defence.Value;
@@ -35,7 +35,7 @@ namespace BlackSmith.Domain.CharacterObject
         /// [非推奨]
         /// </summary>
         /// <param name="value"></param>
-        public DamageValue(int value)
+        internal DamageValue(int value)
         {
             Value = UnderClamp(value);
         }
@@ -60,7 +60,7 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// 攻めと守りのレベル差を表す
     /// </summary>
-    public class LevelGapOfAttackerAndReceiver
+    internal class LevelGapOfAttackerAndReceiver
     {
         private readonly CharacterLevel receiver;
 
@@ -71,7 +71,7 @@ namespace BlackSmith.Domain.CharacterObject
         /// </summary>
         /// <param name="receiver">受け手のレベル</param>
         /// <param name="attacker">攻め手のレベル</param>
-        public LevelGapOfAttackerAndReceiver(CharacterLevel receiver, CharacterLevel attacker)
+        internal LevelGapOfAttackerAndReceiver(CharacterLevel receiver, CharacterLevel attacker)
         {
             this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
             this.attacker = attacker ?? throw new ArgumentNullException(nameof(attacker));

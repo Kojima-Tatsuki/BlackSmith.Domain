@@ -22,7 +22,7 @@ namespace BlackSmith.Domain.Inventory
 
         public void AdditionMoney(Currency money)
         {
-            if (!IsContainType(money.Type))
+            if (!ContainsType(money.Type))
                 Money.Add(money.Type, money);
             else
                 Money[money.Type] = Money[money.Type].Add(money);
@@ -30,7 +30,7 @@ namespace BlackSmith.Domain.Inventory
 
         public void SubtractMoney(Currency money)
         {
-            if (!IsContainType(money.Type))
+            if (!ContainsType(money.Type))
                 throw new ArgumentException("指定型のお金を所持していません");
 
             Money[money.Type] = Money[money.Type].Subtract(money);
@@ -40,12 +40,12 @@ namespace BlackSmith.Domain.Inventory
 
         public Currency GetMoney(CurrencyType type)
         {
-            if (!IsContainType(type))
+            if (!ContainsType(type))
                 throw new ArgumentException("指定型のお金を所持していません");
 
             return Money[type];
         }
 
-        public bool IsContainType(CurrencyType type) => Money.ContainsKey(type);
+        public bool ContainsType(CurrencyType type) => Money.ContainsKey(type);
     }
 }

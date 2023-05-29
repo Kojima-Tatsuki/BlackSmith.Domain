@@ -8,7 +8,7 @@ namespace BlackSmith.Domain.Input
     {
         public ActionName Name { get; }
 
-        public ActionCode(ActionName name)
+        internal ActionCode(ActionName name)
         {
             if (name is null) throw new ArgumentNullException(nameof(name));
 
@@ -21,7 +21,7 @@ namespace BlackSmith.Domain.Input
         public ActionName Name { get; }
         public MoveDirection Direction { get; }
 
-        public MoveActionCode(ActionName name, MoveDirection direction)
+        internal MoveActionCode(ActionName name, MoveDirection direction)
         {
             if (name is null) throw new ArgumentNullException(nameof(name));
 
@@ -34,7 +34,7 @@ namespace BlackSmith.Domain.Input
     {
         public string Value { get; }
 
-        public ActionName(string value)
+        internal ActionName(string value)
         {
             if (value is null) throw new ArgumentNullException(nameof(value));
             if (value.Length < 3)

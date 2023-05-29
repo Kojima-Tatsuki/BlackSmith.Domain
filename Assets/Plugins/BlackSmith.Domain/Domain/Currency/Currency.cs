@@ -14,13 +14,13 @@ namespace BlackSmith.Domain.Currency
         /// <remarks>通貨とその量を元に生成する</remarks>
         /// <param name="type">通貨</param>
         /// <param name="value">量</param>
-        public Currency(CurrencyType type, int value)
+        internal Currency(CurrencyType type, int value)
         {
             Type = type;
             this.value = new CurrencyValue(value);
         }
 
-        public Currency Add(Currency other)
+        internal Currency Add(Currency other)
         {
             if (!Type.Equals(other.Type))
                 throw new ArgumentException($"通貨単位が一致していません [this: {Type}], [other: {other.Type}]");
@@ -28,7 +28,7 @@ namespace BlackSmith.Domain.Currency
             return new Currency(Type, value.Add(new CurrencyValue(other.Value)).Value);
         }
 
-        public Currency Subtract(Currency other)
+        internal Currency Subtract(Currency other)
         {
             if (!Type.Equals(other.Type))
                 throw new ArgumentException($"通貨単位が一致していません [this: {Type}], [other: {other.Type}]");
@@ -43,7 +43,7 @@ namespace BlackSmith.Domain.Currency
         /// <param name="type">両替先の型</param>
         /// <param name="money">変換するお金</param>
         /// <returns></returns>
-        public Currency Exchange(CurrencyType type)
+        internal Currency Exchange(CurrencyType type)
         { 
             var value = (int)Math.Floor((float)type / (float)Type * Value);
 
@@ -92,7 +92,7 @@ namespace BlackSmith.Domain.Currency
         {
             public int Value { get; }
 
-            public CurrencyValue(int value)
+            internal CurrencyValue(int value)
             {
                 if (!IsValidValue(value))
                     throw new AggregateException($"通貨の値として不正な値が入力されました: value = {value}");
@@ -100,12 +100,12 @@ namespace BlackSmith.Domain.Currency
                 Value = value;
             }
 
-            public CurrencyValue Add(CurrencyValue other)
+            internal CurrencyValue Add(CurrencyValue other)
             {
                 return new CurrencyValue(Value + other.Value);
             }
 
-            public CurrencyValue Subtract(CurrencyValue other)
+            internal CurrencyValue Subtract(CurrencyValue other)
             {
                 var v = Value - other.Value;
                 if (!IsValidValue(v))

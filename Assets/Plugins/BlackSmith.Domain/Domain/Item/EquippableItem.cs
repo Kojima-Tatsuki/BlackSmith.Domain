@@ -25,7 +25,7 @@ namespace BlackSmith.Domain.Item
 
         public RequireParameter RequireParameter { get; }
 
-        public EquippableItem(CreateCommand command) : base(command.Name)
+        internal EquippableItem(CreateCommand command) : base(command.Name)
         {
             Attack = command.Attack;
             Defense = command.Defence;
@@ -36,7 +36,7 @@ namespace BlackSmith.Domain.Item
         }
 
         IEquipableItem IEquipableItem.Enchant(EnhancementParameter parameter) => Enchant(parameter);
-        public EquippableItem Enchant(EnhancementParameter parameter)
+        internal EquippableItem Enchant(EnhancementParameter parameter)
         {
             return new EquippableItem(
                 new CreateCommand(
@@ -50,14 +50,15 @@ namespace BlackSmith.Domain.Item
                     ));
         }
 
-        public IEquipableItem Repair()
+        IEquipableItem IEquipableItem.Repair() => Repair();
+        internal IEquipableItem Repair()
         {
             throw new NotImplementedException();
         }
 
         /// <summary>強化時の成功確率</summary>
         /// <returns>確率は 0.0 ~ 1.0 で返される</returns>
-        public float GetSuccessProbabilityWhenEnhancement(DependentParametersForEnhancement parameters)
+        internal float GetSuccessProbabilityWhenEnhancement(DependentParametersForEnhancement parameters)
         {
             var baseLevel = Math.Max(RequireParameter.Level.Value - 5, 0);
 
@@ -68,7 +69,7 @@ namespace BlackSmith.Domain.Item
             return result;
         }
 
-        public record CreateCommand
+        internal record CreateCommand
         { 
             public string Name { get; }
             public EquipmentType Type { get; }
@@ -78,7 +79,7 @@ namespace BlackSmith.Domain.Item
             public AdditionalParameter Additional { get; }
             public RequireParameter Require { get; }
 
-            public CreateCommand(
+            internal CreateCommand(
                 string name,
                 EquipmentType type,
                 EquipmentAttack attack,
@@ -149,7 +150,7 @@ namespace BlackSmith.Domain.Item.Equipment
         public int Heaviness { get; } // 重さ
         public int Durability { get; } // 丈夫さ
 
-        public EnhancementParameter()
+        internal EnhancementParameter()
         {
             Sharpness = 0;
             Quickness = 0;
@@ -158,7 +159,7 @@ namespace BlackSmith.Domain.Item.Equipment
             Durability = 0;
         }
 
-        public EnhancementParameter(int sharpness, int quickness, int accuracy, int heaviness, int durability)
+        internal EnhancementParameter(int sharpness, int quickness, int accuracy, int heaviness, int durability)
         {
             Sharpness = sharpness;
             Quickness = quickness;
@@ -175,7 +176,7 @@ namespace BlackSmith.Domain.Item.Equipment
         /// </summary>
         /// <param name="type">強化するパラメータの種類</param>
         /// <returns>強化結果</returns>
-        public EnhancementParameter AddEnhance(EnhanceType type)
+        internal EnhancementParameter AddEnhance(EnhanceType type)
         {
             var sharpness = Sharpness;
             var quickness = Quickness;
@@ -222,7 +223,7 @@ namespace BlackSmith.Domain.Item.Equipment
     {
         public PlayerLevel PlayerLevel { get; }
 
-        public DependentParametersForEnhancement(PlayerLevel playerLevel)
+        internal DependentParametersForEnhancement(PlayerLevel playerLevel)
         {
             PlayerLevel = playerLevel;
         }

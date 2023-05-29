@@ -16,7 +16,7 @@ namespace BlackSmith.Domain.Item
         /// <param name="recipe">作成するアイテムのレシピ</param>
         /// <param name="materials">素材、過不足なく与える必要がある</param>
         /// <returns></returns>
-        public CraftingResult Craft(CraftingRecipe recipe, IReadOnlyList<ICraftMaterialItem> materials, CharacterID creator)
+        internal CraftingResult Craft(CraftingRecipe recipe, IReadOnlyList<ICraftMaterialItem> materials, CharacterID creator)
         {
             if (recipe == null)  throw new ArgumentNullException(nameof(recipe));
             if (materials == null) throw new ArgumentNullException(nameof(materials));
@@ -43,7 +43,7 @@ namespace BlackSmith.Domain.Item
         // 作成の失敗、成功によらず、作成者は格納する
         public CharacterID Creator { get; }
 
-        public CraftingResult(bool success, ICraftableItem? craftable, CharacterID creator)
+        internal CraftingResult(bool success, ICraftableItem? craftable, CharacterID creator)
         {
             Success = success;
             Craftable = craftable;

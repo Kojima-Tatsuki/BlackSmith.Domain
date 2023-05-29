@@ -16,7 +16,7 @@ namespace BlackSmith.Usecase.Inventory
         /// <param name="item">移動させるアイテム</param>
         public void Transfer<T>(IInventoryService<T> fromInventory, IInventoryService<T> toInventory, T item) where T: Item
         {
-            if (!fromInventory.IsContain(item))
+            if (!fromInventory.Contains(item))
                 throw new ArgumentException("itemがfromInventoryに存在しません");
 
             if (!toInventory.IsAddable(item))

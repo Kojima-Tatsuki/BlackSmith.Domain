@@ -39,7 +39,7 @@ namespace BlackSmith.Domain.Inventory
         /// </summary>
         /// <param name="item">探索するアイテム</param>
         /// <returns>存在すれば真を返す</returns>
-        bool IsContain(T item);
+        bool Contains(T item);
 
         bool IsAddable(T item, int count = 1!);
     }
@@ -66,7 +66,7 @@ namespace BlackSmith.Domain.Inventory
         /// </summary>
         /// <param name="item">探索するアイテム</param>
         /// <returns>存在すれば真を返す</returns>
-        bool IsContain(T item);
+        bool Contains(T item);
 
         bool IsAddable(T item);
     }
@@ -114,6 +114,6 @@ namespace BlackSmith.Domain.Inventory
 
         Currency GetMoney(CurrencyType type);
 
-        bool IsContainType(CurrencyType type);
+        bool ContainsType(CurrencyType type);
     }
 }

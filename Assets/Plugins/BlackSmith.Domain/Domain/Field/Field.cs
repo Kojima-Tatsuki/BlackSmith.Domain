@@ -25,12 +25,12 @@ namespace BlackSmith.Domain.Field
         public IReadOnlyCollection<CharacterID> CharacterIds => Chunk.CharacterIds;
         internal Chunk Chunk { get; private set; }
 
-        public static Field ValueOf(FieldID id, string name, IReadOnlyCollection<CharacterID> ids)
+        internal static Field ValueOf(FieldID id, string name, IReadOnlyCollection<CharacterID> ids)
         {
             return new Field(id, name, ids);
         }
 
-        public static Field NameOf(string name)
+        internal static Field NameOf(string name)
         {
             return new Field(new FieldID(), name, new List<CharacterID>());
         }
@@ -50,13 +50,13 @@ namespace BlackSmith.Domain.Field
          */
 
         /// <summary>アイテムやモンスターの補充を行う</summary>
-        public void AddCharacter(CharacterID id)
+        internal void AddCharacter(CharacterID id)
         {
             Chunk = Chunk.AddCharacter(id);
         }
 
         // 倒されたという通知が流れてくる
-        public void RemoveCharacter(CharacterID id)
+        internal void RemoveCharacter(CharacterID id)
         {
             Chunk = Chunk.RemoveCharacter(id);
         }

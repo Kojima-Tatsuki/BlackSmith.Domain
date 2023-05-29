@@ -14,14 +14,14 @@ namespace BlackSmith.Domain.CharacterObject
 
         public EquipmentLocation Location { get; }
 
-        public Equipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!)
+        internal Equipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!)
         {
             ID = id ?? new EquipmentID(Guid.NewGuid());
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Location = location ?? throw new ArgumentNullException(nameof(location));
         }
 
-        public void ReName(EquipmentName name)
+        internal void ReName(EquipmentName name)
         {
             Name = name;
         }
@@ -31,7 +31,7 @@ namespace BlackSmith.Domain.CharacterObject
     {
         public string Value { get; }
 
-        public EquipmentName(string value)
+        internal EquipmentName(string value)
         {
             Value = value ?? throw new ArgumentNullException(nameof(value));
         }
@@ -39,7 +39,7 @@ namespace BlackSmith.Domain.CharacterObject
 
     public class EquipmentID : BasicID
     {
-        public EquipmentID(Guid id) : base(id)
+        internal EquipmentID(Guid id) : base(id)
         {
         }
 
@@ -53,7 +53,7 @@ namespace BlackSmith.Domain.CharacterObject
     {
         public LocationType Value { get; }
 
-        public EquipmentLocation(LocationType location)
+        internal EquipmentLocation(LocationType location)
         {
             Value = location;
         }
@@ -105,35 +105,35 @@ namespace BlackSmith.Domain.CharacterObject
 
     internal class NullEquipment : Equipment
     {
-        public NullEquipment() : base(new EquipmentName("NULL"), new EquipmentLocation(EquipmentLocation.LocationType.None), new EquipmentID(Guid.Empty))
+        internal NullEquipment() : base(new EquipmentName("NULL"), new EquipmentLocation(EquipmentLocation.LocationType.None), new EquipmentID(Guid.Empty))
         {
         }
     }
 
     internal class HeadEquipment : Equipment
     {
-        public HeadEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
+        internal HeadEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
         {
         }
     }
 
     internal class ChestEquipment : Equipment
     {
-        public ChestEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
+        internal ChestEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
         {
         }
     }
 
     internal class HandsEquipment : Equipment
     {
-        public HandsEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
+        internal HandsEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
         {
         }
     }
 
     internal class LegEquipment : Equipment
     {
-        public LegEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
+        internal LegEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
         {
         }
     }

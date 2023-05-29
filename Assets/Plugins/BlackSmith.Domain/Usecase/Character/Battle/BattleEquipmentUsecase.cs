@@ -23,7 +23,7 @@ namespace BlackSmith.Usecase.Character.Battle
             var player = PlayerRepository.FindByID(playerId) ?? throw new InvalidOperationException(nameof(playerId));
             var inventoryService = InventoryRepository.FindByID(inventoryId) ?? throw new InvalidOperationException(nameof(inventoryId));
 
-            var inventory = (inventoryService as EquipmentInventory) ?? throw new ArgumentException(nameof(inventoryId));
+            var inventory = (inventoryService as IOneByInventoryService<EquippableItem>) ?? throw new ArgumentException(nameof(inventoryId));
 
             EquippableItem? removed = null;
 
@@ -51,7 +51,7 @@ namespace BlackSmith.Usecase.Character.Battle
             var player = PlayerRepository.FindByID(playerId) ?? throw new InvalidOperationException(nameof(playerId));
             var inventoryService = InventoryRepository.FindByID(inventoryId) ?? throw new InvalidOperationException(nameof(inventoryId));
 
-            var inventory = (inventoryService as EquipmentInventory) ?? throw new ArgumentException(nameof(inventoryId));
+            var inventory = (inventoryService as IOneByInventoryService<EquippableItem>) ?? throw new ArgumentException(nameof(inventoryId));
 
             var removed = inventory.RemoveItem(remove);
             var changeResult = player.RemoveBattleEquipment(remove.EquipType);

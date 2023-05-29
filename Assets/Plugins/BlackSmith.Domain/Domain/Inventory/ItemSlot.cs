@@ -66,7 +66,7 @@ namespace BlackSmith.Domain.Inventory
     /// </summary>
     internal class ItemCountNumber : IEquatable<ItemCountNumber>
     {
-        public int Value { get; }
+        internal int Value { get; }
 
         internal ItemCountNumber(int value)
         {
@@ -135,11 +135,11 @@ namespace BlackSmith.Domain.Inventory
 
     internal class ItemHoldableCapacity
     {
-        public ItemCountNumber Value { get; }
+        internal ItemCountNumber Value { get; }
 
         private const int MAXIMUM_CAPACITY = 64;
 
-        public ItemHoldableCapacity(ItemCountNumber capacity)
+        internal ItemHoldableCapacity(ItemCountNumber capacity)
         {
             if (capacity is null)
                 throw new ArgumentNullException(nameof(capacity));

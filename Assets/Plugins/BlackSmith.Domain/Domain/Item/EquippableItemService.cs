@@ -17,7 +17,7 @@ namespace BlackSmith.Domain.Item
         /// <param name="enchanceType">追加付与を試みるパラメータ</param>
         /// <param name="parameters">強化を試みるプレイヤーのステータス</param>
         /// <returns>強化結果</returns>
-        public EnhancedResult Enhance(EquippableItem item, EnhancementParameter.EnhanceType enchanceType, DependentParametersForEnhancement parameters)
+        internal EnhancedResult Enhance(EquippableItem item, EnhancementParameter.EnhanceType enchanceType, DependentParametersForEnhancement parameters)
         {
             var random = new Random();
 

@@ -9,12 +9,12 @@ namespace BlackSmith.Domain.Inventory
     using Item;
     using Currency;
 
-    public class TradeItem
+    internal class TradeItem
     {
-        public IInventoryService<Item> Items { get; }
-        public Currency Money { get; }
+        internal IInventoryService<Item> Items { get; }
+        internal Currency Money { get; }
 
-        public TradeItem(IInventoryService<Item> items, Currency money)
+        internal TradeItem(IInventoryService<Item> items, Currency money)
         {
             Items = items;
             Money = money;

@@ -37,7 +37,7 @@ namespace BlackSmith.Usecase.Inventory
         public bool IsCraftable(CraftCommand command)
         {
             if (!command.Recipe.Materials
-                .All(material => command.FromInventory.IsContain(material)))
+                .All(material => command.FromInventory.Contains(material)))
                 //throw new ArgumentException("一部、素材がたりません");
                 return false;
 
