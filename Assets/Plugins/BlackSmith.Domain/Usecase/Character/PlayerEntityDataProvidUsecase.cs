@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BlackSmith.Usecase.Interface;
 using BlackSmith.Domain.Character.Player;
+using BlackSmith.Domain.Character;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -39,7 +40,7 @@ namespace BlackSmith.Usecase.Character
             return result;
         }
 
-        public PlayerEntityData? GetPlayerData(PlayerID id)
+        public PlayerEntityData? GetPlayerData(CharacterID id)
         {
             if (!repository.IsExist(id))
                 throw new Exception("存在しないIDがゲーム中のIDとして設定されています");
@@ -55,7 +56,7 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class PlayerEntityData
     {
-        public PlayerID ID { get; }
+        public CharacterID ID { get; }
 
         public string Name { get; }
         public int Level { get; }
@@ -67,7 +68,7 @@ namespace BlackSmith.Usecase.Character
         public (int current, int max) Health => (CurrentHealth, MaxHealth);
 
         internal PlayerEntityData(
-            PlayerID id,
+            CharacterID id,
             string name,
             int level,
             int currentHealth, int maxHealth,

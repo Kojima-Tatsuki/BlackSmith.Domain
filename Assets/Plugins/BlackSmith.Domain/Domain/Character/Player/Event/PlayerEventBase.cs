@@ -14,14 +14,14 @@ namespace BlackSmith.Domain.Character.Player.Event
         /// <summary>
         /// イベントを発行したエンティティのID
         /// </summary>
-        public PlayerID ID { get; }
+        public CharacterID ID { get; }
 
         /// <summary>
         /// イベントが発行された時間
         /// </summary>
         public DateTime TimeOfEnevetPublished { get; }
 
-        public PlayerEventBase(PlayerID id)
+        public PlayerEventBase(CharacterID id)
         {
             ID = id;
 
