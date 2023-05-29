@@ -1,4 +1,5 @@
 ﻿using BlackSmith.Domain.Character.Player;
+using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Domain.Inventory;
 using BlackSmith.Domain.Item;
 using BlackSmith.Usecase.Interface;
@@ -18,12 +19,12 @@ namespace BlackSmith.Usecase.Character.Battle
             InventoryRepository = inventoryRepository;
         }
 
-        public void ChengeEquipment(PlayerID playerid, InventoryID inventoryId, EquippableItem equipment, EquippableItem remove)
+        public void ChengeEquipment(PlayerID playerId, InventoryID inventoryId, EquippableItem equipment, EquippableItem remove)
         {
-            var player = PlayerRepository.FindByID(playerid) ?? throw new InvalidOperationException(nameof(playerid));
+            var player = PlayerRepository.FindByID(playerId) ?? throw new InvalidOperationException(nameof(playerId));
             var inventoryService = InventoryRepository.FindByID(inventoryId) ?? throw new InvalidOperationException(nameof(inventoryId));
 
-            var inventory = inventoryService as EquipmentInventory;
+            var inventory = (inventoryService as EquipmentInventory) ?? throw new ArgumentException(nameof(inventoryId));
 
             EquippableItem? removed = null;
 
@@ -44,6 +45,20 @@ namespace BlackSmith.Usecase.Character.Battle
 
             if (added != changeResult.CurrentEquipment)
                 throw new InvalidOperationException("インベントリとBattleModuleから新たに装着したアイテムが一致しません");
+        }
+
+        public void RemoveEquipment(PlayerID playerId, InventoryID inventoryId, EquippableItem remove)
+        {
+            var player = PlayerRepository.FindByID(playerId) ?? throw new InvalidOperationException(nameof(playerId));
+            var inventoryService = InventoryRepository.FindByID(inventoryId) ?? throw new InvalidOperationException(nameof(inventoryId));
+
+            var inventory = (inventoryService as EquipmentInventory) ?? throw new ArgumentException(nameof(inventoryId));
+
+            var removed = inventory.RemoveItem(remove);
+            var changeResult = player.RemoveBattleEquipment(remove.EquipType);
+
+            if (removed != null && removed != changeResult.PrevEquipment)
+                throw new InvalidOperationException("インベントリとBattleModeuleから取り除いたアイテムが一致しません");
         }
     }
 }

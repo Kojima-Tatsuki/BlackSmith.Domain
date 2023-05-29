@@ -1,6 +1,7 @@
 ﻿using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
+using System;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -31,7 +32,7 @@ namespace BlackSmith.Usecase.Character
 
             entity.ChangeName(name);
 
-            instructor.UpdatePlayerEntity(entity as PlayerEntity);
+            instructor.UpdatePlayerEntity((entity as PlayerEntity) ?? throw new InvalidOperationException(nameof(entity)));
         }
 
         public static bool IsValidPlayerName(string name)
