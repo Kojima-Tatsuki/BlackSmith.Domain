@@ -79,7 +79,7 @@ namespace BlackSmith.Domain.Inventory
         public bool IsAddable(EquippableItem item)
         {
             if (item is null)
-                return false;
+                throw new ArgumentNullException(nameof(item));
 
             if (IsOccupiedType(item.EquipType))
                 return false;

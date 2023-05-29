@@ -17,7 +17,7 @@ namespace BlackSmith.Domain.Item
 
         public EquipmentAttack Attack { get; }
 
-        public EquipmentDefence Defence { get; }
+        public EquipmentDefense Defense { get; }
 
         public EnhancementParameter EnhancementParameter { get; }
 
@@ -28,7 +28,7 @@ namespace BlackSmith.Domain.Item
         public EquippableItem(CreateCommand command) : base(command.Name)
         {
             Attack = command.Attack;
-            Defence = command.Defence;
+            Defense = command.Defence;
             EquipType = command.Type;
             EnhancementParameter = command.Enhancement;
             AdditionalParameter = command.Additional;
@@ -43,7 +43,7 @@ namespace BlackSmith.Domain.Item
                     Name,
                     EquipType,
                     Attack,
-                    Defence,
+                    Defense,
                     parameter,
                     AdditionalParameter,
                     RequireParameter
@@ -73,7 +73,7 @@ namespace BlackSmith.Domain.Item
             public string Name { get; }
             public EquipmentType Type { get; }
             public EquipmentAttack Attack { get; }
-            public EquipmentDefence Defence { get; }
+            public EquipmentDefense Defence { get; }
             public EnhancementParameter Enhancement { get; }
             public AdditionalParameter Additional { get; }
             public RequireParameter Require { get; }
@@ -82,7 +82,7 @@ namespace BlackSmith.Domain.Item
                 string name,
                 EquipmentType type,
                 EquipmentAttack attack,
-                EquipmentDefence deffence,
+                EquipmentDefense deffence,
                 EnhancementParameter enchancement,
                 AdditionalParameter additional,
                 RequireParameter require)
@@ -124,17 +124,17 @@ namespace BlackSmith.Domain.Item.Equipment
     public class EquipmentAttack
     {
         public int Value { get; }
-        public EquipmentAttack(int value)
+        internal EquipmentAttack(int value)
         {
             Value = value;
         }
     }
 
     /// <summary>装備防御力</summary>
-    public class EquipmentDefence
+    public class EquipmentDefense
     {
         public int Value { get; }
-        public EquipmentDefence(int value)
+        internal EquipmentDefense(int value)
         {
             Value = value;
         }
@@ -232,7 +232,7 @@ namespace BlackSmith.Domain.Item.Equipment
     public class AdditionalParameter
     {
         public int Attack { get; }
-        public int Defence { get; }
+        public int Defense { get; }
         public int STR { get; }
         public int AGI { get; }
     }

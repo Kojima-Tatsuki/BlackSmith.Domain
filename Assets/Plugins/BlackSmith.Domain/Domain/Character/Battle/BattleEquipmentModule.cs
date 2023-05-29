@@ -1,21 +1,43 @@
-﻿using BlackSmith.Domain.CharacterObject;
+﻿using BlackSmith.Domain.Item;
+using BlackSmith.Domain.Item.Equipment;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlackSmith.Domain.Character.Battle
 {
     internal class BattleEquipmentModule
     {
-        public IBattleEquipment? Weapon { get; }
-        public IBattleEquipment? Armor { get; }
+        public EquippableItem? Weapon { get; }
+        public EquippableItem? Armor { get; }
 
-        public BattleEquipmentModule(IBattleEquipment? weapon, IBattleEquipment? armor)
+        public BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
         {
-            Weapon = weapon?.Type == EquipmentType.Weapon ? weapon : throw new ArgumentException(nameof(weapon));
-            Armor = armor?.Type == EquipmentType.Armor ? armor : throw new ArgumentException(nameof(armor));
+            Weapon = weapon?.EquipType == EquipmentType.Weapon ? weapon : throw new ArgumentException(nameof(weapon));
+            Armor = armor?.EquipType == EquipmentType.Armor ? armor : throw new ArgumentException(nameof(armor));
+        }
+
+        public BattleEquipmentModule ChangeEquipment(EquippableItem item)
+        {
+            switch (item.EquipType)
+            {
+                case EquipmentType.Weapon:
+                    return new BattleEquipmentModule(item, Armor);
+                case EquipmentType.Armor:
+                    return new BattleEquipmentModule(Weapon, item);
+                default:
+                    throw new ArgumentException(nameof(item));
+            }
+        }
+
+        public BattleEquipmentModule RemoveEquipment(EquipmentType type) {
+            switch (type)
+            {
+                case EquipmentType.Weapon:
+                    return new BattleEquipmentModule(null, Armor);
+                case EquipmentType.Armor:
+                    return new BattleEquipmentModule(Weapon, null);
+                default:
+                    throw new ArgumentException(nameof(type));
+            }
         }
     }
 }
