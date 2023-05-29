@@ -4,6 +4,8 @@ using BlackSmith.Domain.CharacterObject;
 using System;
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.CharacterObject.Interface;
+using BlackSmith.Domain.Item;
+using BlackSmith.Domain.Item.Equipment;
 
 namespace BlackSmith.Domain.Character.Player
 {
@@ -61,14 +63,36 @@ namespace BlackSmith.Domain.Character.Player
 
             return BattleModule.HealthPoint;
         }
-        #endregion
 
-        /*public IObservable<Experience> AddExpObservable => addExpSubject;
-        private Subject<Experience> addExpSubject;
-        public void AddExp(Experience exp)
+        // 現状の変更結果は、外部から観測できる範囲に限られるため、Resultクラスの必要性が無い
+        internal ChangeBattleEquipmentResult ChangeBattleEquipment(EquippableItem item)
         {
+            var prev = item.EquipType switch
+            {
+                EquipmentType.Weapon => BattleModule.EquipmentModule.Weapon,
+                EquipmentType.Armor => BattleModule.EquipmentModule.Armor,
+                _ => throw new ArgumentException(nameof(item))
+            };
+            
+            BattleModule = BattleModule.ChangeBattleEquipment(item, item.EquipType).Modeule;
 
-        }*/
+            return new ChangeBattleEquipmentResult(item, prev);
+        }
+
+        internal ChangeBattleEquipmentResult RemoveBattleEquipment(EquipmentType removeType)
+        {
+            var prev = removeType switch
+            {
+                EquipmentType.Weapon => BattleModule.EquipmentModule.Weapon,
+                EquipmentType.Armor => BattleModule.EquipmentModule.Armor,
+                _ => throw new ArgumentException(nameof(removeType))
+            };
+
+            BattleModule = BattleModule.ChangeBattleEquipment(null, removeType).Modeule;
+
+            return new ChangeBattleEquipmentResult(null, prev);
+        }
+        #endregion
 
         public PlayerCreateCommand GetPlayerCreateCommand()
         {

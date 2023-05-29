@@ -4,7 +4,7 @@ using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Usecase.Interface;
 using System;
 
-namespace BlackSmith.Usecase.Character
+namespace BlackSmith.Usecase.Character.Battle
 {
     /// <summary>
     /// プレイヤーにダメージを与えるユースケース
