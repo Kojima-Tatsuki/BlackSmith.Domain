@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
 
@@ -14,7 +15,7 @@ namespace BlackSmith.Usecase.Character
             this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        internal PlayerEntity GetPlayerEntity(PlayerID id)
+        internal PlayerEntity GetPlayerEntity(CharacterID id)
         {
             var entity = repository.FindByID(id)
                 ?? throw new NullReferenceException($"指定されたIDのプレイヤーは存在しません, ID: {id}");

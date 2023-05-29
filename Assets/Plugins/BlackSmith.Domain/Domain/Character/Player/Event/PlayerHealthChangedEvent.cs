@@ -8,7 +8,7 @@ namespace BlackSmith.Domain.Character.Player.Event
     {
         public HealthPoint HealthPoint { get; }
 
-        internal PlayerHealthChangedEvent(PlayerID id, HealthPoint health) : base(id)
+        internal PlayerHealthChangedEvent(CharacterID id, HealthPoint health) : base(id)
         {
             HealthPoint = health;
         }
@@ -19,7 +19,7 @@ namespace BlackSmith.Domain.Character.Player.Event
     {
         // 現在、死亡イベント独自の変数は無いのでコンストラクタの引数もない
 
-        internal PlayerOnDeadEvent(PlayerID id) : base(id)
+        internal PlayerOnDeadEvent(CharacterID id) : base(id)
         {
 
         }

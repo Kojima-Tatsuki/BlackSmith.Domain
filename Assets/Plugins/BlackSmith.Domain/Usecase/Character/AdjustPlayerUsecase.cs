@@ -1,6 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using BlackSmith.Usecase.Interface;
 using BlackSmith.Domain.Character.Player;
+using BlackSmith.Domain.Character;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -38,7 +39,7 @@ namespace BlackSmith.Usecase.Character
         /// プレイヤーデータの削除を行う
         /// </summary>
         /// <param name="id">削除するプレイヤーのID</param>
-        public void DeletePlayer(PlayerID id)
+        public void DeletePlayer(CharacterID id)
         {
             repository.Delete(id);
         }

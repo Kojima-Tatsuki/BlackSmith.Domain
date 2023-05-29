@@ -29,7 +29,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <returns>作成したエンティティ</returns>
         public static PlayerEntity Create(PlayerName name)
         {
-            var id = new PlayerID(Guid.NewGuid());
+            var id = new CharacterID(Guid.NewGuid());
             var levelParams = new LevelDependentParameters();
             var health = new HealthPoint(levelParams.Level);
 
@@ -46,7 +46,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>プレイヤーの再構築を行う際に引数に指定して使う</summary>
     public record PlayerCreateCommand
     {
-        internal PlayerID id { get; }
+        internal CharacterID id { get; }
         internal PlayerName name { get; }
         internal HealthPoint health { get; }
         internal LevelDependentParameters levelParams { get; }
@@ -68,7 +68,7 @@ namespace BlackSmith.Domain.Character.Player
             int exp, int str, int agi
             )
         {
-            this.id = new PlayerID(new Guid(id));
+            this.id = new CharacterID(new Guid(id));
             this.name = new PlayerName(name);
 
             health = new HealthPoint(
@@ -82,7 +82,7 @@ namespace BlackSmith.Domain.Character.Player
         }
 
         internal PlayerCreateCommand(
-            PlayerID id,
+            CharacterID id,
             PlayerName name,
             HealthPoint health,
             LevelDependentParameters levelParams)

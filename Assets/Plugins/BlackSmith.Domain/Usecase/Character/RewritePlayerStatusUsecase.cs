@@ -1,4 +1,5 @@
-﻿using BlackSmith.Domain.Character.Interface;
+﻿using BlackSmith.Domain.Character;
+using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
 
@@ -23,7 +24,7 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="id">書き換えるプレイヤーのID</param>
         /// <param name="newName">書き換え先の名前</param>
-        public void RenamePlayer(PlayerID id, string newName)
+        public void RenamePlayer(CharacterID id, string newName)
         {
             var name = new PlayerName(newName);
 
