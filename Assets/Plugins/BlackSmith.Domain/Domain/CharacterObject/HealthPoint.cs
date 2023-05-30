@@ -191,7 +191,7 @@ namespace BlackSmith.Domain.CharacterObject
         /// </summary>
         /// <param name="level"></param>
         /// <returns></returns>
-        internal static MaxHealthPointValue GetMaxHealthFromPlayerLevel(ICharacterLevel level)
+        internal static MaxHealthPointValue GetMaxHealthFromPlayerLevel(CharacterLevel level)
         {
             var value = level.Value * 3 * 20;
 
