@@ -12,6 +12,7 @@ namespace BlackSmith.Domain.Character.Battle
 
         internal BlattleStatusEffectModule(IReadOnlyDictionary<EffectID, BattleStatusEffect>? statusEffects = null)
         {
+            statusEffects ??= new Dictionary<EffectID, BattleStatusEffect>();
             StatusEffectDictionary = new Dictionary<EffectID, BattleStatusEffect>(statusEffects);
         }
 
