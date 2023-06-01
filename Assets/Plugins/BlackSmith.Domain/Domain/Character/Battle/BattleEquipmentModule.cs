@@ -11,8 +11,8 @@ namespace BlackSmith.Domain.Character.Battle
 
         public BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
         {
-            Weapon = weapon?.EquipType == EquipmentType.Weapon ? weapon : throw new ArgumentException(nameof(weapon));
-            Armor = armor?.EquipType == EquipmentType.Armor ? armor : throw new ArgumentException(nameof(armor));
+            Weapon = weapon is null || weapon.EquipType == EquipmentType.Weapon ? weapon : throw new ArgumentException(nameof(weapon));
+            Armor = armor is null || armor.EquipType == EquipmentType.Armor ? armor : throw new ArgumentException(nameof(armor));
         }
 
         public BattleEquipmentModule ChangeEquipment(EquippableItem item)

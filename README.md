@@ -5,3 +5,6 @@ Aincrad
 An Incarnating Radius  
 具現化する世界
 -->
+
+# UPM Package
+`https://github.com/Kojima-Tatsuki/BlackSmith.Domain.git?path=Assets/Plugins/BlackSmith.Domain`
