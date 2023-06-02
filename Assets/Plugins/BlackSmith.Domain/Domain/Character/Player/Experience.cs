@@ -14,7 +14,7 @@ namespace BlackSmith.Domain.Character.Player
         private static readonly int InitExpRequirement = 100;
 
         // 1レベル上の敵を倒した時に貰える経験値の倍率
-        private static readonly float LevelDifferenceMultiplier = 1.2f;
+        private static readonly float LevelDifferenceMultiplier = 1.25f;
 
         public int Value { get; }
 
@@ -38,7 +38,7 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <param name="level">現在のレベル</param>
         /// <returns></returns>
-        internal Experience NeedToNextLevel(int level)
+        internal static Experience NeedToNextLevel(int level)
         {
             return new Experience((int)(InitExpRequirement * Math.Pow(LevelDifferenceMultiplier, level - 1)));
         }
@@ -50,7 +50,8 @@ namespace BlackSmith.Domain.Character.Player
         /// <returns>取得経験値量</returns>
         internal static Experience ReceveExp(int level)
         {
-            return new Experience((int)Math.Round(InitExpRequirement / InitKillRequirement * Math.Pow(LevelDifferenceMultiplier, level - 1)));
+            // 次のレベルまでに必要な経験値量 / 倒す必要のある敵数
+            return new Experience((int)Math.Round((InitExpRequirement * Math.Pow(LevelDifferenceMultiplier, level - 1)) / InitKillRequirement));
         }
 
         /// <summary>
@@ -61,7 +62,10 @@ namespace BlackSmith.Domain.Character.Player
         /// <returns></returns>
         internal static Experience RequiredCumulativeExp(int level)
         {
-            return new Experience((int)(InitExpRequirement * (1 - Math.Pow(LevelDifferenceMultiplier, level - 1)) / 1 - LevelDifferenceMultiplier));
+            // I : InitExpRequirement
+            // A : LevelDifferenceMultiplier
+            // I * (1 - a^(level - 1)) / (1 - a)
+            return new Experience((int)(InitExpRequirement * (1 - Math.Pow(LevelDifferenceMultiplier, level - 1)) / (1 - LevelDifferenceMultiplier)));
         }
 
         /// <summary>
@@ -73,13 +77,19 @@ namespace BlackSmith.Domain.Character.Player
         {
             // I : InitExpRequirement
             // A : LevelDifferenceMultiplier
-            // log_A ((1 / exp) * (1 - A) / I)
-            return (int)Math.Log(1 - cumExp.Value / InitExpRequirement * (1 - LevelDifferenceMultiplier), LevelDifferenceMultiplier) + 1;
+            // log_A ((1 - exp / I * (1 - A)) + 1
+
+            // 丸め誤差の関係で正確な値が出ない
+            var result = (int)Math.Log(1 - (cumExp.Value * (1 - (double)LevelDifferenceMultiplier) / InitExpRequirement), LevelDifferenceMultiplier) + 1;
+
+            if (RequiredCumulativeExp(result).Value < cumExp.Value && RequiredCumulativeExp(result + 1).Value <= cumExp.Value)
+                return ++result;
+            return result;
         }
 
-        internal static Experience FromLevel(int level)
+        internal static double Cld(Experience cumExp)
         {
-            return new Experience((int)-((LevelDifferenceMultiplier - 1) * Math.Pow(LevelDifferenceMultiplier, 1 - level)) / InitExpRequirement);
+            return Math.Log(1 - (cumExp.Value * (1 - (double)LevelDifferenceMultiplier) / InitExpRequirement), LevelDifferenceMultiplier) + 1;
         }
     }
 }

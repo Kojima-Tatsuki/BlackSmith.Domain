@@ -43,6 +43,8 @@ namespace BlackSmith.Domain.Character.Player
         internal LevelDependentParameters(PlayerLevel level, Strength str, Agility agi)
         {
             Level = level;
+            if (GetLevelDependParamPoint(level) < str.Value + agi.Value)
+                throw new ArgumentException($"指定したSTR, AGIは割当可能量を超過しています STR: {str.Value}, AGI: {agi.Value}");
             STR = str;
             AGI = agi;
         }
@@ -53,7 +55,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <returns></returns>
         internal int GetRemainingParamPoint()
         {
-            return Level.Value - (STR.Value + AGI.Value) * ReceivedPointsPerLevelIncrease;
+            return Level.Value * ReceivedPointsPerLevelIncrease - (STR.Value + AGI.Value);
         }
 
         /// <summary>
@@ -86,7 +88,7 @@ namespace BlackSmith.Domain.Character.Player
             if (level is null)
                 throw new ArgumentNullException(nameof(level));
 
-            return (level.Value - 1) * ReceivedPointsPerLevelIncrease;
+            return level.Value * ReceivedPointsPerLevelIncrease;
         }
     }
 
