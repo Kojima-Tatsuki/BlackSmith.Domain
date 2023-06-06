@@ -20,9 +20,9 @@ namespace BlackSmith.Domain.CharacterObject
         internal DefenseValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule, BlattleStatusEffectModule statusEffectModule)
         {
             FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2);
-            WeaponAttack = CheckVaild(equipmentModule.Weapon?.Defense?.Value ?? 0);
-            ArmorAttack = CheckVaild(equipmentModule.Armor?.Defense?.Value ?? 0);
-            StatusEffect = CheckVaild(statusEffectModule.StatusEffects.Sum(effect => effect.StatusModel.Defense));
+            WeaponAttack = equipmentModule.Weapon?.Defense?.Value ?? 0;
+            ArmorAttack = equipmentModule.Armor?.Defense?.Value ?? 0;
+            StatusEffect = statusEffectModule.StatusEffects.Sum(effect => effect.StatusModel.Defense);
 
             Value = CheckVaild(FromLevelAttack + WeaponAttack + ArmorAttack + StatusEffect);
         }
