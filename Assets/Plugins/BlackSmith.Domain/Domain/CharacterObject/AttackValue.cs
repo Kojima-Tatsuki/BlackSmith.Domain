@@ -19,10 +19,10 @@ namespace BlackSmith.Domain.CharacterObject
 
         internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule, BlattleStatusEffectModule statusEffectModule)
         {
-            FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2);
-            WeaponAttack = CheckVaild(equipmentModule.Weapon?.Attack.Value ?? 0);
-            ArmorAttack = CheckVaild(equipmentModule.Armor?.Attack?.Value ?? 0);
-            StatusEffect = CheckVaild(statusEffectModule.StatusEffects.Sum(effect => effect.StatusModel.Attack));
+            FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2); // ここは必ず1以上の値
+            WeaponAttack = equipmentModule.Weapon?.Attack.Value ?? 0;
+            ArmorAttack = equipmentModule.Armor?.Attack?.Value ?? 0;
+            StatusEffect = statusEffectModule.StatusEffects.Sum(effect => effect.StatusModel.Attack);
 
             Value = CheckVaild(FromLevelAttack + WeaponAttack + ArmorAttack + StatusEffect);
         }
