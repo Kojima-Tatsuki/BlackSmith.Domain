@@ -11,15 +11,11 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class PlayerEntityDataProvidUsecase
     {
-        private readonly PlayerRepositoryInstructor instructor;
-
         private readonly IPlayerRepository repository;
 
         public PlayerEntityDataProvidUsecase(IPlayerRepository playerRepository)
         {
             repository = playerRepository;
-
-            instructor = new PlayerRepositoryInstructor(repository);
         }
 
         /// <summary>
@@ -28,7 +24,7 @@ namespace BlackSmith.Usecase.Character
         /// <returns>すべてのプレイヤーのデータ</returns>
         public IReadOnlyCollection<PlayerEntityData> GetAllPlayerDatas()
         {
-            var entities = instructor.GetAllPlayerEntities();
+            var entities = repository.GetAllPlayers();
 
             var result = new List<PlayerEntityData>(entities.Count);
 
@@ -40,12 +36,12 @@ namespace BlackSmith.Usecase.Character
             return result;
         }
 
-        public PlayerEntityData? GetPlayerData(CharacterID id)
+        public PlayerEntityData GetPlayerData(CharacterID id)
         {
             if (!repository.IsExist(id))
-                throw new Exception("存在しないIDがゲーム中のIDとして設定されています");
+                throw new Exception($"指定したidのキャラクターは存在しません {id}");
 
-            var entity = instructor.GetPlayerEntity(id);
+            var entity = repository.FindByID(id) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
 
             return new PlayerEntityData(entity);
         }

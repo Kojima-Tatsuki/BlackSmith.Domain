@@ -11,13 +11,11 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class RewritePlayerStatusUsecase
     {
-        private readonly PlayerRepositoryInstructor instructor;
+        private readonly IPlayerRepository repository;
 
         public RewritePlayerStatusUsecase(IPlayerRepository playerRepository)
         {
-            var repository = playerRepository;
-
-            instructor = new PlayerRepositoryInstructor(repository);
+            repository = playerRepository;
         }
 
         /// <summary>
@@ -29,11 +27,11 @@ namespace BlackSmith.Usecase.Character
         {
             var name = new PlayerName(newName);
 
-            var entity = instructor.GetPlayerEntity(id) as ICharacterEntity;
+            var entity = repository.FindByID(id) as ICharacterEntity ?? throw new ArgumentException($"指定したidのキャラクターは存在しません, {id}");
 
             entity.ChangeName(name);
 
-            instructor.UpdatePlayerEntity((entity as PlayerEntity) ?? throw new InvalidOperationException(nameof(entity)));
+            repository.UpdateCharacter((entity as PlayerEntity) ?? throw new InvalidOperationException(nameof(entity)));
         }
 
         public static bool IsValidPlayerName(string name)
