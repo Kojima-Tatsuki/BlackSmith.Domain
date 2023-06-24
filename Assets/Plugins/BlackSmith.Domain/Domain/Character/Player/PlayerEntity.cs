@@ -26,12 +26,12 @@ namespace BlackSmith.Domain.Character.Player
         /// <param name="id"></param>
         internal PlayerEntity(PlayerCreateCommand command)
         {
-            ID = command.id;
-            Name = command.name;
-            Level = new PlayerLevel(new Experience(command.Exp));
+            ID = command.Id;
+            Name = command.Name;
+            Level = command.LevelParams.Level;
             BattleModule = new CharacterBattleModule(
-                new HealthPoint(new(command.Health.current), new(command.Health.max)), 
-                command.levelParams, 
+                command.Health, 
+                command.LevelParams, 
                 new BattleEquipmentModule(null, null), 
                 new BlattleStatusEffectModule());
         }
@@ -94,7 +94,7 @@ namespace BlackSmith.Domain.Character.Player
         }
         #endregion
 
-        public PlayerCreateCommand GetPlayerCreateCommand()
+        internal PlayerCreateCommand GetPlayerCreateCommand()
         {
             return new PlayerCreateCommand(ID, Name, BattleModule.HealthPoint, BattleModule.LevelDependentParameters);
         }
