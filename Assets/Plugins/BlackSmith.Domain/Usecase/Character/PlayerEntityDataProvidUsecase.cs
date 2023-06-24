@@ -56,28 +56,33 @@ namespace BlackSmith.Usecase.Character
 
         public string Name { get; }
         public int Level { get; }
+        public int Exp { get; }
         public int CurrentHealth { get; }
         public int MaxHealth { get; }
+        
+        public int Strength { get; }
+        public int Agility { get; }
+
         public int Attack { get; }
         public int Defence { get; }
 
         public (int current, int max) Health => (CurrentHealth, MaxHealth);
 
         internal PlayerEntityData(
-            CharacterID id,
-            string name,
-            int level,
+            CharacterID id, string name,
+            int? level, int exp,
             int currentHealth, int maxHealth,
-            int attack,
-            int defence)
+            int strength, int agility,
+            int attack, int defence)
         {
             ID = id;
             Name = name;
-            Level = level;
+            Level = level ?? Experience.CurrentLevel(new Experience(exp));
+            Exp = exp;
             CurrentHealth = currentHealth;
             MaxHealth = maxHealth;
-            Attack = attack;
-            Defence = defence;
+            Strength = strength; Agility = agility;
+            Attack = attack; Defence = defence;
         }
 
         internal PlayerEntityData(PlayerEntity entity)
@@ -85,9 +90,12 @@ namespace BlackSmith.Usecase.Character
             ID = entity.ID;
             Name = entity.Name.Value;
             Level = entity.Level.Value;
+            Exp = entity.Level.CumulativeExp.Value;
             var health = entity.HealthPoint.GetValues();
             CurrentHealth = health.current;
             MaxHealth = health.max;
+            Strength = entity.BattleModule.LevelDependentParameters.STR.Value;
+            Agility = entity.BattleModule.LevelDependentParameters.AGI.Value;
             Attack = entity.Attack.Value;
             Defence = entity.Defense.Value;
         }

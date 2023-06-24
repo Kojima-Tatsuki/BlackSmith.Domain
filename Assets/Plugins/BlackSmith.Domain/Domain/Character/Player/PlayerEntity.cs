@@ -44,7 +44,7 @@ namespace BlackSmith.Domain.Character.Player
         }
 
         #region BattleModule
-        private CharacterBattleModule BattleModule { get; set; }
+        internal CharacterBattleModule BattleModule { get; set; }
 
         public HealthPoint HealthPoint => BattleModule.HealthPoint;
         public AttackValue Attack => BattleModule.Attack;

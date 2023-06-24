@@ -2,6 +2,7 @@
 using BlackSmith.Usecase.Interface;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Character;
+using BlackSmith.Domain.CharacterObject;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -10,15 +11,11 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class AdjustPlayerUsecase
     {
-        private readonly PlayerFactoryInstructor playerFactory;
-
         private readonly IPlayerRepository repository;
 
         public AdjustPlayerUsecase(IPlayerRepository playerRepository)
         {
             repository = playerRepository;
-
-            playerFactory = new PlayerFactoryInstructor(repository);
         }
 
         /// <summary>
@@ -26,13 +23,27 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="name">作成するプレイヤーの名前</param>
         /// <returns>作成したプレイヤーエンティティのデータ</returns>
-        public PlayerEntityData CreatePlayerAccount(string playerName)
+        public PlayerEntityData CreateCharacter(string playerName)
         {
             var name = new PlayerName(playerName);
 
-            var entity = playerFactory.CreatePlayerEntity(name);
+            var entity = PlayerFactory.Create(name);
+
+            repository.Register(entity);
 
             return new PlayerEntityData(entity);
+        }
+
+        public void ReconstrunctPlayer(PlayerEntityData data)
+        {
+            var command = new PlayerCreateCommand(
+                data.ID, new PlayerName(data.Name),
+                new HealthPoint(new(data.CurrentHealth), new(data.MaxHealth)),
+                new LevelDependentParameters(new PlayerLevel(new(data.Exp)), new(data.Strength), new(data.Agility)));
+
+            var entity = PlayerFactory.Create(command);
+
+            repository.Register(entity);
         }
 
         /// <summary>
