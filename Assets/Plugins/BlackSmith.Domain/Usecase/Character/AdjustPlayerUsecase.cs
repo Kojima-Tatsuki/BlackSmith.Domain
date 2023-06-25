@@ -1,9 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
-using BlackSmith.Usecase.Interface;
+﻿using BlackSmith.Usecase.Interface;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Character;
 using BlackSmith.Domain.CharacterObject;
-using log4net.Core;
 
 namespace BlackSmith.Usecase.Character
 {
