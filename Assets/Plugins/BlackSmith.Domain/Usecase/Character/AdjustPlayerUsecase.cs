@@ -3,6 +3,7 @@ using BlackSmith.Usecase.Interface;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Character;
 using BlackSmith.Domain.CharacterObject;
+using log4net.Core;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -44,6 +45,14 @@ namespace BlackSmith.Usecase.Character
             var entity = PlayerFactory.Create(command);
 
             repository.Register(entity);
+        }
+
+        public void ReconstrunctPlayer(
+                string id, string name, int? level, int exp, int currentHealth, int maxHealth,
+                int strength, int agility, int attack, int defence)
+        {
+            var data = new PlayerEntityData(id, name, level, exp, currentHealth, maxHealth, strength, agility, attack, defence);
+            ReconstrunctPlayer(data);
         }
 
         /// <summary>
