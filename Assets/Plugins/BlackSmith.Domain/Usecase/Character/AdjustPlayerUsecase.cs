@@ -46,11 +46,14 @@ namespace BlackSmith.Usecase.Character
         }
 
         public void ReconstrunctPlayer(
-                string id, string name, int? level, int exp, int currentHealth, int maxHealth,
-                int strength, int agility, int attack, int defence)
+                string id, string name, int exp, int currentHealth, int maxHealth,
+                int strength, int agility)
         {
-            var data = new PlayerEntityData(id, name, level, exp, currentHealth, maxHealth, strength, agility, attack, defence);
-            ReconstrunctPlayer(data);
+            var command = new PlayerCreateCommand(id, name, exp, currentHealth, maxHealth, strength, agility);
+
+            var entity = PlayerFactory.Create(command);
+
+            repository.Register(entity);
         }
 
         /// <summary>
