@@ -49,7 +49,7 @@ namespace BlackSmith.Usecase.Character
                 string id, string name, int exp, int currentHealth, int maxHealth,
                 int strength, int agility)
         {
-            var command = new PlayerCreateCommand(id, name, exp, currentHealth, maxHealth, strength, agility);
+            var command = PlayerCreateCommand.BuildWithPrimitive(id, name, exp, currentHealth, maxHealth, strength, agility);
 
             var entity = PlayerFactory.Create(command);
 
