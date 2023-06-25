@@ -71,15 +71,14 @@ namespace BlackSmith.Usecase.Character
         // AdjustPlayerUsecaseから呼ぶ再構築用のコンストラクタ
         // DomainObjectからではなく、Usecaseから再構築する事を強制する役割
         internal PlayerEntityData(
-            string id, string name,
-            int? level, int exp,
+            string id, string name, int exp,
             int currentHealth, int maxHealth,
             int strength, int agility,
             int attack, int defence)
         {
             ID = new CharacterID(Guid.Parse(id));
             Name = name;
-            Level = level ?? Experience.CurrentLevel(new Experience(exp));
+            Level = Experience.CurrentLevel(new Experience(exp));
             Exp = exp;
             CurrentHealth = currentHealth;
             MaxHealth = maxHealth;
