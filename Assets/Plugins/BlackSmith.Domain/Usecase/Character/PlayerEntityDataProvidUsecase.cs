@@ -1,8 +1,8 @@
+using BlackSmith.Domain.Character;
+using BlackSmith.Domain.Character.Player;
+using BlackSmith.Usecase.Interface;
 using System;
 using System.Collections.Generic;
-using BlackSmith.Usecase.Interface;
-using BlackSmith.Domain.Character.Player;
-using BlackSmith.Domain.Character;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -59,7 +59,7 @@ namespace BlackSmith.Usecase.Character
         public int Exp { get; }
         public int CurrentHealth { get; }
         public int MaxHealth { get; }
-        
+
         public int Strength { get; }
         public int Agility { get; }
 

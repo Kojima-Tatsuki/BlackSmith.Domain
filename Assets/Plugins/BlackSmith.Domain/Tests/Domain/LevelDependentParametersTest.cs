@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using BlackSmith.Domain.Character.Player;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
+using System;
 
 internal class LevelDependentParametersTest
 {
@@ -23,10 +19,10 @@ internal class LevelDependentParametersTest
     [Test(Description = "ステータス上昇ポイントの残り数テスト")]
     [TestCase(1, 1, 1, ExpectedResult = 1, Category = "正常系")]
     [TestCase(5, 10, 5, ExpectedResult = 0, Category = "正常系")]
-    
+
     public int GetRemainingParamPointPasses(int level, int str, int agi)
     {
-        return new LevelDependentParameters(new (Experience.RequiredCumulativeExp(level)), new (str), new (agi))
+        return new LevelDependentParameters(new(Experience.RequiredCumulativeExp(level)), new(str), new(agi))
             .GetRemainingParamPoint();
     }
 

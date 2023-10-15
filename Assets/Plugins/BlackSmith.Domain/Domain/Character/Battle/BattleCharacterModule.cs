@@ -49,7 +49,7 @@ namespace BlackSmith.Domain.Character.Battle
         {
             var currentModule = item is null ? EquipmentModule.RemoveEquipment(changeType) : EquipmentModule.ChangeEquipment(item);
 
-            var removed = (item?.EquipType ?? changeType)  switch
+            var removed = (item?.EquipType ?? changeType) switch
             {
                 EquipmentType.Weapon => EquipmentModule.Weapon,
                 EquipmentType.Armor => EquipmentModule.Armor,

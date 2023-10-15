@@ -1,5 +1,5 @@
-using System;
 using BlackSmith.Domain.CharacterObject;
+using System;
 
 namespace BlackSmith.Domain.Character
 {

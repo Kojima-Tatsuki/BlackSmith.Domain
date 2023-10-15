@@ -5,7 +5,6 @@ using System;
 
 namespace BlackSmith.Domain.Inventory
 {
-    using Item;
     using T = IItem;
 
     // ItemSlot は ValueObject
@@ -41,7 +40,7 @@ namespace BlackSmith.Domain.Inventory
         {
             count ??= new ItemCountNumber(1);
 
-            if (item is null) 
+            if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
             if (!IsContaining(item))

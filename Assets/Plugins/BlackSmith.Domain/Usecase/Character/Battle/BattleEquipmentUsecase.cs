@@ -35,7 +35,7 @@ namespace BlackSmith.Usecase.Character.Battle
                 if (!inventory.IsAddable(equipment))
                     throw new InvalidOperationException($"Failed to attach the item. item: {equipment}. (VooMSeL5)");
             }
-            
+
             var added = inventory.AddItem(equipment);
             var changeResult = player.ChangeBattleEquipment(equipment);
 

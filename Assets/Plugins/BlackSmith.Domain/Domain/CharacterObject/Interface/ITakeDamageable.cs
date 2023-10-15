@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BlackSmith.Domain.CharacterObject;
-
-namespace BlackSmith.Domain.CharacterObject.Interface
+﻿namespace BlackSmith.Domain.CharacterObject.Interface
 {
     internal interface ITakeDamageable
     {

@@ -1,11 +1,10 @@
-using BlackSmith.Domain.Character.Player.Event;
+using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.CharacterObject;
-using System;
-using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.CharacterObject.Interface;
 using BlackSmith.Domain.Item;
 using BlackSmith.Domain.Item.Equipment;
+using System;
 
 namespace BlackSmith.Domain.Character.Player
 {
@@ -30,9 +29,9 @@ namespace BlackSmith.Domain.Character.Player
             Name = command.Name;
             Level = command.LevelParams.Level;
             BattleModule = new CharacterBattleModule(
-                command.Health, 
-                command.LevelParams, 
-                new BattleEquipmentModule(null, null), 
+                command.Health,
+                command.LevelParams,
+                new BattleEquipmentModule(null, null),
                 new BlattleStatusEffectModule());
         }
 
@@ -73,7 +72,7 @@ namespace BlackSmith.Domain.Character.Player
                 EquipmentType.Armor => BattleModule.EquipmentModule.Armor,
                 _ => throw new ArgumentException($"Unexpected type of equipment. {item.EquipType} (SaIz8NCE)")
             };
-            
+
             BattleModule = BattleModule.ChangeBattleEquipment(item, item.EquipType).Modeule;
 
             return new ChangeBattleEquipmentResult(item, prev);

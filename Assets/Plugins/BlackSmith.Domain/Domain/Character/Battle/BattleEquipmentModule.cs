@@ -33,7 +33,8 @@ namespace BlackSmith.Domain.Character.Battle
             }
         }
 
-        public BattleEquipmentModule RemoveEquipment(EquipmentType type) {
+        public BattleEquipmentModule RemoveEquipment(EquipmentType type)
+        {
             switch (type)
             {
                 case EquipmentType.Weapon:

@@ -44,7 +44,7 @@ namespace BlackSmith.Domain.Currency
         /// <param name="money">変換するお金</param>
         /// <returns></returns>
         internal Currency Exchange(CurrencyType type)
-        { 
+        {
             var value = (int)Math.Floor((float)type / (float)Type * Value);
 
             return new(type, value);
@@ -137,7 +137,7 @@ namespace BlackSmith.Domain.Currency
     /// </summary>
     public enum CurrencyType
     {
-        Sakura  = 1, // 桜式通貨
-        Aren    = 2, // アレン式通貨
+        Sakura = 1, // 桜式通貨
+        Aren = 2, // アレン式通貨
     }
 }

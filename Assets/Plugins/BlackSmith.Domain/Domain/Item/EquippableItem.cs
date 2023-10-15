@@ -70,7 +70,7 @@ namespace BlackSmith.Domain.Item
         }
 
         internal record CreateCommand
-        { 
+        {
             public string Name { get; }
             public EquipmentType Type { get; }
             public EquipmentAttack Attack { get; }
