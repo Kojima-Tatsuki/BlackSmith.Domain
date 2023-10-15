@@ -53,7 +53,7 @@ namespace BlackSmith.Domain.Character.Battle
             {
                 EquipmentType.Weapon => EquipmentModule.Weapon,
                 EquipmentType.Armor => EquipmentModule.Armor,
-                _ => throw new ArgumentException(nameof(item)),
+                _ => throw new ArgumentException($"Unexpected type of equipment. {item?.EquipType ?? changeType}. (Hi6JnKRG)"),
             };
 
             return new ChangeEquipmentResult(new CharacterBattleModule(HealthPoint, LevelDependentParameters, currentModule, StatusEffectModule), removed);

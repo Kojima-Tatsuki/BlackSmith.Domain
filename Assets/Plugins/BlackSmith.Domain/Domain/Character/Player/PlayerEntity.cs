@@ -40,7 +40,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <param name="name">変更する名前</param>
         void ICharacterEntity.ChangeName(PlayerName name)
         {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Name = name ?? throw new ArgumentNullException("Not found PlayerName. (O94YoFRG)");
         }
 
         #region BattleModule
@@ -71,7 +71,7 @@ namespace BlackSmith.Domain.Character.Player
             {
                 EquipmentType.Weapon => BattleModule.EquipmentModule.Weapon,
                 EquipmentType.Armor => BattleModule.EquipmentModule.Armor,
-                _ => throw new ArgumentException(nameof(item))
+                _ => throw new ArgumentException($"Unexpected type of equipment. {item.EquipType} (SaIz8NCE)")
             };
             
             BattleModule = BattleModule.ChangeBattleEquipment(item, item.EquipType).Modeule;
@@ -85,7 +85,7 @@ namespace BlackSmith.Domain.Character.Player
             {
                 EquipmentType.Weapon => BattleModule.EquipmentModule.Weapon,
                 EquipmentType.Armor => BattleModule.EquipmentModule.Armor,
-                _ => throw new ArgumentException(nameof(removeType))
+                _ => throw new ArgumentException($"Unexpected type of equipment. {removeType} (oOySNBXC2)")
             };
 
             BattleModule = BattleModule.ChangeBattleEquipment(null, removeType).Modeule;

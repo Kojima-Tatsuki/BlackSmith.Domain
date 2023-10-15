@@ -30,9 +30,9 @@ namespace BlackSmith.Usecase.Character.Battle
             var receiver = PlayerRepository.FindByID(receiverId) as IBattleCharacter;
 
             if (attacker is null)
-                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {attackerId}");
+                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {attackerId}. (bHB0WXxR)");
             if (receiver is null)
-                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {receiverId}");
+                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {receiverId}. (DxYWTkAg6)");
 
             var levelGap = new LevelGapOfAttackerAndReceiver(receiver.Level, attacker.Level);
 
@@ -40,7 +40,7 @@ namespace BlackSmith.Usecase.Character.Battle
 
             receiver.TakeDamage(damage);
 
-            PlayerRepository.UpdateCharacter((receiver as PlayerEntity) ?? throw new InvalidOperationException(nameof(receiver)));
+            PlayerRepository.UpdateCharacter((receiver as PlayerEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、PlayerEntityではありません. (jAv4M0Pb)"));
         }
     }
 }
