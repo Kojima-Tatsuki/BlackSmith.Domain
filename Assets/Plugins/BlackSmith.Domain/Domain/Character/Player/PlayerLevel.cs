@@ -1,6 +1,3 @@
-using System;
-using BlackSmith.Domain.Character.Interface;
-
 namespace BlackSmith.Domain.Character.Player
 {
     /// <summary>

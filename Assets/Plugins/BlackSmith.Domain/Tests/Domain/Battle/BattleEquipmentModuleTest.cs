@@ -27,7 +27,7 @@ public class BattleEquipmentModuleTest
             additional: new AdditionalParameter(),
             require: new RequireParameter()));
 
-        return new EquippableItem?[][] { 
+        return new EquippableItem?[][] {
             new EquippableItem?[] { null, null },
             new EquippableItem?[] { weapon, null },
             new EquippableItem?[] { null, armor },
@@ -76,7 +76,8 @@ public class BattleEquipmentModuleTest
     [TestCaseSource(nameof(CorrectMockData), Category = "ê≥èÌån")]
     public void ModuleInstancePasses(EquippableItem? weapon, EquippableItem? armor)
     {
-        try {
+        try
+        {
             var module = new BattleEquipmentModule(weapon, armor);
         }
         catch (Exception e)

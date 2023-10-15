@@ -1,5 +1,4 @@
-﻿using System;
-using UniRx;
+﻿using UniRx;
 
 namespace BlackSmith.Domain.Character.Player.Event
 {

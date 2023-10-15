@@ -1,5 +1,5 @@
-using System;
 using BlackSmith.Domain.CharacterObject;
+using System;
 
 namespace BlackSmith.Domain.Character.Player
 {
@@ -59,7 +59,7 @@ namespace BlackSmith.Domain.Character.Player
             LevelParams = levelParams;
         }
 
-        internal static PlayerCreateCommand BuildWithPrimitive (string id, string name,
+        internal static PlayerCreateCommand BuildWithPrimitive(string id, string name,
             int currentHealth, int maxHealth,
             int exp, int str, int agi
             )

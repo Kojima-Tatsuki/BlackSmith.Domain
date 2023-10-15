@@ -1,6 +1,5 @@
 ﻿using BlackSmith.Domain.Character;
 using Cysharp.Threading.Tasks;
-using UniRx;
 
 namespace BlackSmith.Domain.PassiveEffect
 {

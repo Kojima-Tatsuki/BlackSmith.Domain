@@ -1,12 +1,11 @@
-using BlackSmith.Domain.Item;
 using System.Collections.Generic;
 
 #nullable enable
 
 namespace BlackSmith.Domain.Inventory
 {
-    using Item;
     using Currency;
+    using Item;
 
     public interface IInventoryService : IInventoryService<IItem>, IInventoryStateViewable<IItem> { }
 
@@ -45,7 +44,7 @@ namespace BlackSmith.Domain.Inventory
     }
 
     /// <summary>1つずつしか操作が行えないインベントリ</summary>
-    public interface IOneByInventoryService<T>: IInventoryStateViewable<T> where T: IItem
+    public interface IOneByInventoryService<T> : IInventoryStateViewable<T> where T : IItem
     {
         /// <summary>
         /// アイテムを追加する

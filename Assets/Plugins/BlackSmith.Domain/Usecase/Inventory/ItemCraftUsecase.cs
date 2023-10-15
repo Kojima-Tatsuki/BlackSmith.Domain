@@ -1,8 +1,8 @@
-﻿using System;
+﻿using BlackSmith.Domain.Inventory;
+using BlackSmith.Domain.Item;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using BlackSmith.Domain.Item;
-using BlackSmith.Domain.Inventory;
 
 namespace BlackSmith.Usecase.Inventory
 {

@@ -33,12 +33,13 @@ namespace BlackSmith.Domain
         public override string ToString() => Value.ToString();
     }
 
-    public interface IDetailBaseValueObject<T> where T : notnull{
+    public interface IDetailBaseValueObject<T> where T : notnull
+    {
         T Value { get; }
     }
 
-    public class BaseValueObject<T> : 
-        IDetailBaseValueObject<T>, 
+    public class BaseValueObject<T> :
+        IDetailBaseValueObject<T>,
         IEquatable<BaseValueObject<T>> where T : notnull
     {
         T IDetailBaseValueObject<T>.Value => Value;

@@ -1,6 +1,5 @@
-using System;
-using System.Collections.Generic;
 using BlackSmith.Domain.Character.Player;
+using System;
 
 namespace BlackSmith.Domain.Skill
 {

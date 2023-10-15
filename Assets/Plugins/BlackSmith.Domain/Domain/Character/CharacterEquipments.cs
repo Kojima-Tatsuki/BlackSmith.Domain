@@ -1,5 +1,5 @@
-using System;
 using BlackSmith.Domain.CharacterObject;
+using System;
 
 namespace BlackSmith.Domain.Character
 {
@@ -15,9 +15,7 @@ namespace BlackSmith.Domain.Character
 
         internal CharacterEquipments(CharacterID id)
         {
-            if (id is null) throw new ArgumentNullException(nameof(id));
-
-            ID = id;
+            ID = id ?? throw new ArgumentNullException("Not found CharacterId. (GYKvim5T)");
 
             Head = null!;
             Chest = null!;
@@ -27,10 +25,10 @@ namespace BlackSmith.Domain.Character
 
         internal void Equip(Equipment equipment)
         {
-            if (equipment is null) throw new ArgumentNullException(nameof(equipment));
+            if (equipment is null) throw new ArgumentNullException("Not found equipment. (encRnZ4y)");
             var location = equipment.Location;
             if (!IsEmptyEquipment(location))
-                throw new ArgumentException("指定されたスロットには既にアイテムが含まれています");
+                throw new ArgumentException($"指定されたスロットには既にアイテムが含まれています. location: {location}. (CptqZbf1)");
 
             switch (location.Value)
             {
@@ -63,7 +61,7 @@ namespace BlackSmith.Domain.Character
 
         internal Equipment UnEquip(EquipmentLocation location)
         {
-            if (location is null) throw new ArgumentNullException(nameof(location));
+            if (location is null) throw new ArgumentNullException("Not found equipment location. (j2XLlWF2)");
 
             return new NullEquipment();
         }

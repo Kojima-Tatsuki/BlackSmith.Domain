@@ -1,8 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using BlackSmith.Domain.CharacterObject;
 using NUnit.Framework;
+using System;
 
 public class HealthPointTest
 {
@@ -25,7 +23,8 @@ public class HealthPointTest
     [Test(Description = "HealthPoint インスタンス時の異常系テスト"), TestCase(15, 10)]
     public void HealthPointInvalidPasses(int current, int max)
     {
-        Assert.Catch(typeof(ArgumentException), () => {
+        Assert.Catch(typeof(ArgumentException), () =>
+        {
             var currentHealth = new HealthPointValue(current);
             var maxHealth = new MaxHealthPointValue(max);
             var health = new HealthPoint(currentHealth, maxHealth);

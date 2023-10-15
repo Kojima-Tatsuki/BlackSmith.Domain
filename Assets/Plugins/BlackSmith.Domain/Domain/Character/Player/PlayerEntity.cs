@@ -1,11 +1,10 @@
-using BlackSmith.Domain.Character.Player.Event;
+using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.CharacterObject;
-using System;
-using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.CharacterObject.Interface;
 using BlackSmith.Domain.Item;
 using BlackSmith.Domain.Item.Equipment;
+using System;
 
 namespace BlackSmith.Domain.Character.Player
 {
@@ -30,9 +29,9 @@ namespace BlackSmith.Domain.Character.Player
             Name = command.Name;
             Level = command.LevelParams.Level;
             BattleModule = new CharacterBattleModule(
-                command.Health, 
-                command.LevelParams, 
-                new BattleEquipmentModule(null, null), 
+                command.Health,
+                command.LevelParams,
+                new BattleEquipmentModule(null, null),
                 new BlattleStatusEffectModule());
         }
 
@@ -40,7 +39,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <param name="name">変更する名前</param>
         void ICharacterEntity.ChangeName(PlayerName name)
         {
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Name = name ?? throw new ArgumentNullException("Not found PlayerName. (O94YoFRG)");
         }
 
         #region BattleModule
@@ -71,9 +70,9 @@ namespace BlackSmith.Domain.Character.Player
             {
                 EquipmentType.Weapon => BattleModule.EquipmentModule.Weapon,
                 EquipmentType.Armor => BattleModule.EquipmentModule.Armor,
-                _ => throw new ArgumentException(nameof(item))
+                _ => throw new ArgumentException($"Unexpected type of equipment. {item.EquipType} (SaIz8NCE)")
             };
-            
+
             BattleModule = BattleModule.ChangeBattleEquipment(item, item.EquipType).Modeule;
 
             return new ChangeBattleEquipmentResult(item, prev);
@@ -85,7 +84,7 @@ namespace BlackSmith.Domain.Character.Player
             {
                 EquipmentType.Weapon => BattleModule.EquipmentModule.Weapon,
                 EquipmentType.Armor => BattleModule.EquipmentModule.Armor,
-                _ => throw new ArgumentException(nameof(removeType))
+                _ => throw new ArgumentException($"Unexpected type of equipment. {removeType} (oOySNBXC2)")
             };
 
             BattleModule = BattleModule.ChangeBattleEquipment(null, removeType).Modeule;

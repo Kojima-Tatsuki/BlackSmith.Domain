@@ -1,5 +1,5 @@
-using System;
 using BlackSmith.Domain.Item;
+using System;
 
 namespace BlackSmith.Domain.Inventory
 {

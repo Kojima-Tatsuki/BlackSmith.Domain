@@ -1,5 +1,4 @@
 ﻿using System;
-using BlackSmith.Domain.Character.Interface;
 
 namespace BlackSmith.Domain.Character
 {
@@ -11,7 +10,7 @@ namespace BlackSmith.Domain.Character
         internal CharacterLevel(int level)
         {
             if (!IsVaild(level))
-                throw new ArgumentException($"0以下の値はレベルとして扱えません, value : {level}");
+                throw new ArgumentException($"0以下の値はレベルとして扱えません, value : {level}. (cz7lNbVb)");
 
             Value = level;
         }

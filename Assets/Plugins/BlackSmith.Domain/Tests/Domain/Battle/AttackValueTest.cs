@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
@@ -6,6 +5,7 @@ using BlackSmith.Domain.Item;
 using BlackSmith.Domain.Item.Equipment;
 using BlackSmith.Domain.PassiveEffect;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 internal class AttackValueTest
 {

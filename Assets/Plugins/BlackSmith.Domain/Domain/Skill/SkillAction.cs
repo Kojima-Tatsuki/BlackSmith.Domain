@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlackSmith.Domain.Skill
 {
@@ -30,6 +26,6 @@ namespace BlackSmith.Domain.Skill
 
     public class ActionID : BasicID
     {
-        internal ActionID(Guid id): base(id) { }
+        internal ActionID(Guid id) : base(id) { }
     }
 }

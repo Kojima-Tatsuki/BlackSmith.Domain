@@ -11,8 +11,13 @@ namespace BlackSmith.Domain.Character.Battle
 
         public BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
         {
-            Weapon = weapon is null || weapon.EquipType == EquipmentType.Weapon ? weapon : throw new ArgumentException(nameof(weapon));
-            Armor = armor is null || armor.EquipType == EquipmentType.Armor ? armor : throw new ArgumentException(nameof(armor));
+            if (weapon.EquipType != EquipmentType.Weapon)
+                throw new ArgumentException($"Unexpected type of equipment. {weapon.EquipType}. (lJTQ1VIJ)");
+            if (armor.EquipType != EquipmentType.Armor)
+                throw new ArgumentException($"Unexpected type of equipment. {armor.EquipType}. (aJL3gEST)");
+
+            Weapon = weapon;
+            Armor = armor;
         }
 
         public BattleEquipmentModule ChangeEquipment(EquippableItem item)
@@ -24,11 +29,12 @@ namespace BlackSmith.Domain.Character.Battle
                 case EquipmentType.Armor:
                     return new BattleEquipmentModule(Weapon, item);
                 default:
-                    throw new ArgumentException(nameof(item));
+                    throw new ArgumentException($"Unexpected type of equipment. {item.EquipType}. (MFXmEum9)");
             }
         }
 
-        public BattleEquipmentModule RemoveEquipment(EquipmentType type) {
+        public BattleEquipmentModule RemoveEquipment(EquipmentType type)
+        {
             switch (type)
             {
                 case EquipmentType.Weapon:
@@ -36,7 +42,7 @@ namespace BlackSmith.Domain.Character.Battle
                 case EquipmentType.Armor:
                     return new BattleEquipmentModule(Weapon, null);
                 default:
-                    throw new ArgumentException(nameof(type));
+                    throw new ArgumentException($"Unexpected type of equipment. {type}. (PfgrJ0iM)");
             }
         }
     }
