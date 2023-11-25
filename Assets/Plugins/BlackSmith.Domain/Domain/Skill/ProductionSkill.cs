@@ -13,6 +13,8 @@ namespace BlackSmith.Domain.Skill
 
         private Skill BaseSkill { get; }
 
+        // アクション自体の動作実装は、ここで行わない
+        // スキルは使用の際の証明書のようにふるまうと良さげ
         public CreateSkillAction CreateAction => throw new NotImplementedException();
 
         public RefineSkillAction RefineAction => throw new NotImplementedException();

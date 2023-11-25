@@ -1,5 +1,6 @@
 using BlackSmith.Domain.Character.Player;
 using System;
+using System.Collections.Generic;
 
 namespace BlackSmith.Domain.Skill
 {
@@ -87,12 +88,17 @@ namespace BlackSmith.Domain.Skill
         }
     }
 
+    /// <summary>スキルと熟練度の組み合わせ</summary>
+    /// <remarks>スキル習得条件の記述などで用いる</remarks>
+    public record SkillAndProficiency(Skill Skill, SkillProficiency Proficiency);
+
     /// <summary>スキルの取得条件</summary>
     public class SkillAcquisitionConditions
     {
         public PlayerLevel Level { get; }
         public Strength Strength { get; }
         public Agility Agility { get; }
+        public IReadOnlyCollection<SkillAndProficiency> RequiredSkills { get; }
 
         internal SkillAcquisitionConditions(PlayerLevel level, Strength strength, Agility agility)
         {
