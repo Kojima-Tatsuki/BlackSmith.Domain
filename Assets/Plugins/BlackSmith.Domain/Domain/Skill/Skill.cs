@@ -7,16 +7,17 @@ using System.Collections.Generic;
 namespace BlackSmith.Domain.Skill
 {
     /// <summary>スキル</summary>
-    public class Skill
+    public abstract class Skill : ISkill
     {
-        internal SkillID ID { get; }
+        public SkillID ID { get; }
 
-        internal SkillName SkillName { get; }
+        public SkillName SkillName { get; }
 
         /// <summary>スキル熟練度</summary>
-        internal SkillProficiency Proficiency { get; }
+        public SkillProficiency Proficiency { get; }
 
-        internal SkillAcquisitionConditions AcquisitionConditions { get; }
+        /// <summary>スキルの取得条件</summary>
+        public SkillAcquisitionConditions AcquisitionConditions { get; }
 
         internal Skill(SkillID id, SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions)
         {
