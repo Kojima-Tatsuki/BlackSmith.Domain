@@ -1,8 +1,7 @@
 ﻿using BlackSmith.Domain.Character.Player;
-using BlackSmith.Domain.Item.Equipment;
 using System;
 
-namespace BlackSmith.Domain.Item
+namespace BlackSmith.Domain.Item.Equipment
 {
     public interface IEquipableItem : IItem
     {
@@ -56,19 +55,6 @@ namespace BlackSmith.Domain.Item
             throw new NotImplementedException();
         }
 
-        /// <summary>強化時の成功確率</summary>
-        /// <returns>確率は 0.0 ~ 1.0 で返される</returns>
-        internal float GetSuccessProbabilityWhenEnhancement(DependentParametersForEnhancement parameters)
-        {
-            var baseLevel = Math.Max(RequireParameter.Level.Value - 5, 0);
-
-            var diff = Math.Min(parameters.PlayerLevel.Value - baseLevel, 5);
-
-            var result = MathF.Min(90 - 10 * EnhancementParameter.GetEnchancedCount + diff, 100) / 100;
-
-            return result;
-        }
-
         internal record CreateCommand
         {
             public string Name { get; }
@@ -98,10 +84,7 @@ namespace BlackSmith.Domain.Item
             }
         }
     }
-}
 
-namespace BlackSmith.Domain.Item.Equipment
-{
     /// <summary>装備種類</summary>
     public enum EquipmentType
     {
@@ -215,17 +198,6 @@ namespace BlackSmith.Domain.Item.Equipment
             Accuracy,
             Heaviness,
             Durability,
-        }
-    }
-
-    /// <summary>強化の際に依存するアイテム以外のパラメータ</summary>
-    public class DependentParametersForEnhancement
-    {
-        public PlayerLevel PlayerLevel { get; }
-
-        internal DependentParametersForEnhancement(PlayerLevel playerLevel)
-        {
-            PlayerLevel = playerLevel;
         }
     }
 
