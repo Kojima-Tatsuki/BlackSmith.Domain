@@ -217,5 +217,12 @@ namespace BlackSmith.Domain.Item.Equipment
 
         internal Strength Strength { get; }
         internal Agility Agility { get; }
+
+        internal RequireParameter(PlayerLevel level, Strength strength, Agility agility)
+        {
+            Level = level;
+            Strength = strength;
+            Agility = agility;
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using BlackSmith.Domain.Item;
+﻿using BlackSmith.Domain.Item.Equipment;
 
 namespace BlackSmith.Domain.Character.Battle
 {

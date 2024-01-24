@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Item;
+using BlackSmith.Domain.Item.Equipment;
 using System;
 
 namespace BlackSmith.Domain.Inventory
@@ -7,7 +7,7 @@ namespace BlackSmith.Domain.Inventory
     {
         public IInventoryService Create()
         {
-            InventoryID id = new InventoryID(Guid.NewGuid());
+            InventoryID id = new InventoryID();
 
             var inventory = new InfiniteSlotInventory(id);
             return inventory;
@@ -15,7 +15,7 @@ namespace BlackSmith.Domain.Inventory
 
         public IOneByInventoryService<EquippableItem> CreateEquipInventory()
         {
-            InventoryID id = new InventoryID(Guid.NewGuid());
+            InventoryID id = new InventoryID();
 
             var inventory = new EquipmentInventory(id);
             return inventory;
