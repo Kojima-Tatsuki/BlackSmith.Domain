@@ -1,6 +1,7 @@
-﻿using BlackSmith.Domain.Item;
-using BlackSmith.Domain.Item.Equipment;
+﻿using BlackSmith.Domain.Item.Equipment;
 using System;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Character.Battle
 {
@@ -11,10 +12,10 @@ namespace BlackSmith.Domain.Character.Battle
 
         public BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
         {
-            if (weapon.EquipType != EquipmentType.Weapon)
-                throw new ArgumentException($"Unexpected type of equipment. {weapon.EquipType}. (lJTQ1VIJ)");
-            if (armor.EquipType != EquipmentType.Armor)
-                throw new ArgumentException($"Unexpected type of equipment. {armor.EquipType}. (aJL3gEST)");
+            if (weapon?.EquipType != EquipmentType.Weapon)
+                throw new ArgumentException($"Unexpected type of equipment. {weapon?.EquipType}. (lJTQ1VIJ)");
+            if (armor?.EquipType != EquipmentType.Armor)
+                throw new ArgumentException($"Unexpected type of equipment. {armor?.EquipType}. (aJL3gEST)");
 
             Weapon = weapon;
             Armor = armor;

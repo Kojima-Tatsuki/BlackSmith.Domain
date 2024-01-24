@@ -2,6 +2,8 @@ using BlackSmith.Domain.Character.Player;
 using System;
 using System.Collections.Generic;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Skill
 {
     /// <summary>スキル</summary>
@@ -100,11 +102,12 @@ namespace BlackSmith.Domain.Skill
         public Agility Agility { get; }
         public IReadOnlyCollection<SkillAndProficiency> RequiredSkills { get; }
 
-        internal SkillAcquisitionConditions(PlayerLevel level, Strength strength, Agility agility)
+        internal SkillAcquisitionConditions(PlayerLevel level, Strength strength, Agility agility, IReadOnlyCollection<SkillAndProficiency>? requireSkills = null)
         {
             Level = level;
             Strength = strength;
             Agility = agility;
+            RequiredSkills = requireSkills ?? new List<SkillAndProficiency>();
         }
 
         internal static SkillAcquisitionConditions FromDependentParams(LevelDependentParameters parameters)
