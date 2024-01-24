@@ -21,9 +21,9 @@ namespace BlackSmith.Domain.Skill
 
         public RepairSkillAction RepairAction => throw new NotImplementedException();
 
-        internal ProductionSkill(SkillName name, SkillExperience exp, SkillAcquisitionConditions conditions)
+        internal ProductionSkill(SkillID id, SkillName name, SkillExperience exp, SkillAcquisitionConditions conditions)
         {
-            BaseSkill = new Skill(name, exp, conditions);
+            BaseSkill = new Skill(id, name, exp, conditions);
         }
     }
 }

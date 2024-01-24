@@ -47,9 +47,7 @@ namespace BlackSmith.Domain.Item
     /// <summary>アイテムを一意に定めることのできる識別子</summary>
     public class ItemID : BasicID
     {
-        internal ItemID(Guid id) : base(id)
-        {
-        }
+        protected override string Prefix => "Item-";
     }
 
     /// <summary>

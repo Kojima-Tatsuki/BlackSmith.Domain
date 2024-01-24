@@ -26,6 +26,6 @@ namespace BlackSmith.Domain.Skill
 
     public class ActionID : BasicID
     {
-        internal ActionID(Guid id) : base(id) { }
+        protected override string Prefix => "Action-";
     }
 }

@@ -9,6 +9,8 @@ namespace BlackSmith.Domain.Skill
     /// <summary>スキル</summary>
     public class Skill
     {
+        internal SkillID ID { get; }
+
         internal SkillName SkillName { get; }
 
         /// <summary>スキル熟練度</summary>
@@ -16,8 +18,9 @@ namespace BlackSmith.Domain.Skill
 
         internal SkillAcquisitionConditions AcquisitionConditions { get; }
 
-        internal Skill(SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions)
+        internal Skill(SkillID id, SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions)
         {
+            ID = id ?? throw new ArgumentNullException(nameof(id));
             SkillName = skillName ?? throw new ArgumentNullException(nameof(skillName));
             Proficiency = new SkillProficiency(exp) ?? throw new ArgumentNullException(nameof(exp));
             AcquisitionConditions = acquisitionConditions ?? throw new ArgumentNullException(nameof(acquisitionConditions));
@@ -25,6 +28,12 @@ namespace BlackSmith.Domain.Skill
 
         /// <summary>スキルが取得できるか</summary>
         internal bool CanSkillAcquisition(SkillAcquisitionConditions requireParaeters) => AcquisitionConditions.CanSkillAcquisition(requireParaeters);
+    }
+
+    /// <summary>スキルのID</summary>
+    public class SkillID : BasicID
+    {
+        protected override string Prefix => "Skill-";
     }
 
     /// <summary>スキル名</summary>
