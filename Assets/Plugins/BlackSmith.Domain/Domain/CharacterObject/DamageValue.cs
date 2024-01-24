@@ -1,6 +1,5 @@
-using System;
 using BlackSmith.Domain.Character;
-using BlackSmith.Domain.Character.Interface;
+using System;
 
 #nullable enable
 

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlackSmith.Domain.PassiveEffect
 {
@@ -37,7 +33,7 @@ namespace BlackSmith.Domain.PassiveEffect
         public int Defense { get; }
         public int MovementSpeed { get; }
 
-        internal BattleStatusEffectModel(int maxHealth,  int attack, int defense, int moveSpeed)
+        internal BattleStatusEffectModel(int maxHealth, int attack, int defense, int moveSpeed)
         {
             MaxHealth = maxHealth;
             Attack = attack;

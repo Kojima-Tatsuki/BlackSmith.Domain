@@ -1,7 +1,7 @@
-﻿using BlackSmith.Usecase.Interface;
+﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
-using BlackSmith.Domain.Character;
 using BlackSmith.Domain.CharacterObject;
+using BlackSmith.Usecase.Interface;
 
 namespace BlackSmith.Usecase.Character
 {

@@ -1,32 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Domain.Skill
 {
     // このスキル自体に意味はないスキル使用条件で用いられるのみ
-    internal class ProductionSkill : IProductionSkill
+    internal class ProductionSkill : Skill, IProductionSkill
     {
-        SkillName ISkill.Name => BaseSkill.SkillName;
-
-        SkillProficiency ISkill.Proficiency => BaseSkill.Proficiency;
-
-        SkillAcquisitionConditions ISkill.AcquisitionConditions => BaseSkill.AcquisitionConditions;
-
-        private Skill BaseSkill { get; }
-
+        // アクション自体の動作実装は、ここで行わない
+        // スキルは使用の際の証明書のようにふるまうと良さげ
         public CreateSkillAction CreateAction => throw new NotImplementedException();
 
         public RefineSkillAction RefineAction => throw new NotImplementedException();
 
         public RepairSkillAction RepairAction => throw new NotImplementedException();
 
-        internal ProductionSkill(SkillName name, SkillExperience exp, SkillAcquisitionConditions conditions)
+        public ProductionSkill(SkillID id, SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions) : base(id, skillName, exp, acquisitionConditions)
         {
-            BaseSkill = new Skill(name, exp, conditions);
+
         }
     }
 }

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlackSmith.Domain.Inventory
+﻿namespace BlackSmith.Domain.Inventory
 {
-    using Item;
     using Currency;
+    using Item;
 
     internal class TradeItem
     {

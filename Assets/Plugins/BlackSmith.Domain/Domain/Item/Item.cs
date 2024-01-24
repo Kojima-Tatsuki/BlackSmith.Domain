@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BlackSmith.Domain.Item
 {
-    public interface IItem: IEquatable<IItem>
+    public interface IItem : IEquatable<IItem>
     {
         string Name { get; }
     }
@@ -47,9 +47,7 @@ namespace BlackSmith.Domain.Item
     /// <summary>アイテムを一意に定めることのできる識別子</summary>
     public class ItemID : BasicID
     {
-        internal ItemID(Guid id) : base(id)
-        {
-        }
+        protected override string Prefix => "Item-";
     }
 
     /// <summary>
@@ -73,12 +71,12 @@ namespace BlackSmith.Domain.Item
         }
     }
 
-    internal enum ItemType 
+    internal enum ItemType
     {
-        None    = 0x0,  // なし
-        Weapon  = 0x1,  // 武器
-        Armor   = 0x2,  // 防具
-        Consum  = 0x4,  // 消費アイテム
+        None = 0x0,  // なし
+        Weapon = 0x1,  // 武器
+        Armor = 0x2,  // 防具
+        Consum = 0x4,  // 消費アイテム
     }
 
 

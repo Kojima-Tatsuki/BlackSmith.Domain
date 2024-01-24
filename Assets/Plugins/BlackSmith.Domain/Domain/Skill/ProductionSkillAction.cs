@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlackSmith.Domain.Skill
+﻿namespace BlackSmith.Domain.Skill
 {
     /// <summary>作成行動</summary>
     public class CreateSkillAction

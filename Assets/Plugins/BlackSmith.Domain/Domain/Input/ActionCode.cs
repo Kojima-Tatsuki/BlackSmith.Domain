@@ -10,9 +10,7 @@ namespace BlackSmith.Domain.Input
 
         internal ActionCode(ActionName name)
         {
-            if (name is null) throw new ArgumentNullException(nameof(name));
-
-            this.Name = name;
+            Name = name ?? throw new ArgumentNullException("Not found ActionName. (MN0FluVx)");
         }
     }
 
@@ -23,10 +21,8 @@ namespace BlackSmith.Domain.Input
 
         internal MoveActionCode(ActionName name, MoveDirection direction)
         {
-            if (name is null) throw new ArgumentNullException(nameof(name));
-
-            this.Name = name;
-            this.Direction = direction;
+            Name = name ?? throw new ArgumentNullException("Not found ActionName. (rzTfsDFD6)");
+            Direction = direction;
         }
     }
 
@@ -36,9 +32,9 @@ namespace BlackSmith.Domain.Input
 
         internal ActionName(string value)
         {
-            if (value is null) throw new ArgumentNullException(nameof(value));
+            if (value is null) throw new ArgumentNullException("Not found actionName value. (ASsKMc9g)");
             if (value.Length < 3)
-                throw new AggregateException("ActionNameは3文字以上です");
+                throw new AggregateException("ActionNameは3文字以上です. (TtoFW9gK)");
 
             Value = value;
         }
@@ -48,7 +44,7 @@ namespace BlackSmith.Domain.Input
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            return string.Equals(this.Value, other.Value);
+            return string.Equals(Value, other.Value);
         }
 
         public override bool Equals(object? obj)
@@ -56,7 +52,7 @@ namespace BlackSmith.Domain.Input
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return false;
 
-            if (this.GetType() != obj.GetType()) return false;
+            if (GetType() != obj.GetType()) return false;
             return Equals((ActionName)obj);
         }
 

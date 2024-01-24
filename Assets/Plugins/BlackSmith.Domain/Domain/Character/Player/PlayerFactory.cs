@@ -1,5 +1,5 @@
-using System;
 using BlackSmith.Domain.CharacterObject;
+using System;
 
 namespace BlackSmith.Domain.Character.Player
 {
@@ -29,7 +29,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <returns>作成したエンティティ</returns>
         internal static PlayerEntity Create(PlayerName name)
         {
-            var id = new CharacterID(Guid.NewGuid());
+            var id = new CharacterID();
             var levelParams = new LevelDependentParameters();
             var health = new HealthPoint(levelParams.Level);
 
@@ -59,13 +59,13 @@ namespace BlackSmith.Domain.Character.Player
             LevelParams = levelParams;
         }
 
-        internal static PlayerCreateCommand BuildWithPrimitive (string id, string name,
+        internal static PlayerCreateCommand BuildWithPrimitive(string id, string name,
             int currentHealth, int maxHealth,
             int exp, int str, int agi
             )
         {
             return new PlayerCreateCommand(
-                new CharacterID(new Guid(id)),
+                new CharacterID(id),
                 new PlayerName(name),
                 new HealthPoint(
                     new HealthPointValue(currentHealth),

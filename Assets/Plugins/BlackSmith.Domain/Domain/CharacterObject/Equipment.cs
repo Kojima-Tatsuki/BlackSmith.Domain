@@ -16,7 +16,7 @@ namespace BlackSmith.Domain.CharacterObject
 
         internal Equipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!)
         {
-            ID = id ?? new EquipmentID(Guid.NewGuid());
+            ID = id ?? new EquipmentID();
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Location = location ?? throw new ArgumentNullException(nameof(location));
         }
@@ -39,9 +39,7 @@ namespace BlackSmith.Domain.CharacterObject
 
     public class EquipmentID : BasicID
     {
-        internal EquipmentID(Guid id) : base(id)
-        {
-        }
+        protected override string Prefix => "Equipment-";
 
         public override string ToString()
         {
@@ -105,7 +103,7 @@ namespace BlackSmith.Domain.CharacterObject
 
     internal class NullEquipment : Equipment
     {
-        internal NullEquipment() : base(new EquipmentName("NULL"), new EquipmentLocation(EquipmentLocation.LocationType.None), new EquipmentID(Guid.Empty))
+        internal NullEquipment() : base(new EquipmentName("NULL"), new EquipmentLocation(EquipmentLocation.LocationType.None), new EquipmentID())
         {
         }
     }

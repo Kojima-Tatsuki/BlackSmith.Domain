@@ -22,7 +22,7 @@ namespace BlackSmith.Domain.Character.Battle
             var dict = new Dictionary<EffectID, BattleStatusEffect>(StatusEffectDictionary);
 
             if (dict.Keys.Contains(statusEffect.Id))
-                throw new InvalidOperationException($"The effect aleady exists. id: {statusEffect.Id}");
+                throw new InvalidOperationException($"The effect aleady exists. id: {statusEffect.Id}. (RiaYLr6o)");
 
             dict.Add(statusEffect.Id, statusEffect);
 
@@ -34,7 +34,7 @@ namespace BlackSmith.Domain.Character.Battle
             var dict = new Dictionary<EffectID, BattleStatusEffect>(StatusEffectDictionary);
 
             if (!dict.Keys.Contains(statusEffect.Id))
-                throw new InvalidOperationException($"Does not exist the effect. id: {statusEffect.Id}");
+                throw new InvalidOperationException($"Does not exist the effect. id: {statusEffect.Id}. (NXL6wtjY)");
 
             dict.Remove(statusEffect.Id);
 

@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using BlackSmith.Domain.Character;
+﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Field;
+using System;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Skill
 {
@@ -18,10 +19,12 @@ namespace BlackSmith.Domain.Skill
 
         public SkillActivator Activator { get; }
 
-        internal SkillEffect(string effectName, EffectExecutionConditions executionConditions)
+        internal SkillEffect(string effectName, EffectExecutionConditions executionConditions, SkillTarget target, SkillActivator activator)
         {
             EffectName = effectName;
             ExecutionConditions = executionConditions;
+            Target = target;
+            Activator = activator;
         }
     }
 
@@ -55,11 +58,21 @@ namespace BlackSmith.Domain.Skill
     public class SkillTarget
     {
         public CharacterID TargetId { get; }
+
+        public SkillTarget(CharacterID targetId)
+        {
+            TargetId = targetId;
+        }
     }
 
     /// <summary>スキルの実行者</summary>
     public class SkillActivator
     {
         public CharacterID ActivatorId { get; }
+
+        public SkillActivator(CharacterID activatorId)
+        {
+            ActivatorId = activatorId;
+        }
     }
 }

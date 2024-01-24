@@ -1,11 +1,13 @@
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
-using BlackSmith.Domain.Item;
 using BlackSmith.Domain.Item.Equipment;
 using System;
 
 namespace BlackSmith.Domain.Character.Battle
 {
+    /// <summary>
+    /// 戦闘時のキャラクターのモデル
+    /// </summary>
     internal class CharacterBattleModule
     {
         internal CharacterLevel Level { get; }
@@ -49,11 +51,11 @@ namespace BlackSmith.Domain.Character.Battle
         {
             var currentModule = item is null ? EquipmentModule.RemoveEquipment(changeType) : EquipmentModule.ChangeEquipment(item);
 
-            var removed = (item?.EquipType ?? changeType)  switch
+            var removed = (item?.EquipType ?? changeType) switch
             {
                 EquipmentType.Weapon => EquipmentModule.Weapon,
                 EquipmentType.Armor => EquipmentModule.Armor,
-                _ => throw new ArgumentException(nameof(item)),
+                _ => throw new ArgumentException($"Unexpected type of equipment. {item?.EquipType ?? changeType}. (Hi6JnKRG)"),
             };
 
             return new ChangeEquipmentResult(new CharacterBattleModule(HealthPoint, LevelDependentParameters, currentModule, StatusEffectModule), removed);

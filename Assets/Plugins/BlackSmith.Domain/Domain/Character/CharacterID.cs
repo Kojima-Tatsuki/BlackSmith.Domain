@@ -5,13 +5,10 @@ namespace BlackSmith.Domain.Character
     /// <summary>プレイヤーや敵を含むすべてのキャラクターを一意に定める識別子</summary>
     public class CharacterID : BasicID
     {
-        internal CharacterID(Guid id) : base(id)
-        {
-        }
+        protected override string Prefix => "Character-";
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+        public CharacterID() : base() { }
+
+        public CharacterID(string id) : base(id) { }
     }
 }

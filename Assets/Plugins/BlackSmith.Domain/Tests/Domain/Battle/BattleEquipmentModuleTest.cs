@@ -1,8 +1,10 @@
 using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.Item;
+using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Item.Equipment;
 using NUnit.Framework;
 using System;
+
+#nullable enable
 
 public class BattleEquipmentModuleTest
 {
@@ -16,7 +18,7 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         var armor = new EquippableItem(new(
             name: "MockArmor",
@@ -25,9 +27,9 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
-        return new EquippableItem?[][] { 
+        return new EquippableItem?[][] {
             new EquippableItem?[] { null, null },
             new EquippableItem?[] { weapon, null },
             new EquippableItem?[] { null, armor },
@@ -45,7 +47,7 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         var inCorrectWeapon = new EquippableItem(new(
             name: "MockWeapon",
@@ -54,7 +56,7 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         var armor = new EquippableItem(new(
             name: "MockArmor",
@@ -63,7 +65,7 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         return new EquippableItem?[][] {
             new EquippableItem?[] { currectWeapon, currectWeapon },
@@ -76,7 +78,8 @@ public class BattleEquipmentModuleTest
     [TestCaseSource(nameof(CorrectMockData), Category = "ê≥èÌån")]
     public void ModuleInstancePasses(EquippableItem? weapon, EquippableItem? armor)
     {
-        try {
+        try
+        {
             var module = new BattleEquipmentModule(weapon, armor);
         }
         catch (Exception e)

@@ -1,7 +1,6 @@
-using BlackSmith.Domain.Item;
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 #nullable enable
 
@@ -107,9 +106,7 @@ namespace BlackSmith.Domain.Inventory
 
     public class InventoryID : BasicID
     {
-        internal InventoryID(Guid id) : base(id)
-        {
-        }
+        protected override string Prefix => "Inventory-";
     }
 
     public class InventoryCapacity

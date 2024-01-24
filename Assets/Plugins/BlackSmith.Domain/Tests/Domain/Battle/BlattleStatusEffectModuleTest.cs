@@ -1,8 +1,8 @@
-using System;
-using System.Collections.Generic;
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.PassiveEffect;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 
 internal class BlattleStatusEffectModuleTest
 {
@@ -18,7 +18,7 @@ internal class BlattleStatusEffectModuleTest
             },
             new Dictionary<EffectID, BattleStatusEffect>()
             {
-                
+
             },
             null
         };

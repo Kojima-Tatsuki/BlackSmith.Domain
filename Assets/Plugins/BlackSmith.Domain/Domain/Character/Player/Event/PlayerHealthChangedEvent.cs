@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using BlackSmith.Domain.CharacterObject;
+﻿using BlackSmith.Domain.CharacterObject;
 
 namespace BlackSmith.Domain.Character.Player.Event
 {

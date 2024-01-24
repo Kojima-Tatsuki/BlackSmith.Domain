@@ -1,6 +1,6 @@
-﻿using System;
+﻿using BlackSmith.Domain.Character;
+using System;
 using System.Collections.Generic;
-using BlackSmith.Domain.Character;
 
 namespace BlackSmith.Domain.Field
 {
@@ -64,9 +64,7 @@ namespace BlackSmith.Domain.Field
 
     public class FieldID : BasicID
     {
-        internal FieldID() : base(Guid.NewGuid()) { }
-
-        internal FieldID(Guid id) : base(id) { }
+        protected override string Prefix => "Field-";
     }
 
     // この区分けが必要かは検討すべき
