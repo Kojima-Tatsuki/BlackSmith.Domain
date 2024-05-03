@@ -4,7 +4,7 @@ using System;
 
 internal class LevelDependentParametersTest
 {
-    [Test(Description = "LevelDependentParametersTest‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‰»ƒeƒXƒg")]
+    [Test(Description = "LevelDependentParametersTestã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ†ã‚¹ãƒˆ")]
     public void InstancePasses()
     {
         Assert.That(() => new LevelDependentParameters() != null);
@@ -16,9 +16,9 @@ internal class LevelDependentParametersTest
         Assert.That(() => new LevelDependentParameters(level, str, agi) != null);
     }
 
-    [Test(Description = "ƒXƒe[ƒ^ƒXã¸ƒ|ƒCƒ“ƒg‚Ìc‚è”ƒeƒXƒg")]
-    [TestCase(1, 1, 1, ExpectedResult = 1, Category = "³íŒn")]
-    [TestCase(5, 10, 5, ExpectedResult = 0, Category = "³íŒn")]
+    [Test(Description = "ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ä¸Šæ˜‡ãƒã‚¤ãƒ³ãƒˆã®æ®‹ã‚Šæ•°ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(1, 1, 1, ExpectedResult = 1, Category = "æ­£å¸¸ç³»")]
+    [TestCase(5, 10, 5, ExpectedResult = 0, Category = "æ­£å¸¸ç³»")]
 
     public int GetRemainingParamPointPasses(int level, int str, int agi)
     {
@@ -27,10 +27,10 @@ internal class LevelDependentParametersTest
     }
 
     [Test()]
-    [TestCase(1, 3, 1, Category = "ˆÙíŒn")]
+    [TestCase(1, 3, 1, Category = "ç•°å¸¸ç³»")]
     public void GetRemainingParamPointFail(int level, int str, int agi)
     {
-        Assert.Throws(Is.TypeOf<ArgumentException>().And.Message.EqualTo($"w’è‚µ‚½STR, AGI‚ÍŠ„“–‰Â”\—Ê‚ğ’´‰ß‚µ‚Ä‚¢‚Ü‚· STR: {str}, AGI: {agi}"),
+        Assert.Throws(Is.TypeOf<ArgumentException>().And.Message.EqualTo($"æŒ‡å®šã—ãŸSTR, AGIã¯å‰²å½“å¯èƒ½é‡ã‚’è¶…éã—ã¦ã„ã¾ã™ STR: {str}, AGI: {agi}"),
         () => new LevelDependentParameters(new(Experience.RequiredCumulativeExp(level)), new(str), new(agi))
                 .GetRemainingParamPoint());
     }

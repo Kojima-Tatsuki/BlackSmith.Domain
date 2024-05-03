@@ -2,7 +2,7 @@ using System;
 
 namespace BlackSmith.Domain.Character
 {
-    /// <summary>�v���C���[��G���܂ނ��ׂẴL�����N�^�[����ӂɒ�߂鎯�ʎq</summary>
+    /// <summary>プレイヤーや敵を含むすべてのキャラクターを一意に定める識別子</summary>
     public class CharacterID : BasicID
     {
         protected override string Prefix => "Character-";

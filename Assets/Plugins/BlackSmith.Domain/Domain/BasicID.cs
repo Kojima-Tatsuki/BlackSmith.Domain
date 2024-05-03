@@ -17,7 +17,7 @@ namespace BlackSmith.Domain
         internal BasicID(string id)
         {
             if (!IsValid(id))
-                throw new ArgumentException("w’è‚µ‚½ID‚Í“KØ‚È’l‚Å‚Í‚ ‚è‚Ü‚¹‚ñ");
+                throw new ArgumentException("æŒ‡å®šã—ãŸIDã¯é©åˆ‡ãªå€¤ã§ã¯ã‚ã‚Šã¾ã›ã‚“");
 
             Value = GetGuid(id);
         }

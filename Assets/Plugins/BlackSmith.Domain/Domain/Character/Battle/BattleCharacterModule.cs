@@ -6,7 +6,7 @@ using System;
 namespace BlackSmith.Domain.Character.Battle
 {
     /// <summary>
-    /// 戦闘時のキャラクターのモデル
+    /// 謌ｦ髣俶凾縺ｮ繧ｭ繝｣繝ｩ繧ｯ繧ｿ繝ｼ縺ｮ繝｢繝�繝ｫ
     /// </summary>
     internal class CharacterBattleModule
     {

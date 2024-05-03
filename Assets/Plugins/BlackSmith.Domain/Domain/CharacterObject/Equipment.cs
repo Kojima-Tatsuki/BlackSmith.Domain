@@ -4,10 +4,10 @@ using System;
 
 namespace BlackSmith.Domain.CharacterObject
 {
-    /// <summary> ‘•”õ, Entity‚ÌƒNƒ‰ƒX </summary>
+    /// <summary> è£…å‚™, Entityã®ã‚¯ãƒ©ã‚¹ </summary>
     internal class Equipment
     {
-        /// <summary> ‘•”õ‚ÌObjectID </summary>
+        /// <summary> è£…å‚™ã®ObjectID </summary>
         public EquipmentID ID { get; }
 
         public EquipmentName Name { get; private set; }

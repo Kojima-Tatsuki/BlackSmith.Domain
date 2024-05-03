@@ -5,41 +5,41 @@ using System.Linq;
 
 namespace BlackSmith.Domain.Item
 {
-    // Interface‚Å’è‹`‚µ‚Ä‚¢‚é‚à‚Ì‚ÍAEnum‚ÅÀ‘•‚ğ’u‚«Š·‚¦‚é‚±‚Æ‚ğl—¶‚µ‘±‚¯‚é
+    // Interfaceã§å®šç¾©ã—ã¦ã„ã‚‹ã‚‚ã®ã¯ã€Enumã§å®Ÿè£…ã‚’ç½®ãæ›ãˆã‚‹ã“ã¨ã‚’è€ƒæ…®ã—ç¶šã‘ã‚‹
 
-    /// <summary>‘fŞ‚Æ‚È‚é‚±‚Æ‚ª‚Å‚«‚éƒAƒCƒeƒ€</summary>
+    /// <summary>ç´ æã¨ãªã‚‹ã“ã¨ãŒã§ãã‚‹ã‚¢ã‚¤ãƒ†ãƒ </summary>
     public interface ICraftMaterialItem : IItem
     {
 
     }
 
-    /// <summary>‘fŞƒAƒCƒeƒ€‚ğg—p‚µ‚Äì¬‚ª‚Å‚«‚éƒAƒCƒeƒ€</summary>
+    /// <summary>ç´ æã‚¢ã‚¤ãƒ†ãƒ ã‚’ä½¿ç”¨ã—ã¦ä½œæˆãŒã§ãã‚‹ã‚¢ã‚¤ãƒ†ãƒ </summary>
     public interface ICraftableItem : IItem
     {
-        CharacterID CreatedBy { get; } // §ìÒID
+        CharacterID CreatedBy { get; } // åˆ¶ä½œè€…ID
         IReadOnlyCollection<ICraftMaterialItem> GetRequireMaterials();
     }
 
-    /// <summary>ƒŒƒVƒs</summary>
+    /// <summary>ãƒ¬ã‚·ãƒ”</summary>
     public class CraftingRecipe
     {
-        /// <summary>ƒŒƒVƒs‚ğg—p‚µ‚ÄŠ®¬‚·‚éƒAƒCƒeƒ€</summary>
+        /// <summary>ãƒ¬ã‚·ãƒ”ã‚’ä½¿ç”¨ã—ã¦å®Œæˆã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ </summary>
         public readonly ICraftableItem Craftable;
-        // ƒŒƒVƒs‚É‚Í‡˜‚ÌŠT”O‚ª‘¶İ‚·‚é
+        // ãƒ¬ã‚·ãƒ”ã«ã¯é †åºã®æ¦‚å¿µãŒå­˜åœ¨ã™ã‚‹
         public readonly IReadOnlyList<ICraftMaterialItem> Materials;
 
-        // ƒŒƒVƒsƒIƒuƒWƒFƒNƒg‚Ìì¬‚ÍA‚±‚Ìƒ‰ƒCƒuƒ‰ƒŠ‚ÉŒÀ‚é
+        // ãƒ¬ã‚·ãƒ”ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®ä½œæˆã¯ã€ã“ã®ãƒ©ã‚¤ãƒ–ãƒ©ãƒªã«é™ã‚‹
         internal CraftingRecipe(ICraftableItem craftable, IReadOnlyList<ICraftMaterialItem> materials)
         {
             Craftable = craftable;
             Materials = materials;
         }
 
-        // ‘fŞ‚ª‚»‚ë‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©‚ğl‚¦‚é’iŠK‚Å‚ÍA‡˜‚Íl‚¦‚È‚¢
-        /// <summary>‘fŞ‚Ì•K—v—Ê‚ğ–‚½‚µ‚Ä‚¢‚é‚©‚ğ•Ô‚·</summary>
-        /// <remarks>ˆø”‚Í•K—v—ÊˆÈã‚É‘fŞ‚ª‘¶İ‚µ‚Ä‚à‚æ‚¢A–‚½‚È‚¢ê‡‚ÍFalse‚ª•Ô‚é</remarks>
-        /// <param name="materials">”»’è‚·‚é‘fŞ</param>
-        /// <returns>•K—v—Ê‚ğ–‚½‚·‚©</returns>
+        // ç´ æãŒãã‚ã£ã¦ã„ã‚‹ã‹ã©ã†ã‹ã‚’è€ƒãˆã‚‹æ®µéšã§ã¯ã€é †åºã¯è€ƒãˆãªã„
+        /// <summary>ç´ æã®å¿…è¦é‡ã‚’æº€ãŸã—ã¦ã„ã‚‹ã‹ã‚’è¿”ã™</summary>
+        /// <remarks>å¼•æ•°ã¯å¿…è¦é‡ä»¥ä¸Šã«ç´ æãŒå­˜åœ¨ã—ã¦ã‚‚ã‚ˆã„ã€æº€ãŸãªã„å ´åˆã¯FalseãŒè¿”ã‚‹</remarks>
+        /// <param name="materials">åˆ¤å®šã™ã‚‹ç´ æ</param>
+        /// <returns>å¿…è¦é‡ã‚’æº€ãŸã™ã‹</returns>
         public bool IsCraftable(IReadOnlyCollection<ICraftMaterialItem> materials)
         {
             return Materials.All(item => materials.Contains(item));

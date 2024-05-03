@@ -4,7 +4,7 @@ using System;
 
 public class HealthPointTest
 {
-    [Test(Description = "HealthPoint ƒCƒ“ƒXƒ^ƒ“ƒXŽž‚ÌƒeƒXƒg‚ðs‚¤"), TestCase(10)]
+    [Test(Description = "HealthPoint ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ™‚ã®ãƒ†ã‚¹ãƒˆã‚’è¡Œã†"), TestCase(10)]
     public void HealthPointCreatePasses(int value)
     {
         var currentHealth = new HealthPointValue(value);
@@ -20,7 +20,7 @@ public class HealthPointTest
         Assert.AreEqual(maxHealth, healthByMax.MaximumValue);
     }
 
-    [Test(Description = "HealthPoint ƒCƒ“ƒXƒ^ƒ“ƒXŽž‚ÌˆÙíŒnƒeƒXƒg"), TestCase(15, 10)]
+    [Test(Description = "HealthPoint ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹æ™‚ã®ç•°å¸¸ç³»ãƒ†ã‚¹ãƒˆ"), TestCase(15, 10)]
     public void HealthPointInvalidPasses(int current, int max)
     {
         Assert.Catch(typeof(ArgumentException), () =>
