@@ -1,5 +1,7 @@
 ﻿using BlackSmith.Domain.Item.Equipment;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Character.Battle
 {
     internal class ChangeBattleEquipmentResult
