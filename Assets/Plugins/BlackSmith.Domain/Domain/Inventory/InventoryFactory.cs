@@ -1,5 +1,4 @@
 using BlackSmith.Domain.Item.Equipment;
-using System;
 
 namespace BlackSmith.Domain.Inventory
 {

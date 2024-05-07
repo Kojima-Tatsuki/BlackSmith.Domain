@@ -6,8 +6,6 @@ using System.Linq;
 
 namespace BlackSmith.Domain.Inventory
 {
-    using Item;
-
     /// <summary>装備中のアイテムを格納するインベントリ</summary>
     internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
     {
