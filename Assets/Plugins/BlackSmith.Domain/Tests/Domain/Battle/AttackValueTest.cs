@@ -1,7 +1,6 @@
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
-using BlackSmith.Domain.Item;
 using BlackSmith.Domain.Item.Equipment;
 using BlackSmith.Domain.PassiveEffect;
 using NUnit.Framework;
@@ -20,7 +19,7 @@ internal class AttackValueTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         var armor = new EquippableItem(new(
             name: "MockArmor",
@@ -29,7 +28,7 @@ internal class AttackValueTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
         var nullEquipmentModule = new BattleEquipmentModule(null, null);
         var weaponEqupmentModule = new BattleEquipmentModule(weapon, null);
         var armorEquipmentModule = new BattleEquipmentModule(null, armor);

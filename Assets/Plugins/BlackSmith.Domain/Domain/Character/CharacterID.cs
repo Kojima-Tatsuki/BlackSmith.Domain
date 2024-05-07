@@ -2,16 +2,13 @@ using System;
 
 namespace BlackSmith.Domain.Character
 {
-    /// <summary>ƒvƒŒƒCƒ„[‚â“G‚ğŠÜ‚Ş‚·‚×‚Ä‚ÌƒLƒƒƒ‰ƒNƒ^[‚ğˆêˆÓ‚É’è‚ß‚é¯•Êq</summary>
+    /// <summary>ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚„æ•µã‚’å«ã‚€ã™ã¹ã¦ã®ã‚­ãƒ£ãƒ©ã‚¯ã‚¿ãƒ¼ã‚’ä¸€æ„ã«å®šã‚ã‚‹è­˜åˆ¥å­</summary>
     public class CharacterID : BasicID
     {
-        internal CharacterID(Guid id) : base(id)
-        {
-        }
+        protected override string Prefix => "Character-";
 
-        public override string ToString()
-        {
-            return base.ToString();
-        }
+        public CharacterID() : base() { }
+
+        public CharacterID(string id) : base(id) { }
     }
 }

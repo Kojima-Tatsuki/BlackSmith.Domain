@@ -2,7 +2,6 @@ using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Domain.CharacterObject.Interface;
-using BlackSmith.Domain.Item;
 using BlackSmith.Domain.Item.Equipment;
 using System;
 

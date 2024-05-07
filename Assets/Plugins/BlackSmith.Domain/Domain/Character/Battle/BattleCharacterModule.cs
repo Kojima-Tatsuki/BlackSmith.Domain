@@ -1,11 +1,13 @@
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
-using BlackSmith.Domain.Item;
 using BlackSmith.Domain.Item.Equipment;
 using System;
 
 namespace BlackSmith.Domain.Character.Battle
 {
+    /// <summary>
+    /// 戦闘時のキャラクターのモデル
+    /// </summary>
     internal class CharacterBattleModule
     {
         internal CharacterLevel Level { get; }

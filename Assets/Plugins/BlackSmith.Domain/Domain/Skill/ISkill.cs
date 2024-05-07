@@ -3,7 +3,7 @@
     internal interface ISkill
     {
         /// <summary>スキル名</summary>
-        SkillName Name { get; }
+        SkillName SkillName { get; }
 
         /// <summary>熟練度</summary>
         SkillProficiency Proficiency { get; }

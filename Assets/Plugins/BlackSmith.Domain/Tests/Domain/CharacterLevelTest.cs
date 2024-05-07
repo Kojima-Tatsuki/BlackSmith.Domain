@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 public class CharacterLevelTest
 {
-    [Test(Description = "スキル取得数を計算するテスト正常系")]
+    [Test(Description = "繧ｹ繧ｭ繝ｫ蜿門ｾ玲焚繧定ｨ育ｮ励☆繧九ユ繧ｹ繝域ｭ｣蟶ｸ邉ｻ")]
     [TestCase(1, ExpectedResult = 2)]
     [TestCase(6, ExpectedResult = 3)]
     [TestCase(11, ExpectedResult = 3)]

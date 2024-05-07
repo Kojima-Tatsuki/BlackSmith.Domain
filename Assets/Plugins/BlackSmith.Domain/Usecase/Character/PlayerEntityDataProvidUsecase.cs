@@ -77,7 +77,7 @@ namespace BlackSmith.Usecase.Character
             int strength, int agility,
             int attack, int defence)
         {
-            ID = new CharacterID(Guid.Parse(id));
+            ID = new CharacterID(id);
             Name = name;
             Level = level ?? Experience.CurrentLevel(new Experience(exp));
             Exp = exp;

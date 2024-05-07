@@ -6,7 +6,7 @@ using System.Linq;
 namespace BlackSmith.Domain.CharacterObject
 {
     /// <summary>
-    /// –hŒä—Í
+    /// é˜²å¾¡åŠ›
     /// </summary>
     public class DefenseValue
     {
@@ -30,7 +30,7 @@ namespace BlackSmith.Domain.CharacterObject
         private int CheckVaild(int value)
         {
             if (value <= 0)
-                throw new ArgumentOutOfRangeException($"–hŒä—Í‚É‚Í1ˆÈã‚Ì’l‚ð“ü—Í‚µ‚Ä‚­‚¾‚³‚¢, value : {value}");
+                throw new ArgumentOutOfRangeException($"é˜²å¾¡åŠ›ã«ã¯1ä»¥ä¸Šã®å€¤ã‚’å…¥åŠ›ã—ã¦ãã ã•ã„, value : {value}");
 
             return value;
         }
