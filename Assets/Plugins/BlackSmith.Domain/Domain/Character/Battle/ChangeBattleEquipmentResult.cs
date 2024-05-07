@@ -1,4 +1,6 @@
-﻿using BlackSmith.Domain.Item;
+﻿using BlackSmith.Domain.Item.Equipment;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Character.Battle
 {

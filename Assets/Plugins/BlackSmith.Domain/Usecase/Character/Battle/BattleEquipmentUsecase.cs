@@ -1,8 +1,10 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Inventory;
-using BlackSmith.Domain.Item;
+using BlackSmith.Domain.Item.Equipment;
 using BlackSmith.Usecase.Interface;
 using System;
+
+#nullable enable
 
 namespace BlackSmith.Usecase.Character.Battle
 {
