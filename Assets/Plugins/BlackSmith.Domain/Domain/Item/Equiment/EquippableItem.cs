@@ -10,7 +10,7 @@ namespace BlackSmith.Domain.Item.Equipment
         IEquipableItem Repair();
     }
 
-    public class EquippableItem : Item, IEquipableItem
+    public record EquippableItem : Item, IEquipableItem
     {
         public EquipmentType EquipType { get; }
 

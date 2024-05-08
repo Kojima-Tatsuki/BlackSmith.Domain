@@ -8,7 +8,7 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// 攻撃力
     /// </summary>
-    public class AttackValue
+    public record AttackValue
     {
         public int Value { get; }
 
@@ -43,7 +43,8 @@ namespace BlackSmith.Domain.CharacterObject
         }
     }
 
-    public class AttackDetailModel
+    // これいる？？
+    public record AttackDetailModel
     {
         public int Level { get; }
         public int Weapon { get; }

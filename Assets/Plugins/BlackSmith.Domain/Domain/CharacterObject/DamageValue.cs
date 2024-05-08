@@ -8,7 +8,7 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// ダメージ量を表すクラス
     /// </summary>
-    public class DamageValue
+    public record DamageValue
     {
         /// <summary> レベル差関数用の補正値 </summary>
         private const double LevelGapCorrectionValue = 1.2599210498948731;
@@ -59,7 +59,7 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// 攻めと守りのレベル差を表す
     /// </summary>
-    internal class LevelGapOfAttackerAndReceiver
+    internal record LevelGapOfAttackerAndReceiver
     {
         private readonly CharacterLevel receiver;
 

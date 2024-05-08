@@ -5,7 +5,7 @@ using System;
 
 namespace BlackSmith.Domain.Character.Battle
 {
-    internal class BattleEquipmentModule
+    internal record BattleEquipmentModule
     {
         public EquippableItem? Weapon { get; }
         public EquippableItem? Armor { get; }

@@ -3,7 +3,7 @@
 namespace BlackSmith.Domain.Character
 {
     // Expを利用しないため、レベルに変動を起こさせない
-    public class CharacterLevel
+    public record CharacterLevel
     {
         public int Value { get; }
 

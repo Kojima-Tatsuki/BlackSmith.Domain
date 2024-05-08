@@ -4,7 +4,7 @@ namespace BlackSmith.Domain.Character.Player
     /// キャラクターのレベル
     /// </summary>
     /// <remarks>Expでもってすべての計算を行っている</remarks>
-    public class PlayerLevel : CharacterLevel
+    public record PlayerLevel : CharacterLevel
     {
         public int MaxValue { get; } = 100;
 

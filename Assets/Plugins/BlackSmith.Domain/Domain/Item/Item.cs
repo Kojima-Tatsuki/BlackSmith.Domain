@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Item
 {
-    public interface IItem : IEquatable<IItem>
+    public interface IItem
     {
         string Name { get; }
     }
 
     /// <summary>このItemに関するデータの変更等を行う際の窓口として使用する</summary>
-    public class Item : IItem, IEquatable<IItem>
+    public record Item : IItem
     {
         public string Name => itemName.Value;
         private protected readonly ItemName itemName;
@@ -19,28 +21,6 @@ namespace BlackSmith.Domain.Item
             if (itemName is null) throw new ArgumentNullException(nameof(itemName));
 
             this.itemName = new ItemName(itemName);
-        }
-
-        public bool Equals(IItem? other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Equals(Name, other.Name); // 名前で比較
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-
-            if (GetType() != obj.GetType()) return false;
-            return Equals((Item)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
         }
     }
 
@@ -53,7 +33,7 @@ namespace BlackSmith.Domain.Item
     /// <summary>
     /// アイテム名
     /// </summary>
-    internal class ItemName
+    internal record ItemName
     {
         public string Value { get; }
 
@@ -63,11 +43,6 @@ namespace BlackSmith.Domain.Item
             if (name.Length == 0) throw new ArgumentOutOfRangeException("nameは1文字以上です。");
 
             Value = name;
-        }
-
-        public override string ToString()
-        {
-            return Value;
         }
     }
 
