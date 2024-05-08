@@ -122,7 +122,7 @@ namespace BlackSmith.Domain.CharacterObject
         }
     }
 
-    internal class HealthPointValue : IEquatable<HealthPointValue>
+    internal record HealthPointValue
     {
         internal int Value { get; }
 
@@ -141,31 +141,6 @@ namespace BlackSmith.Domain.CharacterObject
             return true;
         }
 
-        public bool Equals(HealthPointValue? other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Value == other.Value;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-
-            if (GetType() != obj.GetType()) return false;
-            return Equals((HealthPointValue)obj);
-        }
-
-        public override int GetHashCode() => Value.GetHashCode();
-
-        public static bool operator ==(HealthPointValue x, HealthPointValue y)
-            => x.Value == y.Value;
-
-        public static bool operator !=(HealthPointValue x, HealthPointValue y)
-            => x.Value != y.Value;
-
         public static bool operator <(HealthPointValue x, HealthPointValue y)
             => x.Value < y.Value;
 
@@ -181,7 +156,7 @@ namespace BlackSmith.Domain.CharacterObject
         public override string ToString() => Value.ToString();
     }
 
-    internal class MaxHealthPointValue : HealthPointValue
+    internal record MaxHealthPointValue : HealthPointValue
     {
         public MaxHealthPointValue(int value) : base(value) { }
 
