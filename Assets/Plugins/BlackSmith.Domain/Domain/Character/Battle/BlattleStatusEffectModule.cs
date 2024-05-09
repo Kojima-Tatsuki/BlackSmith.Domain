@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Character.Battle
 {
     internal class BlattleStatusEffectModule

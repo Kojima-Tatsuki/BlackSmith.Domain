@@ -3,6 +3,8 @@ using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Domain.Item.Equipment;
 using System;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Character.Battle
 {
     /// <summary>

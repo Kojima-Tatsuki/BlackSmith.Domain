@@ -14,13 +14,23 @@ public class HealthPointTest
     [TestCase(null, 10, typeof(ArgumentNullException), Category = "正常系")] // 現在値がnullの場合
     [TestCase(10, null, typeof(ArgumentNullException), Category = "正常系")] // 最大値がnullの場合
     [TestCase(null, null, typeof(ArgumentNullException), Category = "正常系")] // 両方nullの場合
-    public void HealthPointInstancePasses(int value, int max, Type? exception = null)
+    public void HealthPointInstancePasses(int? value, int? max, Type? exception = null)
     {
         if (exception is null)
-            Assert.That(new HealthPoint(new HealthPointValue(value), new MaxHealthPointValue(max)), 
-                Is.EqualTo(new HealthPoint(new HealthPointValue(value), new MaxHealthPointValue(max))));
+            Assert.That(new HealthPoint(new HealthPointValue(value ?? 0), new MaxHealthPointValue(max ?? 0)),
+                Is.EqualTo(new HealthPoint(new HealthPointValue(value ?? 0), new MaxHealthPointValue(max ?? 0))));
         else
-            Assert.Throws(exception, () => new HealthPoint(new HealthPointValue(value), new MaxHealthPointValue(max)));
+        {
+            // 引数にNullが渡された場合のテスト
+            if (value == null && max == null)
+                Assert.Throws(exception, () => new HealthPoint(null, null));
+            else if (value == null)
+                Assert.Throws(exception, () => new HealthPoint(null, new MaxHealthPointValue(max ?? 0)));
+            else if (max == null)
+                Assert.Throws(exception, () => new HealthPoint(new HealthPointValue(value ?? 0), null));
+            else
+                Assert.Throws(exception, () => new HealthPoint(new HealthPointValue(value ?? 0), new MaxHealthPointValue(max ?? 0)));
+        }
     }
 
     [Test(Description = "HealthPoint インスタンス時の異常系テスト"), TestCase(15, 10)]

@@ -1,5 +1,7 @@
 ﻿using System;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Currency
 {
     /// <summary> お金 </summary>
