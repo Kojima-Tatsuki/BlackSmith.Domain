@@ -11,10 +11,10 @@ public class HealthPointTest
     [TestCase(10, 10, null, Category = "正常系")]
     [TestCase(0, 0, null, Category = "正常系")]
     [TestCase(10, 20, null, Category = "正常系")]
-    [TestCase(20, 10, typeof(ArgumentException), Category = "正常系")] // 現在値が最大値より大きい場合
-    [TestCase(null, 10, typeof(ArgumentNullException), Category = "正常系")] // 現在値がnullの場合
-    [TestCase(10, null, typeof(ArgumentNullException), Category = "正常系")] // 最大値がnullの場合
-    [TestCase(null, null, typeof(ArgumentNullException), Category = "正常系")] // 両方nullの場合
+    [TestCase(20, 10, typeof(ArgumentException), Category = "異常系")] // 現在値が最大値より大きい場合
+    [TestCase(null, 10, typeof(ArgumentNullException), Category = "異常系")] // 現在値がnullの場合
+    [TestCase(10, null, typeof(ArgumentNullException), Category = "異常系")] // 最大値がnullの場合
+    [TestCase(null, null, typeof(ArgumentNullException), Category = "異常系")] // 両方nullの場合
     public void HealthPointInstancePasses(int? value, int? max, Type? exception = null)
     {
         if (exception is null)
@@ -37,8 +37,8 @@ public class HealthPointTest
     [Test(Description = "HelthPointインスタンス化テスト")]
     [TestCase(10, null, Category = "正常系")]
     [TestCase(0, null, Category = "正常系")]
-    [TestCase(-1, typeof(ArgumentException), Category = "正常系")]
-    [TestCase(null, typeof(ArgumentNullException), Category = "正常系")]
+    [TestCase(-1, typeof(ArgumentException), Category = "異常系")]
+    [TestCase(null, typeof(ArgumentNullException), Category = "異常系")]
     public void HealthPointInstancePasses(int? max, Type? exception = null)
     {
         if (exception is null)
@@ -56,9 +56,9 @@ public class HealthPointTest
     // CaracterLevelクラスを使用したHealthPointのインスタンス化テスト
     [Test(Description = "HelthPointインスタンス化テスト")]
     [TestCase(10, null, Category = "正常系")]
-    [TestCase(0, typeof(ArgumentException), Category = "正常系")]
-    [TestCase(-1, typeof(ArgumentException), Category = "正常系")]
-    [TestCase(null, typeof(ArgumentNullException), Category = "正常系")]
+    [TestCase(0, typeof(ArgumentException), Category = "異常系")]
+    [TestCase(-1, typeof(ArgumentException), Category = "異常系")]
+    [TestCase(null, typeof(ArgumentNullException), Category = "異常系")]
     public void HealthPointInstanceFromCharacterLevelPasses(int? level, Type? exception = null)
     {
         if (exception is null)
@@ -76,7 +76,7 @@ public class HealthPointTest
     [Test(Description = "HelthPointValueインスタンス化テスト")]
     [TestCase(10, 10, null, Category = "正常系")]
     [TestCase(0, 0, null, Category = "正常系")]
-    [TestCase(-1, null, typeof(ArgumentException), Category = "正常系")]
+    [TestCase(-1, null, typeof(ArgumentException), Category = "異常系")]
     public void HealthPointValueInstancePasses(int value, int result, Type? exception = null)
     {
         if (exception is null)
@@ -104,7 +104,7 @@ public class HealthPointTest
     [Test(Description = "MaxHealthPointValueインスタンス化テスト")]
     [TestCase(10, 10, null, Category = "正常系")]
     [TestCase(0, 0, null, Category = "正常系")]
-    [TestCase(-1, null, typeof(ArgumentException), Category = "正常系")]
+    [TestCase(-1, null, typeof(ArgumentException), Category = "異常系")]
     public void MaxHealthPointValueInstancePasses(int value, int result, Type? exception = null)
     {
         if (exception is null)
