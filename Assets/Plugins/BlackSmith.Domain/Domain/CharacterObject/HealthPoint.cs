@@ -51,10 +51,10 @@ namespace BlackSmith.Domain.CharacterObject
         /// <param name="level">算出に用いるレベル</param>
         internal HealthPoint(CharacterLevel level)
         {
+            if (level is null) throw new ArgumentNullException(nameof(level));
+
             // 攻撃力の6倍の体力を作りたい
             var maxValue = level.Value * 10;
-
-            var max = new MaxHealthPointValue(maxValue);
 
             Value = new HealthPointValue(maxValue);
             MaximumValue = new MaxHealthPointValue(maxValue);

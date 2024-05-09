@@ -1,3 +1,4 @@
+using BlackSmith.Domain.Character;
 using BlackSmith.Domain.CharacterObject;
 using NUnit.Framework;
 using System;
@@ -33,15 +34,43 @@ public class HealthPointTest
         }
     }
 
-    [Test(Description = "HealthPoint インスタンス時の異常系テスト"), TestCase(15, 10)]
-    public void HealthPointInvalidPasses(int current, int max)
+    [Test(Description = "HelthPointインスタンス化テスト")]
+    [TestCase(10, null, Category = "正常系")]
+    [TestCase(0, null, Category = "正常系")]
+    [TestCase(-1, typeof(ArgumentException), Category = "正常系")]
+    [TestCase(null, typeof(ArgumentNullException), Category = "正常系")]
+    public void HealthPointInstancePasses(int? max, Type? exception = null)
     {
-        Assert.Catch(typeof(ArgumentException), () =>
+        if (exception is null)
+            Assert.That(new HealthPoint(new MaxHealthPointValue(max ?? 0)),
+                Is.EqualTo(new HealthPoint(new MaxHealthPointValue(max ?? 0))));
+        else
         {
-            var currentHealth = new HealthPointValue(current);
-            var maxHealth = new MaxHealthPointValue(max);
-            var health = new HealthPoint(currentHealth, maxHealth);
-        });
+            if (max == null)
+                Assert.Throws(exception, () => new HealthPoint(max: null));
+            else
+            Assert.Throws(exception, () => new HealthPoint(new MaxHealthPointValue(max ?? 0)));
+        }
+    }
+
+    // CaracterLevelクラスを使用したHealthPointのインスタンス化テスト
+    [Test(Description = "HelthPointインスタンス化テスト")]
+    [TestCase(10, null, Category = "正常系")]
+    [TestCase(0, typeof(ArgumentException), Category = "正常系")]
+    [TestCase(-1, typeof(ArgumentException), Category = "正常系")]
+    [TestCase(null, typeof(ArgumentNullException), Category = "正常系")]
+    public void HealthPointInstanceFromCharacterLevelPasses(int? level, Type? exception = null)
+    {
+        if (exception is null)
+            Assert.That(new HealthPoint(new CharacterLevel(level ?? 0)),
+                               Is.EqualTo(new HealthPoint(new CharacterLevel(level ?? 1))));
+        else
+        {
+            if (level == null)
+                Assert.Throws(exception, () => new HealthPoint(level: null));
+            else
+                Assert.Throws(exception, () => new HealthPoint(new CharacterLevel(level ?? 1)));
+        }
     }
 
     [Test(Description = "HelthPointValueインスタンス化テスト")]
