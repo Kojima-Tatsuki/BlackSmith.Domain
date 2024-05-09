@@ -6,7 +6,7 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// =Value= This class is used to represent HP.
     /// </summary>
-    public class HealthPoint
+    public record HealthPoint
     {
         internal HealthPointValue Value { get; }
 

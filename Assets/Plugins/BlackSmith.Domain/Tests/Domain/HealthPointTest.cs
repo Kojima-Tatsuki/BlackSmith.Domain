@@ -2,22 +2,25 @@ using BlackSmith.Domain.CharacterObject;
 using NUnit.Framework;
 using System;
 
+#nullable enable
+
 public class HealthPointTest
 {
-    [Test(Description = "HealthPoint インスタンス時のテストを行う"), TestCase(10)]
-    public void HealthPointCreatePasses(int value)
+    [Test(Description = "HelthPointインスタンス化テスト")]
+    [TestCase(10, 10, null, Category = "正常系")]
+    [TestCase(0, 0, null, Category = "正常系")]
+    [TestCase(10, 20, null, Category = "正常系")]
+    [TestCase(20, 10, typeof(ArgumentException), Category = "正常系")] // 現在値が最大値より大きい場合
+    [TestCase(null, 10, typeof(ArgumentNullException), Category = "正常系")] // 現在値がnullの場合
+    [TestCase(10, null, typeof(ArgumentNullException), Category = "正常系")] // 最大値がnullの場合
+    [TestCase(null, null, typeof(ArgumentNullException), Category = "正常系")] // 両方nullの場合
+    public void HealthPointInstancePasses(int value, int max, Type? exception = null)
     {
-        var currentHealth = new HealthPointValue(value);
-        var maxHealth = new MaxHealthPointValue(value);
-        var health = new HealthPoint(currentHealth, maxHealth);
-
-        Assert.AreEqual(currentHealth, health.Value);
-        Assert.AreEqual(maxHealth, health.MaximumValue);
-
-        var healthByMax = new HealthPoint(maxHealth);
-
-        Assert.AreEqual(currentHealth, healthByMax.Value);
-        Assert.AreEqual(maxHealth, healthByMax.MaximumValue);
+        if (exception is null)
+            Assert.That(new HealthPoint(new HealthPointValue(value), new MaxHealthPointValue(max)), 
+                Is.EqualTo(new HealthPoint(new HealthPointValue(value), new MaxHealthPointValue(max))));
+        else
+            Assert.Throws(exception, () => new HealthPoint(new HealthPointValue(value), new MaxHealthPointValue(max)));
     }
 
     [Test(Description = "HealthPoint インスタンス時の異常系テスト"), TestCase(15, 10)]
@@ -35,7 +38,7 @@ public class HealthPointTest
     [TestCase(10, 10, null, Category = "正常系")]
     [TestCase(0, 0, null, Category = "正常系")]
     [TestCase(-1, null, typeof(ArgumentException), Category = "正常系")]
-    public void HealthPointValueInstancePasses(int value, int result, Type exception = null)
+    public void HealthPointValueInstancePasses(int value, int result, Type? exception = null)
     {
         if (exception is null)
             Assert.That(new HealthPointValue(value), Is.EqualTo(new HealthPointValue(result)));
@@ -63,7 +66,7 @@ public class HealthPointTest
     [TestCase(10, 10, null, Category = "正常系")]
     [TestCase(0, 0, null, Category = "正常系")]
     [TestCase(-1, null, typeof(ArgumentException), Category = "正常系")]
-    public void MaxHealthPointValueInstancePasses(int value, int result, Type exception = null)
+    public void MaxHealthPointValueInstancePasses(int value, int result, Type? exception = null)
     {
         if (exception is null)
             Assert.That(new MaxHealthPointValue(value), Is.EqualTo(new MaxHealthPointValue(result)));

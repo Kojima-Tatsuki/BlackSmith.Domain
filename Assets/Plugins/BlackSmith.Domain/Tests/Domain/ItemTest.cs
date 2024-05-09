@@ -2,6 +2,8 @@ using BlackSmith.Domain.Item;
 using NUnit.Framework;
 using System;
 
+#nullable enable
+
 public class ItemTest
 {
     // Item ÇÃÉeÉXÉg
@@ -10,7 +12,7 @@ public class ItemTest
     [TestCase("I", "I" , null, Category = "ê≥èÌån")]
     [TestCase("", null, typeof(ArgumentOutOfRangeException), Category = "ê≥èÌån")]
     [TestCase(null, null, typeof(ArgumentNullException), Category = "ê≥èÌån")]
-    public void ItemInstance(string itemName, string resultItemName, Type exception = null)
+    public void ItemInstance(string itemName, string resultItemName, Type? exception = null)
     {
         if (exception is null)
             Assert.That(new Item(itemName), Is.EqualTo(new Item(resultItemName)));
@@ -24,7 +26,7 @@ public class ItemTest
     [TestCase("I", "I", null, Category = "ê≥èÌån")]
     [TestCase("", null, typeof(ArgumentOutOfRangeException), Category = "ê≥èÌån")]
     [TestCase(null, null, typeof(ArgumentNullException), Category = "ê≥èÌån")]
-    public void ItemNameInstance(string itemName, string resultItemName, Type exception = null)
+    public void ItemNameInstance(string itemName, string resultItemName, Type? exception = null)
     {
         if (exception is null)
             Assert.That(new ItemName(itemName), Is.EqualTo(new ItemName(resultItemName)));
