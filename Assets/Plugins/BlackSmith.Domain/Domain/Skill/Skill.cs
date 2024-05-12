@@ -32,7 +32,7 @@ namespace BlackSmith.Domain.Skill
     }
 
     /// <summary>スキルのID</summary>
-    public class SkillID : BasicID
+    public record SkillID : BasicID
     {
         protected override string Prefix => "Skill-";
     }

@@ -104,7 +104,7 @@ namespace BlackSmith.Domain.Inventory
         int IInventoryStateViewable<IItem>.GetContainItemCount(IItem item) => ContainingItemCount(item).Value;
     }
 
-    public class InventoryID : BasicID
+    public record InventoryID : BasicID
     {
         protected override string Prefix => "Inventory-";
     }

@@ -24,11 +24,11 @@ public class HealthPointTest
         {
             // 引数にNullが渡された場合のテスト
             if (value == null && max == null)
-                Assert.Throws(exception, () => new HealthPoint(null, null));
+                Assert.Throws(exception, () => new HealthPoint(null!, null!));
             else if (value == null)
-                Assert.Throws(exception, () => new HealthPoint(null, new MaxHealthPointValue(max ?? 0)));
+                Assert.Throws(exception, () => new HealthPoint(null!, new MaxHealthPointValue(max ?? 0)));
             else if (max == null)
-                Assert.Throws(exception, () => new HealthPoint(new HealthPointValue(value ?? 0), null));
+                Assert.Throws(exception, () => new HealthPoint(new HealthPointValue(value ?? 0), null!));
             else
                 Assert.Throws(exception, () => new HealthPoint(new HealthPointValue(value ?? 0), new MaxHealthPointValue(max ?? 0)));
         }
@@ -47,7 +47,7 @@ public class HealthPointTest
         else
         {
             if (max == null)
-                Assert.Throws(exception, () => new HealthPoint(max: null));
+                Assert.Throws(exception, () => new HealthPoint(max: null!));
             else
             Assert.Throws(exception, () => new HealthPoint(new MaxHealthPointValue(max ?? 0)));
         }
@@ -67,7 +67,7 @@ public class HealthPointTest
         else
         {
             if (level == null)
-                Assert.Throws(exception, () => new HealthPoint(level: null));
+                Assert.Throws(exception, () => new HealthPoint(level: null!));
             else
                 Assert.Throws(exception, () => new HealthPoint(new CharacterLevel(level ?? 1)));
         }

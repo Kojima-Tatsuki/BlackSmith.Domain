@@ -1,7 +1,7 @@
 namespace BlackSmith.Domain.Character
 {
     /// <summary>プレイヤーや敵を含むすべてのキャラクターを一意に定める識別子</summary>
-    public class CharacterID : BasicID
+    public record CharacterID : BasicID
     {
         protected override string Prefix => "Character-";
 

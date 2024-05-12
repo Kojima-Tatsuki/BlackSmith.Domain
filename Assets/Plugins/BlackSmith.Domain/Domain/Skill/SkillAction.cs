@@ -22,7 +22,7 @@
 
     }
 
-    public class SkillActionID : BasicID
+    public record SkillActionID : BasicID
     {
         protected override string Prefix => "SkillAction-";
     }

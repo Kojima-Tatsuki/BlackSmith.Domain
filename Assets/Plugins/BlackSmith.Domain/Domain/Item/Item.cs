@@ -25,7 +25,7 @@ namespace BlackSmith.Domain.Item
     }
 
     /// <summary>アイテムを一意に定めることのできる識別子</summary>
-    public class ItemID : BasicID
+    public record ItemID : BasicID
     {
         protected override string Prefix => "Item-";
     }

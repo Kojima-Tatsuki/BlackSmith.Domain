@@ -4,8 +4,9 @@ using System;
 
 internal class LevelDependentParametersTest
 {
-    [Test(Description = "LevelDependentParametersTestのインスタンス化テスト")]
-    public void InstancePasses()
+    [Test(Description = "LevelDependentParametersインスタンス化テスト")]
+
+    public void LevelDependentParametersInstancePasses()
     {
         Assert.That(() => new LevelDependentParameters() != null);
 
