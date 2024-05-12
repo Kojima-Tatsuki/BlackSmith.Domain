@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 internal class AttackValueTest
 {
-    private static (LevelDependentParameters ldp, BattleEquipmentModule em, BlattleStatusEffectModule sem, int result)[] CorrectMockData()
+    private static (LevelDependentParameters ldp, BattleEquipmentModule em, BattleStatusEffectModule sem, int result)[] CorrectMockData()
     {
         var ldp = new LevelDependentParameters(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(2), new Agility(1));
 
@@ -41,10 +41,10 @@ internal class AttackValueTest
             { id, effect }
         };
 
-        var nullStatusEffectModule = new BlattleStatusEffectModule(null);
-        var statusEffectModule = new BlattleStatusEffectModule(statusEffect);
+        var nullStatusEffectModule = new BattleStatusEffectModule(null);
+        var statusEffectModule = new BattleStatusEffectModule(statusEffect);
 
-        return new (LevelDependentParameters, BattleEquipmentModule, BlattleStatusEffectModule, int)[]{
+        return new (LevelDependentParameters, BattleEquipmentModule, BattleStatusEffectModule, int)[]{
             new ( ldp, nullEquipmentModule, nullStatusEffectModule, 6),
             new ( ldp, weaponEqupmentModule, nullStatusEffectModule, 6 + 1),
             new ( ldp, armorEquipmentModule, nullStatusEffectModule, 6 + 1),
@@ -58,7 +58,7 @@ internal class AttackValueTest
 
     [Test(Description = "攻撃力のインスタンステスト")]
     [TestCaseSource(nameof(CorrectMockData), Category = "正常系")]
-    public void InstancePasses((LevelDependentParameters lep, BattleEquipmentModule em, BlattleStatusEffectModule sem, int result) data)
+    public void InstancePasses((LevelDependentParameters lep, BattleEquipmentModule em, BattleStatusEffectModule sem, int result) data)
     {
         var attack = new AttackValue(data.lep, data.em, data.sem);
 

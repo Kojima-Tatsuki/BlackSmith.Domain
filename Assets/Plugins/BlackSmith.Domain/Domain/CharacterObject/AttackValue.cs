@@ -17,7 +17,7 @@ namespace BlackSmith.Domain.CharacterObject
         internal int FromArmorAttack { get; }
         internal int FromStatusEffectAttack { get; }
 
-        internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule, BlattleStatusEffectModule statusEffectModule)
+        internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
         {
             FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2); // ここは必ず1以上の値
             FromWeaponAttack = equipmentModule.Weapon?.Attack.Value ?? 0;

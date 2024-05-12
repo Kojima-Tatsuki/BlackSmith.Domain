@@ -12,9 +12,9 @@ namespace BlackSmith.Domain.Character.Battle
 
         public BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
         {
-            if (weapon?.EquipType != EquipmentType.Weapon)
+            if (weapon != null && weapon.EquipType != EquipmentType.Weapon)
                 throw new ArgumentException($"Unexpected type of equipment. {weapon?.EquipType}. (lJTQ1VIJ)");
-            if (armor?.EquipType != EquipmentType.Armor)
+            if (armor != null && armor.EquipType != EquipmentType.Armor)
                 throw new ArgumentException($"Unexpected type of equipment. {armor?.EquipType}. (aJL3gEST)");
 
             Weapon = weapon;

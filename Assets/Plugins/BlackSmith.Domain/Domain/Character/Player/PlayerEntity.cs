@@ -31,7 +31,7 @@ namespace BlackSmith.Domain.Character.Player
                 command.Health,
                 command.LevelParams,
                 new BattleEquipmentModule(null, null),
-                new BlattleStatusEffectModule());
+                new BattleStatusEffectModule());
         }
 
         /// <summary> 名前の変更を行う </summary>
