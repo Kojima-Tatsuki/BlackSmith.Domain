@@ -8,23 +8,23 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// 攻撃力
     /// </summary>
-    public class AttackValue
+    public record AttackValue
     {
         public int Value { get; }
 
-        private int FromLevelAttack { get; }
-        private int WeaponAttack { get; }
-        private int ArmorAttack { get; }
-        private int StatusEffect { get; }
+        internal int FromLevelAttack { get; }
+        internal int FromWeaponAttack { get; }
+        internal int FromArmorAttack { get; }
+        internal int FromStatusEffectAttack { get; }
 
-        internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule, BlattleStatusEffectModule statusEffectModule)
+        internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
         {
             FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2); // ここは必ず1以上の値
-            WeaponAttack = equipmentModule.Weapon?.Attack.Value ?? 0;
-            ArmorAttack = equipmentModule.Armor?.Attack?.Value ?? 0;
-            StatusEffect = statusEffectModule.StatusEffects.Sum(effect => effect.StatusModel.Attack);
+            FromWeaponAttack = equipmentModule.Weapon?.Attack.Value ?? 0;
+            FromArmorAttack = equipmentModule.Armor?.Attack?.Value ?? 0;
+            FromStatusEffectAttack = statusEffectModule.StatusEffects.Sum(effect => effect.StatusModel.Attack);
 
-            Value = CheckVaild(FromLevelAttack + WeaponAttack + ArmorAttack + StatusEffect);
+            Value = CheckVaild(FromLevelAttack + FromWeaponAttack + FromArmorAttack + FromStatusEffectAttack);
         }
 
         private int CheckVaild(int value)
@@ -36,26 +36,5 @@ namespace BlackSmith.Domain.CharacterObject
         }
 
         public override string ToString() => Value.ToString();
-
-        internal AttackDetailModel GetDetail()
-        {
-            return new AttackDetailModel(FromLevelAttack, WeaponAttack, ArmorAttack, StatusEffect);
-        }
-    }
-
-    public class AttackDetailModel
-    {
-        public int Level { get; }
-        public int Weapon { get; }
-        public int Armor { get; }
-        public int StatusEffect { get; }
-
-        internal AttackDetailModel(int level, int weapon, int armor, int effect)
-        {
-            Level = level;
-            Weapon = weapon;
-            Armor = armor;
-            StatusEffect = effect;
-        }
     }
 }

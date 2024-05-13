@@ -8,10 +8,10 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// ダメージ量を表すクラス
     /// </summary>
-    public class DamageValue
+    public record DamageValue
     {
         /// <summary> レベル差関数用の補正値 </summary>
-        private const double LevelGapCorrectionValue = 1.2599210498948731;
+        private const double LevelGapCorrection = 1.2599210498948731;
 
         public int Value { get; }
 
@@ -22,7 +22,7 @@ namespace BlackSmith.Domain.CharacterObject
 
             // 3 レベル差で威力が約2倍になる
             // lev = LGCV ^ levelGap
-            var lev = Math.Pow(LevelGapCorrectionValue, levelGap.GetGepFromAttackerToReceiver());
+            var lev = Math.Pow(LevelGapCorrection, levelGap.GetGepFromAttackerToReceiver());
 
             // レベル差関数 * (attack^2) / (attack + deffence) * 補正値
             var damage = (int)Math.Floor(lev * a * a / (a + d)); // 切り捨てて計算
@@ -59,7 +59,7 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// 攻めと守りのレベル差を表す
     /// </summary>
-    internal class LevelGapOfAttackerAndReceiver
+    internal record LevelGapOfAttackerAndReceiver
     {
         private readonly CharacterLevel receiver;
 

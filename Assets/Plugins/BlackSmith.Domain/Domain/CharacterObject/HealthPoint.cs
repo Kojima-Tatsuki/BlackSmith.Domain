@@ -6,7 +6,7 @@ namespace BlackSmith.Domain.CharacterObject
     /// <summary>
     /// =Value= This class is used to represent HP.
     /// </summary>
-    public class HealthPoint
+    public record HealthPoint
     {
         internal HealthPointValue Value { get; }
 
@@ -51,10 +51,10 @@ namespace BlackSmith.Domain.CharacterObject
         /// <param name="level">算出に用いるレベル</param>
         internal HealthPoint(CharacterLevel level)
         {
+            if (level is null) throw new ArgumentNullException(nameof(level));
+
             // 攻撃力の6倍の体力を作りたい
             var maxValue = level.Value * 10;
-
-            var max = new MaxHealthPointValue(maxValue);
 
             Value = new HealthPointValue(maxValue);
             MaximumValue = new MaxHealthPointValue(maxValue);
@@ -122,7 +122,7 @@ namespace BlackSmith.Domain.CharacterObject
         }
     }
 
-    internal class HealthPointValue : IEquatable<HealthPointValue>
+    internal record HealthPointValue
     {
         internal int Value { get; }
 
@@ -141,31 +141,6 @@ namespace BlackSmith.Domain.CharacterObject
             return true;
         }
 
-        public bool Equals(HealthPointValue? other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Value == other.Value;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-
-            if (GetType() != obj.GetType()) return false;
-            return Equals((HealthPointValue)obj);
-        }
-
-        public override int GetHashCode() => Value.GetHashCode();
-
-        public static bool operator ==(HealthPointValue x, HealthPointValue y)
-            => x.Value == y.Value;
-
-        public static bool operator !=(HealthPointValue x, HealthPointValue y)
-            => x.Value != y.Value;
-
         public static bool operator <(HealthPointValue x, HealthPointValue y)
             => x.Value < y.Value;
 
@@ -181,7 +156,7 @@ namespace BlackSmith.Domain.CharacterObject
         public override string ToString() => Value.ToString();
     }
 
-    internal class MaxHealthPointValue : HealthPointValue
+    internal record MaxHealthPointValue : HealthPointValue
     {
         public MaxHealthPointValue(int value) : base(value) { }
 

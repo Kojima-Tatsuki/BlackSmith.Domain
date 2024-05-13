@@ -3,11 +3,17 @@ using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Item.Equipment;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
 #nullable enable
 
-public class BattleEquipmentModuleTest
+internal class BattleEquipmentModuleTest
 {
+    public static BattleEquipmentModule[] GetBattleEquipmentModuleMock()
+    {
+        return CorrectMockData().Select(data => new BattleEquipmentModule(data[0], data[1])).ToArray();
+    }
+
     // 正常系用モックデータ
     private static EquippableItem?[][] CorrectMockData()
     {

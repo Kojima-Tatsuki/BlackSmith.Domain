@@ -4,8 +4,9 @@ using System;
 
 namespace BlackSmith.Domain.CharacterObject
 {
-    /// <summary> 装備, Entityのクラス </summary>
-    internal class Equipment
+    // Value Objectとして扱いたい
+    /// <summary> 装備クラス </summary>
+    internal record Equipment
     {
         /// <summary> 装備のObjectID </summary>
         public EquipmentID ID { get; }
@@ -27,7 +28,7 @@ namespace BlackSmith.Domain.CharacterObject
         }
     }
 
-    public class EquipmentName
+    public record EquipmentName
     {
         public string Value { get; }
 
@@ -37,7 +38,7 @@ namespace BlackSmith.Domain.CharacterObject
         }
     }
 
-    public class EquipmentID : BasicID
+    public record EquipmentID : BasicID
     {
         protected override string Prefix => "Equipment-";
 
@@ -47,42 +48,13 @@ namespace BlackSmith.Domain.CharacterObject
         }
     }
 
-    public class EquipmentLocation : IEquatable<EquipmentLocation>
+    public record EquipmentLocation
     {
         public LocationType Value { get; }
 
         internal EquipmentLocation(LocationType location)
         {
             Value = location;
-        }
-
-        public bool Equals(EquipmentLocation? other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Value == other.Value;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-
-            if (GetType() != obj.GetType()) return false;
-            return Equals((EquipmentLocation)obj);
-        }
-
-        public override int GetHashCode() => Value.GetHashCode();
-
-        public static bool operator ==(EquipmentLocation x, EquipmentLocation y)
-        {
-            return x.Value == y.Value;
-        }
-
-        public static bool operator !=(EquipmentLocation x, EquipmentLocation y)
-        {
-            return x.Value != y.Value;
         }
 
         public enum LocationType
@@ -101,35 +73,35 @@ namespace BlackSmith.Domain.CharacterObject
         }
     }
 
-    internal class NullEquipment : Equipment
+    internal record NullEquipment : Equipment
     {
         internal NullEquipment() : base(new EquipmentName("NULL"), new EquipmentLocation(EquipmentLocation.LocationType.None), new EquipmentID())
         {
         }
     }
 
-    internal class HeadEquipment : Equipment
+    internal record HeadEquipment : Equipment
     {
         internal HeadEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
         {
         }
     }
 
-    internal class ChestEquipment : Equipment
+    internal record ChestEquipment : Equipment
     {
         internal ChestEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
         {
         }
     }
 
-    internal class HandsEquipment : Equipment
+    internal record HandsEquipment : Equipment
     {
         internal HandsEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
         {
         }
     }
 
-    internal class LegEquipment : Equipment
+    internal record LegEquipment : Equipment
     {
         internal LegEquipment(EquipmentName name, EquipmentLocation location, EquipmentID id = null!) : base(name, location, id)
         {

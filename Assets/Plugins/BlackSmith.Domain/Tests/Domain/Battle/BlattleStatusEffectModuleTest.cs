@@ -30,7 +30,7 @@ internal class BlattleStatusEffectModuleTest
     {
         try
         {
-            var module = new BlattleStatusEffectModule(dict);
+            var module = new BattleStatusEffectModule(dict);
         }
         catch (Exception e)
         {

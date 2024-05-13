@@ -61,7 +61,7 @@ namespace BlackSmith.Domain.Field
         }
     }
 
-    public class FieldID : BasicID
+    public record FieldID : BasicID
     {
         protected override string Prefix => "Field-";
     }

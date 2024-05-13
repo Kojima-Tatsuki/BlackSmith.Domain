@@ -1,9 +1,11 @@
 ﻿using System;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Currency
 {
     /// <summary> お金 </summary>
-    public class Currency
+    public record Currency
     {
         public CurrencyType Type { get; }
 
@@ -57,38 +59,12 @@ namespace BlackSmith.Domain.Currency
         /// <returns>一致していれば真を返す</returns>
         public bool EqualsType(Currency other) => Type.Equals(other.Type);
 
-        public bool Equals(Currency? other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Value.Equals(other.Value) && EqualsType(other);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-
-            if (GetType() != obj.GetType()) return false;
-            return Equals((Currency)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
         public override string? ToString()
         {
             return $"Type : {Type}, Value : {Value}";
         }
 
-        public static bool operator ==(Currency x, Currency y) => x.Equals(y);
-
-        public static bool operator !=(Currency x, Currency y) => !x.Equals(y);
-
-        private class CurrencyValue
+        private record CurrencyValue
         {
             public int Value { get; }
 

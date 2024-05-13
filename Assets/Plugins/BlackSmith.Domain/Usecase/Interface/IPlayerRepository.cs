@@ -2,6 +2,8 @@
 using BlackSmith.Domain.Character.Player;
 using System.Collections.Generic;
 
+#nullable enable
+
 namespace BlackSmith.Usecase.Interface
 {
     /// <summary>

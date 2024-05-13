@@ -8,7 +8,7 @@ namespace BlackSmith.Domain.Character.Player
     /// レベルを元に変動するパラメータを格納する
     /// </summary>
     /// <remarks>Value Object</remarks>
-    internal class LevelDependentParameters
+    internal record LevelDependentParameters
     {
         /// <summary>
         /// 現在のプレイヤーのレベル
@@ -95,7 +95,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>
     /// 筋力
     /// </summary>
-    public class Strength
+    public record Strength
     {
         public int Value => value.Value;
         private readonly BasePlayerParameter value;
@@ -107,7 +107,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>
     /// 俊敏性
     /// </summary>
-    public class Agility
+    public record Agility
     {
         public int Value => value.Value;
         private readonly BasePlayerParameter value;
@@ -119,7 +119,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>
     /// 基礎ステータスの基底クラス
     /// </summary>
-    internal class BasePlayerParameter
+    internal record BasePlayerParameter
     {
         public int Value { get; }
 

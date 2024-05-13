@@ -3,12 +3,14 @@ using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Domain.Item.Equipment;
 using System;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Character.Battle
 {
     /// <summary>
     /// 戦闘時のキャラクターのモデル
     /// </summary>
-    internal class CharacterBattleModule
+    internal record CharacterBattleModule
     {
         internal CharacterLevel Level { get; }
 
@@ -19,9 +21,9 @@ namespace BlackSmith.Domain.Character.Battle
         internal LevelDependentParameters LevelDependentParameters { get; }
 
         internal BattleEquipmentModule EquipmentModule { get; }
-        internal BlattleStatusEffectModule StatusEffectModule { get; }
+        internal BattleStatusEffectModule StatusEffectModule { get; }
 
-        internal CharacterBattleModule(HealthPoint health, LevelDependentParameters levelDepParams, BattleEquipmentModule equipmentModule, BlattleStatusEffectModule statusEffectModule)
+        internal CharacterBattleModule(HealthPoint health, LevelDependentParameters levelDepParams, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
         {
             HealthPoint = health;
             LevelDependentParameters = levelDepParams;
@@ -61,7 +63,7 @@ namespace BlackSmith.Domain.Character.Battle
             return new ChangeEquipmentResult(new CharacterBattleModule(HealthPoint, LevelDependentParameters, currentModule, StatusEffectModule), removed);
         }
 
-        internal class ChangeEquipmentResult
+        internal record ChangeEquipmentResult
         {
             public CharacterBattleModule Modeule { get; }
             public EquippableItem? RemovedItem { get; }

@@ -3,20 +3,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Character.Battle
 {
-    internal class BlattleStatusEffectModule
+    internal record BattleStatusEffectModule
     {
         internal IReadOnlyCollection<BattleStatusEffect> StatusEffects => StatusEffectDictionary.Values.ToList();
         private IReadOnlyDictionary<EffectID, BattleStatusEffect> StatusEffectDictionary { get; }
 
-        internal BlattleStatusEffectModule(IReadOnlyDictionary<EffectID, BattleStatusEffect>? statusEffects = null)
+        internal BattleStatusEffectModule(IReadOnlyDictionary<EffectID, BattleStatusEffect>? statusEffects = null)
         {
             statusEffects ??= new Dictionary<EffectID, BattleStatusEffect>();
             StatusEffectDictionary = new Dictionary<EffectID, BattleStatusEffect>(statusEffects);
         }
 
-        internal BlattleStatusEffectModule AddStatusEffect(BattleStatusEffect statusEffect)
+        internal BattleStatusEffectModule AddStatusEffect(BattleStatusEffect statusEffect)
         {
             // 追加して生成
             var dict = new Dictionary<EffectID, BattleStatusEffect>(StatusEffectDictionary);
@@ -26,10 +28,10 @@ namespace BlackSmith.Domain.Character.Battle
 
             dict.Add(statusEffect.Id, statusEffect);
 
-            return new BlattleStatusEffectModule(dict);
+            return new BattleStatusEffectModule(dict);
         }
 
-        internal BlattleStatusEffectModule RemoveStatusEffect(BattleStatusEffect statusEffect)
+        internal BattleStatusEffectModule RemoveStatusEffect(BattleStatusEffect statusEffect)
         {
             var dict = new Dictionary<EffectID, BattleStatusEffect>(StatusEffectDictionary);
 
@@ -38,7 +40,7 @@ namespace BlackSmith.Domain.Character.Battle
 
             dict.Remove(statusEffect.Id);
 
-            return new BlattleStatusEffectModule(dict);
+            return new BattleStatusEffectModule(dict);
         }
     }
 }
