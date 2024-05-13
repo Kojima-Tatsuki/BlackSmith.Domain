@@ -10,4 +10,4 @@ An Incarnating Radius
 `https://github.com/Kojima-Tatsuki/BlackSmith.Domain.git?path=Assets/Plugins/BlackSmith.Domain`
 
 ## develop branch
-`https://github.com/Kojima-Tatsuki/BlackSmith.Domain/tree/develop?path=Assets/Plugins/BlackSmith.Domain`
+`https://github.com/Kojima-Tatsuki/BlackSmith.Domain.git?path=Assets/Plugins/BlackSmith.Domain#develop`
