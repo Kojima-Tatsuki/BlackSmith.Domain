@@ -9,11 +9,11 @@ namespace BlackSmith.Usecase.Character
     /// <summary>
     /// プレイヤーのステータスに変更を与える際に用いるユースケース
     /// </summary>
-    public class RewritePlayerStatusUsecase
+    public class RewritePlayerCommonEntityStatusUsecase
     {
-        private readonly IPlayerRepository repository;
+        private readonly IPlayerCommonEntityRepository repository;
 
-        public RewritePlayerStatusUsecase(IPlayerRepository playerRepository)
+        public RewritePlayerCommonEntityStatusUsecase(IPlayerCommonEntityRepository playerRepository)
         {
             repository = playerRepository;
         }
@@ -31,7 +31,7 @@ namespace BlackSmith.Usecase.Character
 
             entity.ChangeName(name);
 
-            repository.UpdateCharacter((entity as PlayerEntity) ?? throw new InvalidOperationException(nameof(entity)));
+            repository.UpdateCharacter((entity as PlayerCommonEntity) ?? throw new InvalidOperationException(nameof(entity)));
         }
 
         public static bool IsValidPlayerName(string name)

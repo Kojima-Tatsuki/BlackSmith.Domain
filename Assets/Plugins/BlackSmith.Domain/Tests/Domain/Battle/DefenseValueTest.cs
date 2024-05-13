@@ -1,12 +1,9 @@
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
-using BlackSmith.Domain.Item.Equipment;
-using BlackSmith.Domain.PassiveEffect;
 using NUnit.Framework;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 
 #nullable enable
 
