@@ -10,7 +10,7 @@ namespace BlackSmith.Domain.Character.Battle
     /// <summary>
     /// 戦闘時のキャラクターのモデル
     /// </summary>
-    internal class CharacterBattleModule
+    internal record CharacterBattleModule
     {
         internal CharacterLevel Level { get; }
 
@@ -63,7 +63,7 @@ namespace BlackSmith.Domain.Character.Battle
             return new ChangeEquipmentResult(new CharacterBattleModule(HealthPoint, LevelDependentParameters, currentModule, StatusEffectModule), removed);
         }
 
-        internal class ChangeEquipmentResult
+        internal record ChangeEquipmentResult
         {
             public CharacterBattleModule Modeule { get; }
             public EquippableItem? RemovedItem { get; }

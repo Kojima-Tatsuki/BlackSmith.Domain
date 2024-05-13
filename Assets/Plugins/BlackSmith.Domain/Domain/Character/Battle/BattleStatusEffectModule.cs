@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace BlackSmith.Domain.Character.Battle
 {
-    internal class BattleStatusEffectModule
+    internal record BattleStatusEffectModule
     {
         internal IReadOnlyCollection<BattleStatusEffect> StatusEffects => StatusEffectDictionary.Values.ToList();
         private IReadOnlyDictionary<EffectID, BattleStatusEffect> StatusEffectDictionary { get; }

@@ -4,7 +4,7 @@
 
 namespace BlackSmith.Domain.Character.Battle
 {
-    internal class ChangeBattleEquipmentResult
+    internal record ChangeBattleEquipmentResult
     {
         public EquippableItem? CurrentEquipment { get; }
         public EquippableItem? PrevEquipment { get; }

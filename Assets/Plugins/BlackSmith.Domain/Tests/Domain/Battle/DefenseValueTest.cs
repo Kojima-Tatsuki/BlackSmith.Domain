@@ -19,7 +19,7 @@ internal class DefenseValueTest
         // BattleModule‚ğg—p‚µ‚È‚¢ê‡
         yield return new TestCaseData(ldp, null, null, null).SetCategory("³íŒn");
 
-        var eq = new BattleEquipmentModule(null, null);
+        var eq = BattleEquipmentModuleTest.GetBattleEquipmentModuleMock();
 
         yield return new TestCaseData(ldp, eq, null, null).SetCategory("³íŒn");
 

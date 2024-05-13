@@ -3,9 +3,9 @@
 namespace BlackSmith.Domain.PassiveEffect
 {
     // 直接的なリポジトリ管理はしない
-    internal class BattleStatusEffect
+    internal record BattleStatusEffect
     {
-        internal EffectID Id { get; }
+        internal EffectID Id { get; } // IDを重複刺せないのであれば、Idのみを使用したEqualsを実装すべき？
 
         internal BattleStatusEffectModel StatusModel { get; }
 
@@ -16,7 +16,7 @@ namespace BlackSmith.Domain.PassiveEffect
         }
     }
 
-    internal class EffectID
+    internal record EffectID
     {
         internal Guid Value { get; }
 
@@ -26,7 +26,7 @@ namespace BlackSmith.Domain.PassiveEffect
         }
     }
 
-    internal class BattleStatusEffectModel
+    internal record BattleStatusEffectModel
     {
         public int MaxHealth { get; }
         public int Attack { get; }

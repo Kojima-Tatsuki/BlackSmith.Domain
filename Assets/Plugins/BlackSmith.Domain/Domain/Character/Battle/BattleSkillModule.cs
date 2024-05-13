@@ -1,6 +1,6 @@
 ﻿namespace BlackSmith.Domain.Character.Battle
 {
-    internal class BattleSkillModule
+    internal record BattleSkillModule
     {
 
     }
