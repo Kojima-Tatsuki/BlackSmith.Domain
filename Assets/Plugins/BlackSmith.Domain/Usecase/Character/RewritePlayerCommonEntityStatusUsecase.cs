@@ -9,11 +9,11 @@ namespace BlackSmith.Usecase.Character
     /// <summary>
     /// プレイヤーのステータスに変更を与える際に用いるユースケース
     /// </summary>
-    public class RewritePlayerStatusUsecase
+    public class RewritePlayerCommonEntityStatusUsecase
     {
         private readonly IPlayerCommonEntityRepository repository;
 
-        public RewritePlayerStatusUsecase(IPlayerCommonEntityRepository playerRepository)
+        public RewritePlayerCommonEntityStatusUsecase(IPlayerCommonEntityRepository playerRepository)
         {
             repository = playerRepository;
         }

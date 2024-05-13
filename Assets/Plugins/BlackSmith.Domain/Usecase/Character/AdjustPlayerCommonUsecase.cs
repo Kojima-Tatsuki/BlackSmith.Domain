@@ -1,6 +1,5 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
-using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Usecase.Interface;
 
 namespace BlackSmith.Usecase.Character
@@ -17,11 +16,12 @@ namespace BlackSmith.Usecase.Character
             repository = playerRepository;
         }
 
+        // 外部にpublicで公開されているのは、各パラメータの値のみであるため、Entityを返却しても問題ない
         /// <summary>
         /// プレイヤーデータの作成を行う
         /// </summary>
         /// <param name="name">作成するプレイヤーの名前</param>
-        /// <returns>作成したプレイヤーエンティティのデータ</returns>
+        /// <returns>作成したプレイヤーエンティティ</returns>
         public PlayerCommonEntity CreateCharacter(string playerName)
         {
             var name = new PlayerName(playerName);

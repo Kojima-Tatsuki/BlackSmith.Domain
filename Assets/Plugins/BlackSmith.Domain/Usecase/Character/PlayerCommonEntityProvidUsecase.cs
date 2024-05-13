@@ -9,11 +9,11 @@ namespace BlackSmith.Usecase.Character
     /// <summary>
     /// Presenter層にPlayerEntityDataを渡すクラス
     /// </summary>
-    public class PlayerEntityDataProvidUsecase
+    public class PlayerCommonEntityProvidUsecase
     {
         private readonly IPlayerCommonEntityRepository repository;
 
-        public PlayerEntityDataProvidUsecase(IPlayerCommonEntityRepository playerRepository)
+        public PlayerCommonEntityProvidUsecase(IPlayerCommonEntityRepository playerRepository)
         {
             repository = playerRepository;
         }
