@@ -10,9 +10,9 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class AdjustPlayerCommonUsecase
     {
-        private readonly IPlayerRepository repository;
+        private readonly IPlayerCommonEntityRepository repository;
 
-        public AdjustPlayerCommonUsecase(IPlayerRepository playerRepository)
+        public AdjustPlayerCommonUsecase(IPlayerCommonEntityRepository playerRepository)
         {
             repository = playerRepository;
         }
@@ -22,7 +22,7 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="name">作成するプレイヤーの名前</param>
         /// <returns>作成したプレイヤーエンティティのデータ</returns>
-        public PlayerEntityData CreateCharacter(string playerName)
+        public PlayerCommonEntity CreateCharacter(string playerName)
         {
             var name = new PlayerName(playerName);
 
@@ -30,27 +30,18 @@ namespace BlackSmith.Usecase.Character
 
             repository.Register(entity);
 
-            return new PlayerEntityData(entity);
+            return entity;
         }
 
-        public void RreconstructPlayer(PlayerEntityData data)
+        public PlayerCommonEntity RreconstructPlayer(PlayerCommonReconstractPrimitiveModel model)
         {
-            var command = new PlayerCommonCreateCommand(
-                data.ID, new PlayerName(data.Name),
-                new HealthPoint(new(data.CurrentHealth), new(data.MaxHealth)),
-                new LevelDependentParameters(new PlayerLevel(new(data.Exp)), new(data.Strength), new(data.Agility)));
+            var command = model.ToCommand();
 
             var entity = PlayerFactory.Reconstruct(command);
 
             repository.Register(entity);
-        }
 
-        public void ReconstrunctPlayer(
-                string id, string name, int? level, int exp, int currentHealth, int maxHealth,
-                int strength, int agility, int attack, int defence)
-        {
-            var data = new PlayerEntityData(id, name, level, exp, currentHealth, maxHealth, strength, agility, attack, defence);
-            RreconstructPlayer(data);
+            return entity;
         }
 
         /// <summary>
@@ -60,6 +51,18 @@ namespace BlackSmith.Usecase.Character
         public void DeletePlayer(CharacterID id)
         {
             repository.Delete(id);
+        }
+
+        public record PlayerCommonReconstractPrimitiveModel(string Id, string Name, int Exp)
+        {
+            internal PlayerCommonReconstractCommand ToCommand()
+            {
+                var id = new CharacterID(Id);
+                var name = new PlayerName(Name);
+                var level = new PlayerLevel(new Experience(Exp));
+
+                return new PlayerCommonReconstractCommand(id, name, level);
+            }
         }
     }
 }

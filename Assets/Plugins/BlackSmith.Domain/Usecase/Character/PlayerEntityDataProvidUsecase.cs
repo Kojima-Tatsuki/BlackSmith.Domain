@@ -11,9 +11,9 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class PlayerEntityDataProvidUsecase
     {
-        private readonly IPlayerRepository repository;
+        private readonly IPlayerCommonEntityRepository repository;
 
-        public PlayerEntityDataProvidUsecase(IPlayerRepository playerRepository)
+        public PlayerEntityDataProvidUsecase(IPlayerCommonEntityRepository playerRepository)
         {
             repository = playerRepository;
         }
@@ -22,84 +22,19 @@ namespace BlackSmith.Usecase.Character
         /// すべてのプレイヤーのデータを返す
         /// </summary>
         /// <returns>すべてのプレイヤーのデータ</returns>
-        public IReadOnlyCollection<PlayerEntityData> GetAllPlayerDatas()
+        public IReadOnlyCollection<PlayerCommonEntity> GetAllPlayerCommonEntities()
         {
-            var entities = repository.GetAllPlayers();
-
-            var result = new List<PlayerEntityData>(entities.Count);
-
-            foreach (var entity in entities)
-            {
-                result.Add(new PlayerEntityData(entity));
-            }
-
-            return result;
+            return repository.GetAllPlayers();
         }
 
-        public PlayerEntityData GetPlayerData(CharacterID id)
+        public PlayerCommonEntity GetPlayerData(CharacterID id)
         {
             if (!repository.IsExist(id))
                 throw new Exception($"指定したidのキャラクターは存在しません {id}");
 
             var entity = repository.FindByID(id) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
 
-            return new PlayerEntityData(entity);
-        }
-    }
-
-    /// <summary>
-    /// Usecase層とPresenter層間のPlayerEntityのOutputData
-    /// </summary>
-    public record PlayerEntityData
-    {
-        public CharacterID ID { get; }
-
-        public string Name { get; }
-        public int Level { get; }
-        public int Exp { get; }
-        public int CurrentHealth { get; }
-        public int MaxHealth { get; }
-
-        public int Strength { get; }
-        public int Agility { get; }
-
-        public int Attack { get; }
-        public int Defence { get; }
-
-        public (int current, int max) Health => (CurrentHealth, MaxHealth);
-
-        // AdjustPlayerUsecaseから呼ぶ再構築用のコンストラクタ
-        // DomainObjectからではなく、Usecaseから再構築する事を強制する役割
-        internal PlayerEntityData(
-            string id, string name,
-            int? level, int exp,
-            int currentHealth, int maxHealth,
-            int strength, int agility,
-            int attack, int defence)
-        {
-            ID = new CharacterID(id);
-            Name = name;
-            Level = level ?? Experience.CurrentLevel(new Experience(exp));
-            Exp = exp;
-            CurrentHealth = currentHealth;
-            MaxHealth = maxHealth;
-            Strength = strength; Agility = agility;
-            Attack = attack; Defence = defence;
-        }
-
-        internal PlayerEntityData(PlayerCommonEntity entity)
-        {
-            ID = entity.ID;
-            Name = entity.Name.Value;
-            Level = entity.Level.Value;
-            Exp = entity.Level.CumulativeExp.Value;
-            var health = entity.HealthPoint.GetValues();
-            CurrentHealth = health.current;
-            MaxHealth = health.max;
-            Strength = entity.BattleModule.LevelDependentParameters.STR.Value;
-            Agility = entity.BattleModule.LevelDependentParameters.AGI.Value;
-            Attack = entity.Attack.Value;
-            Defence = entity.Defense.Value;
+            return entity;
         }
     }
 }

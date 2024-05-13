@@ -1,11 +1,9 @@
-﻿using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.CharacterObject.Interface;
+﻿using BlackSmith.Domain.CharacterObject.Interface;
 using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Domain.Item.Equipment;
 using System;
-using BlackSmith.Domain.Character;
 
-namespace BlackSmith.Assets.Plugins.BlackSmith.Domain.Domain.Character.Battle
+namespace BlackSmith.Domain.Character.Battle
 {
     public class PlayerBattleEntity : IBattleCharacter, IEquatable<PlayerBattleEntity>
     {

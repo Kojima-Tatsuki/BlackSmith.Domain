@@ -9,7 +9,7 @@ namespace BlackSmith.Usecase.Interface
     /// <summary>
     /// すべてのプレイヤーエンティティを保管するリポジトリ
     /// </summary>
-    public interface IPlayerRepository
+    public interface IPlayerCommonEntityRepository
     {
         void Register(PlayerCommonEntity character);
 

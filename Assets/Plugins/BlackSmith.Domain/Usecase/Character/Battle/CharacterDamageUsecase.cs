@@ -12,9 +12,9 @@ namespace BlackSmith.Usecase.Character.Battle
     /// </summary>
     public class CharacterDamageUsecase
     {
-        private IPlayerRepository PlayerRepository { get; }
+        private IPlayerBattleEntityRepository PlayerRepository { get; }
 
-        public CharacterDamageUsecase(IPlayerRepository playerRepository)
+        public CharacterDamageUsecase(IPlayerBattleEntityRepository playerRepository)
         {
             PlayerRepository = playerRepository;
         }
@@ -40,7 +40,7 @@ namespace BlackSmith.Usecase.Character.Battle
 
             receiver.TakeDamage(damage);
 
-            PlayerRepository.UpdateCharacter((receiver as PlayerCommonEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、PlayerEntityではありません. (jAv4M0Pb)"));
+            PlayerRepository.UpdateCharacter((receiver as PlayerBattleEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、PlayerEntityではありません. (jAv4M0Pb)"));
         }
     }
 }

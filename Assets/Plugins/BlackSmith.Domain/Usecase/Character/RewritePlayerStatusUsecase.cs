@@ -11,9 +11,9 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class RewritePlayerStatusUsecase
     {
-        private readonly IPlayerRepository repository;
+        private readonly IPlayerCommonEntityRepository repository;
 
-        public RewritePlayerStatusUsecase(IPlayerRepository playerRepository)
+        public RewritePlayerStatusUsecase(IPlayerCommonEntityRepository playerRepository)
         {
             repository = playerRepository;
         }
