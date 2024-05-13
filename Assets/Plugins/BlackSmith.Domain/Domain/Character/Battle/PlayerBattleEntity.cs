@@ -1,53 +1,30 @@
-using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.Character.Interface;
-using BlackSmith.Domain.CharacterObject;
+﻿using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.CharacterObject.Interface;
+using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Domain.Item.Equipment;
 using System;
+using BlackSmith.Domain.Character;
 
-namespace BlackSmith.Domain.Character.Player
+namespace BlackSmith.Assets.Plugins.BlackSmith.Domain.Domain.Character.Battle
 {
-    // Facade, 窓口のようなイメージで扱う
-    public class PlayerEntity : ICharacterEntity, IBattleCharacter
+    public class PlayerBattleEntity : IBattleCharacter, IEquatable<PlayerBattleEntity>
     {
         public CharacterID ID { get; }
-        public PlayerName Name { get; private set; }
 
-        CharacterLevel ICharacterEntity.Level => Level;
-        CharacterLevel IBattleCharacter.Level => Level;
-        public PlayerLevel Level { get; private set; }
-
-        /// <summary>
-        /// プレイヤーエンティティのインスタンス化を行う
-        /// </summary>
-        /// <remarks>再利用する際は、ファクトリーで変更メソッドを呼び出す？</remarks>
-        /// <param name="id"></param>
-        internal PlayerEntity(PlayerCreateCommand command)
-        {
-            ID = command.Id;
-            Name = command.Name;
-            Level = command.LevelParams.Level;
-            BattleModule = new CharacterBattleModule(
-                command.Health,
-                command.LevelParams,
-                new BattleEquipmentModule(null, null),
-                new BattleStatusEffectModule());
-        }
-
-        /// <summary> 名前の変更を行う </summary>
-        /// <param name="name">変更する名前</param>
-        void ICharacterEntity.ChangeName(PlayerName name)
-        {
-            Name = name ?? throw new ArgumentNullException("Not found PlayerName. (O94YoFRG)");
-        }
-
-        #region BattleModule
         internal CharacterBattleModule BattleModule { get; set; }
 
+        public CharacterLevel Level => BattleModule.Level;
         public HealthPoint HealthPoint => BattleModule.HealthPoint;
         public AttackValue Attack => BattleModule.Attack;
         public DefenseValue Defense => BattleModule.Defense;
 
+        internal PlayerBattleEntity(PlayerBattleReconstractCommand command)
+        {
+            ID = command.Id;
+            BattleModule = command.Module;
+        }
+
+        // スコープをinternalとしたいため、Interfaceのメソッドを明示的に実装
         HealthPoint ITakeDamageable.TakeDamage(DamageValue damage)
         {
             BattleModule = BattleModule.TakeDamage(damage);
@@ -90,24 +67,15 @@ namespace BlackSmith.Domain.Character.Player
 
             return new ChangeBattleEquipmentResult(null, prev);
         }
-        #endregion
 
-        internal PlayerCreateCommand GetPlayerCreateCommand()
+        public bool Equals(PlayerBattleEntity other)
         {
-            return new PlayerCreateCommand(ID, Name, BattleModule.HealthPoint, BattleModule.LevelDependentParameters);
-        }
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
 
-        /// <summary>
-        /// 内部情報を文字列として表示する
-        /// </summary>
-        public override string ToString()
-        {
-            var result = "";
-            result += $"Name : {Name.Value}\n";
-            result += $"ID : {ID}\n";
-            result += $"Level : {Level.Value}";
-
-            return result;
+            return ID.Equals(other.ID);
         }
     }
+
+    internal record PlayerBattleReconstractCommand(CharacterID Id, CharacterBattleModule Module);
 }

@@ -31,7 +31,7 @@ namespace BlackSmith.Usecase.Character
 
             entity.ChangeName(name);
 
-            repository.UpdateCharacter((entity as PlayerEntity) ?? throw new InvalidOperationException(nameof(entity)));
+            repository.UpdateCharacter((entity as PlayerCommonEntity) ?? throw new InvalidOperationException(nameof(entity)));
         }
 
         public static bool IsValidPlayerName(string name)

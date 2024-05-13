@@ -6,7 +6,7 @@ namespace BlackSmith.Domain.Character.Player
     {
         // キャラクターに対して対象の装備を装備させる
         // 既に装備していた場合には、エラー処理をする
-        internal void Equip(PlayerEntity player, Equipment equip)
+        internal void Equip(PlayerCommonEntity player, Equipment equip)
         {
             /*
             プレイヤーの装備欄に指定の装備が装備できるなら、装備する

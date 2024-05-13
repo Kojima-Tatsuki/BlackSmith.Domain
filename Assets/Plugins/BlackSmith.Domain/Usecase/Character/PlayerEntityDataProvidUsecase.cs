@@ -50,7 +50,7 @@ namespace BlackSmith.Usecase.Character
     /// <summary>
     /// Usecase層とPresenter層間のPlayerEntityのOutputData
     /// </summary>
-    public class PlayerEntityData
+    public record PlayerEntityData
     {
         public CharacterID ID { get; }
 
@@ -87,7 +87,7 @@ namespace BlackSmith.Usecase.Character
             Attack = attack; Defence = defence;
         }
 
-        internal PlayerEntityData(PlayerEntity entity)
+        internal PlayerEntityData(PlayerCommonEntity entity)
         {
             ID = entity.ID;
             Name = entity.Name.Value;

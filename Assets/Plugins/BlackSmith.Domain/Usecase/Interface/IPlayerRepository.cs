@@ -11,13 +11,13 @@ namespace BlackSmith.Usecase.Interface
     /// </summary>
     public interface IPlayerRepository
     {
-        void Register(PlayerEntity character);
+        void Register(PlayerCommonEntity character);
 
-        void UpdateCharacter(PlayerEntity character);
+        void UpdateCharacter(PlayerCommonEntity character);
 
-        PlayerEntity? FindByID(CharacterID id);
+        PlayerCommonEntity? FindByID(CharacterID id);
 
-        IReadOnlyCollection<PlayerEntity> GetAllPlayers();
+        IReadOnlyCollection<PlayerCommonEntity> GetAllPlayers();
 
         bool IsExist(CharacterID id);
 

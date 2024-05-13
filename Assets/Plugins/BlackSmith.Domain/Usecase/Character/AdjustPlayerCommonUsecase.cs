@@ -6,13 +6,13 @@ using BlackSmith.Usecase.Interface;
 namespace BlackSmith.Usecase.Character
 {
     /// <summary>
-    /// プレイヤーの作成、削除を行うユースケース
+    /// CommonPlayerEntityの作成、削除を行うユースケース
     /// </summary>
-    public class AdjustPlayerUsecase
+    public class AdjustPlayerCommonUsecase
     {
         private readonly IPlayerRepository repository;
 
-        public AdjustPlayerUsecase(IPlayerRepository playerRepository)
+        public AdjustPlayerCommonUsecase(IPlayerRepository playerRepository)
         {
             repository = playerRepository;
         }
@@ -33,14 +33,14 @@ namespace BlackSmith.Usecase.Character
             return new PlayerEntityData(entity);
         }
 
-        public void ReconstrunctPlayer(PlayerEntityData data)
+        public void RreconstructPlayer(PlayerEntityData data)
         {
-            var command = new PlayerCreateCommand(
+            var command = new PlayerCommonCreateCommand(
                 data.ID, new PlayerName(data.Name),
                 new HealthPoint(new(data.CurrentHealth), new(data.MaxHealth)),
                 new LevelDependentParameters(new PlayerLevel(new(data.Exp)), new(data.Strength), new(data.Agility)));
 
-            var entity = PlayerFactory.Create(command);
+            var entity = PlayerFactory.Reconstruct(command);
 
             repository.Register(entity);
         }
@@ -50,7 +50,7 @@ namespace BlackSmith.Usecase.Character
                 int strength, int agility, int attack, int defence)
         {
             var data = new PlayerEntityData(id, name, level, exp, currentHealth, maxHealth, strength, agility, attack, defence);
-            ReconstrunctPlayer(data);
+            RreconstructPlayer(data);
         }
 
         /// <summary>
