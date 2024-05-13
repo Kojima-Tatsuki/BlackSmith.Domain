@@ -3,5 +3,12 @@
   "displayName": "BlackSmith Domain",
   "version": "1.1.5",
   "description": "This package describes the domain logic of BlackSmith.",
-  "unity": "2021.3"
+  "unity": "2021.3",
+  "dependencies": {
+    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
+    "org.nuget.r3": "1.1.11"
+  },
+  "author": {
+    "name": "Tatsuki Kojima"
+  }
 }
