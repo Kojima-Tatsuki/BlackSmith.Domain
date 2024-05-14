@@ -8,9 +8,9 @@ namespace BlackSmith.Domain.Field
     // フィールド上に存在する地形ではないデータを扱う
     internal class Chunk
     {
-        public Guid ChunkId { get; init; }
+        public Guid ChunkId { get; }
 
-        public IReadOnlyCollection<CharacterID> CharacterIds { get; init; }
+        public IReadOnlyCollection<CharacterID> CharacterIds { get; }
 
         // コンストラクタのスコープに関しては、リポジトリの実装に依存する
         internal Chunk(IReadOnlyCollection<CharacterID> exists)

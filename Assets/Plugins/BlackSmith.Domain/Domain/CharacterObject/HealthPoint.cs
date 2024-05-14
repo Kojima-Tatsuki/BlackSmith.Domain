@@ -23,7 +23,7 @@ namespace BlackSmith.Domain.CharacterObject
             if (max is null) throw new ArgumentNullException(nameof(max));
 
             if (!IsValidValue(value, max))
-                throw new ArgumentException($"不正な値が引数として渡されました, [value, max] : [{value}, {max}]");
+                throw new ArgumentException($"不正な値が引数として渡されました, [guid, max] : [{value}, {max}]");
 
             Value = value;
             MaximumValue = max;
@@ -39,7 +39,7 @@ namespace BlackSmith.Domain.CharacterObject
             var value = new HealthPointValue(maxValue.Value); // 現在値の初期値を最大値と定める
 
             if (!IsValidValue(value, max))
-                throw new ArgumentException($"不正な値が引数として渡されました, [value, max] : [{value}, {max}]");
+                throw new ArgumentException($"不正な値が引数として渡されました, [guid, max] : [{value}, {max}]");
 
             Value = value;
             MaximumValue = max;

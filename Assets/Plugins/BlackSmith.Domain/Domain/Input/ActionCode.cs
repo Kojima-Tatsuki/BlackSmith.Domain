@@ -32,7 +32,7 @@ namespace BlackSmith.Domain.Input
 
         internal ActionName(string value)
         {
-            if (value is null) throw new ArgumentNullException("Not found actionName value. (ASsKMc9g)");
+            if (value is null) throw new ArgumentNullException("Not found actionName guid. (ASsKMc9g)");
             if (value.Length < 3)
                 throw new AggregateException("ActionNameは3文字以上です. (TtoFW9gK)");
 

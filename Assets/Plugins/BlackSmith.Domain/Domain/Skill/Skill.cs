@@ -102,7 +102,17 @@ namespace BlackSmith.Domain.Skill
 
     /// <summary>スキルと熟練度の組み合わせ</summary>
     /// <remarks>スキル習得条件の記述などで用いる</remarks>
-    public record SkillAndProficiency(Skill Skill, SkillProficiency Proficiency);
+    public record SkillAndProficiency
+    {
+        public Skill Skill { get; }
+        public SkillProficiency Proficiency { get; }
+
+        internal SkillAndProficiency(Skill skill, SkillProficiency proficiency)
+        {
+            Skill = skill;
+            Proficiency = proficiency;
+        }
+    }
 
     /// <summary>スキルの取得条件</summary>
     public class SkillAcquisitionConditions

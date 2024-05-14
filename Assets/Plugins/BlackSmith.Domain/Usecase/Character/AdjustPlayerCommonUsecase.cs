@@ -33,7 +33,7 @@ namespace BlackSmith.Usecase.Character
             return entity;
         }
 
-        public PlayerCommonEntity RreconstructPlayer(PlayerCommonReconstractPrimitiveModel model)
+        public PlayerCommonEntity ReconstructPlayer(PlayerCommonReconstractPrimitiveModel model)
         {
             var command = model.ToCommand();
 
@@ -53,8 +53,19 @@ namespace BlackSmith.Usecase.Character
             repository.Delete(id);
         }
 
-        public record PlayerCommonReconstractPrimitiveModel(string Id, string Name, int Exp)
+        public class PlayerCommonReconstractPrimitiveModel
         {
+            public string Id { get; }
+            public string Name { get; }
+            public int Exp { get; }
+
+            public PlayerCommonReconstractPrimitiveModel(string id, string name, int exp)
+            {
+                Id = id;
+                Name = name;
+                Exp = exp;
+            }
+
             internal PlayerCommonReconstractCommand ToCommand()
             {
                 var id = new CharacterID(Id);

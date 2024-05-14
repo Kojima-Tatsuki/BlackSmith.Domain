@@ -40,7 +40,7 @@ internal class LevelDependentParametersTest
 
     [Test(Description = "Strengthインスタンス化テスト")]
     [TestCase(1, null, Category = "正常系")]
-    [TestCase(0, typeof(ArgumentException), Category = "異常系系")]
+    [TestCase(0, typeof(ArgumentException), Category = "異常系")]
     public void StrengthInstancePasses(int value, Type? excaption)
     {
         if (excaption is null)
@@ -51,7 +51,7 @@ internal class LevelDependentParametersTest
 
     [Test(Description = "Agilityインスタンス化テスト")]
     [TestCase(1, null, Category = "正常系")]
-    [TestCase(0, typeof(ArgumentException), Category = "異常系系")]
+    [TestCase(0, typeof(ArgumentException), Category = "異常系")]
     public void AgilityInstancePasses(int value, Type? excaption)
     {
         if (excaption is null)

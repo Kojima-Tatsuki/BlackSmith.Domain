@@ -37,7 +37,7 @@ namespace BlackSmith.Domain.CharacterObject
         private int CheckVaild(int value)
         {
             if (value <= 0)
-                throw new ArgumentOutOfRangeException($"防御力には1以上の値を入力してください, value : {value}");
+                throw new ArgumentOutOfRangeException($"防御力には1以上の値を入力してください, guid : {value}");
 
             return value;
         }

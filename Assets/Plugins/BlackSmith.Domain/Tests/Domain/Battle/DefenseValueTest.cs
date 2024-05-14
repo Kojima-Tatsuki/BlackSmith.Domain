@@ -31,7 +31,7 @@ internal class DefenseValueTest
     {
         if (exception is null)
             Assert.That(new DefenseValue(levelParams, equipmentModule, effectModel),
-                               Is.EqualTo(new DefenseValue(levelParams, equipmentModule, effectModel)));
+                Is.EqualTo(new DefenseValue(levelParams, equipmentModule, effectModel)));
         else
             Assert.Throws(exception, () => new DefenseValue(levelParams, equipmentModule, effectModel));
     }

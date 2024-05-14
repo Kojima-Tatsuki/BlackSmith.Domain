@@ -126,7 +126,7 @@ namespace BlackSmith.Domain.Character.Player
         internal BasePlayerParameter(int value)
         {
             if (!IsValid(value))
-                throw new ArgumentException($"valueに不正な値が入力されました, value: {value}");
+                throw new ArgumentException($"valueに不正な値が入力されました, guid: {value}");
 
             Value = value;
         }
