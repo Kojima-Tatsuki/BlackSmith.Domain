@@ -19,6 +19,11 @@ namespace BlackSmith.Usecase.Interface
         /// <exception cref="InvalidOperationException">既にキャラクターが登録されている場合</exception>
         void Register(PlayerCommonEntity character);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="character"></param>
+        /// <exception cref="InvalidOperationException">変更を行うキャラクターが存在しない場合</exception>
         void UpdateCharacter(PlayerCommonEntity character);
 
         PlayerCommonEntity? FindByID(CharacterID id);
@@ -27,6 +32,11 @@ namespace BlackSmith.Usecase.Interface
 
         bool IsExist(CharacterID id);
 
+        /// <summary>
+        /// キャラクターの登録を削除する
+        /// </summary>
+        /// <param name="id"></param>
+        /// <exception cref="InvalidOperationException">削除を行うキャラクターが存在しない場合</exception>
         void Delete(CharacterID id);
     }
 }

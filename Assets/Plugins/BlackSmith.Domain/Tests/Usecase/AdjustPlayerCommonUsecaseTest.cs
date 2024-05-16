@@ -46,6 +46,24 @@ namespace BlackSmith.Usecase.Character
             yield return new TestCaseData(failRep, model, typeof(InvalidOperationException)).SetCategory("異常系");
         }
 
+        private static IEnumerable DeleteCharacterTestCases()
+        {
+            var repository = new MockPlayerCommonEntityRepository();
+            var name = "TestPlayerName";
+            var id = new CharacterID();
+            var level = new PlayerLevel();
+
+            var model = new PlayerCommonReconstractPrimitiveModel(id.Value, name, level.CumulativeExp.Value);
+
+            var usecase = new AdjustPlayerCommonUsecase(repository);
+            usecase.ReconstructPlayer(model);
+
+            yield return new TestCaseData(repository, id, null).SetCategory("正常系");
+
+            // 存在しないIDのプレイヤーを削除しようとした場合
+            yield return new TestCaseData(repository, new CharacterID(), typeof(InvalidOperationException)).SetCategory("異常系");
+        }
+
         [Test(Description = "CreateCharacterのテスト")]
         [TestCaseSource(nameof(CreateCharacterTestCases))]
         public void CreateCharacterPasses(IPlayerCommonEntityRepository repository, string name, Type? exception)
@@ -77,6 +95,24 @@ namespace BlackSmith.Usecase.Character
             else
                 Assert.Throws(exception, () => usecase.ReconstructPlayer(model));
         }
+
+        [Test(Description = "DeletePlayerのテスト")]
+        [TestCaseSource(nameof(this.DeleteCharacterTestCases))]
+        public void DeleteCharacterPasses(IPlayerCommonEntityRepository repository, CharacterID id, Type? exception)
+        {
+            var usecase = new AdjustPlayerCommonUsecase(repository);
+
+            if (exception is null)
+            {
+                Assert.That(repository.IsExist(id), Is.True);
+
+                usecase.DeletePlayer(id);
+
+                Assert.That(repository.IsExist(id), Is.False);
+            }
+            else
+                Assert.Throws(exception, () => usecase.DeletePlayer(id));
+        }
     }
 
     internal class MockPlayerCommonEntityRepository : IPlayerCommonEntityRepository
@@ -93,7 +129,13 @@ namespace BlackSmith.Usecase.Character
             this.players = players;
         }
 
-        public void Delete(CharacterID id) => players.Remove(id);
+        public void Delete(CharacterID id)
+        {
+            if (!IsExist(id))
+                throw new InvalidOperationException("削除対象のプレイヤーが存在しません");
+
+            players.Remove(id);
+        }
         public PlayerCommonEntity FindByID(CharacterID id) => players[id];
         public IReadOnlyCollection<PlayerCommonEntity> GetAllPlayers() => players.Values;
         public bool IsExist(CharacterID id) => players.ContainsKey(id);
