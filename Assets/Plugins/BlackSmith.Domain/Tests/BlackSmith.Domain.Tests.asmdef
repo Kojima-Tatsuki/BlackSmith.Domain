@@ -3,13 +3,14 @@
     "rootNamespace": "",
     "references": [
         "BlackSmith.Domain",
-        "UniRx",
         "UniTask",
         "UniTask.Linq",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,

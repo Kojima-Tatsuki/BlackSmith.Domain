@@ -17,9 +17,9 @@ namespace BlackSmith.Domain.Field
     /// <summary>街やダンジョンを含むマップ単位</summary>
     public class Field
     {
-        public FieldID ID { get; init; }
+        public FieldID ID { get; }
 
-        public string Name { get; init; } // フィールド名
+        public string Name { get; } // フィールド名
 
         public IReadOnlyCollection<CharacterID> CharacterIds => Chunk.CharacterIds;
         internal Chunk Chunk { get; private set; }

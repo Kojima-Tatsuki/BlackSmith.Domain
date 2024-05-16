@@ -4,7 +4,7 @@
 
 namespace BlackSmith.Domain.Character.Player
 {
-    public class PlayerName
+    public record PlayerName
     {
         public string Value { get; }
 

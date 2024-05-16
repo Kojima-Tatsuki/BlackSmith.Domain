@@ -17,11 +17,23 @@ namespace BlackSmith.Domain.Item.Equiment
         }
     }
 
-    public record WeaponCreateCommand(
-        string Name,
-        EquipmentAttack EquipmentAttack,
-        EquipmentDefense EquipmentDefense,
-        EnhancementParameter EnhancementParameter,
-        AdditionalParameter AdditionalParameter,
-        RequireParameter RequireParameter);
+    public record WeaponCreateCommand
+    {
+        public string Name { get; }
+        public EquipmentAttack EquipmentAttack { get; }
+        public EquipmentDefense EquipmentDefense { get; }
+        public EnhancementParameter EnhancementParameter { get; }
+        public AdditionalParameter AdditionalParameter { get; }
+        public RequireParameter RequireParameter { get; }
+
+        public WeaponCreateCommand(string name, EquipmentAttack attack, EquipmentDefense defense, EnhancementParameter enhancement, AdditionalParameter additional, RequireParameter require)
+        {
+            Name = name;
+            EquipmentAttack = attack;
+            EquipmentDefense = defense;
+            EnhancementParameter = enhancement;
+            AdditionalParameter = additional;
+            RequireParameter = require;
+        }
+    }
 }

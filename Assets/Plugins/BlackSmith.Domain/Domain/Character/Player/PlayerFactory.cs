@@ -38,5 +38,17 @@ namespace BlackSmith.Domain.Character.Player
     }
 
     /// <summary>プレイヤーの再構築を行う際に引数に指定して使う</summary>
-    internal record PlayerCommonReconstractCommand(CharacterID Id, PlayerName Name, PlayerLevel Level);
+    internal record PlayerCommonReconstractCommand
+    {
+        public CharacterID Id { get; }
+        public PlayerName Name { get; }
+        public PlayerLevel Level { get; }
+
+        internal PlayerCommonReconstractCommand(CharacterID id, PlayerName name, PlayerLevel level)
+        {
+            Id = id;
+            Name = name;
+            Level = level;
+        }
+    }
 }

@@ -7,11 +7,13 @@ namespace BlackSmith.Domain
     public abstract record BasicID
     {
         protected abstract string Prefix { get; }
-        private Guid Value { get; }
+
+        public string Value => Prefix + guid;
+        private Guid guid { get; }
 
         internal BasicID()
         {
-            Value = Guid.NewGuid();
+            guid = Guid.NewGuid();
         }
 
         internal BasicID(string id)
@@ -19,7 +21,7 @@ namespace BlackSmith.Domain
             if (!IsValid(id))
                 throw new ArgumentException("指定したIDは適切な値ではありません");
 
-            Value = GetGuid(id);
+            guid = GetGuid(id);
         }
 
         private bool IsValid(string id)
@@ -34,6 +36,6 @@ namespace BlackSmith.Domain
 
         private Guid GetGuid(string id) => Guid.Parse(id.Substring(Prefix.Length));
 
-        public override string ToString() => Prefix + Value.ToString();
+        public override string ToString() => Prefix + guid;
     }
 }
