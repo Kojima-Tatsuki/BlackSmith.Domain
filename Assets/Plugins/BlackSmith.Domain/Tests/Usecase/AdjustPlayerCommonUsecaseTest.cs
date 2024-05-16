@@ -5,7 +5,6 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using static BlackSmith.Usecase.Character.AdjustPlayerCommonUsecase;
 
 #nullable enable
