@@ -71,7 +71,7 @@ namespace BlackSmith.Domain.Currency
             internal CurrencyValue(int value)
             {
                 if (!IsValidValue(value))
-                    throw new AggregateException($"通貨の値として不正な値が入力されました: guid = {value}. (QOd6vrjA)");
+                    throw new AggregateException($"通貨の値として不正な値が入力されました: value = {value}. (QOd6vrjA)");
 
                 Value = value;
             }
