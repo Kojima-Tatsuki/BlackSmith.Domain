@@ -53,7 +53,7 @@ namespace BlackSmith.Usecase.Character
             repository.Delete(id);
         }
 
-        public class PlayerCommonReconstractPrimitiveModel
+        public record PlayerCommonReconstractPrimitiveModel
         {
             public string Id { get; }
             public string Name { get; }
