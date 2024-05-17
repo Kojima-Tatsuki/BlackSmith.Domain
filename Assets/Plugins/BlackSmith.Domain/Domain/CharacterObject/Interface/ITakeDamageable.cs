@@ -1,4 +1,6 @@
-﻿namespace BlackSmith.Domain.CharacterObject.Interface
+﻿using System;
+
+namespace BlackSmith.Domain.CharacterObject.Interface
 {
     internal interface ITakeDamageable
     {
@@ -14,6 +16,7 @@
         /// </summary>
         /// <param name="value">回復する体力</param>
         /// <returns>回復後の体力</returns>
+        /// <exception cref="ArgumentOutOfRangeException">valueに負数を入力した場合</exception>
         HealthPoint HealHealth(int value);
     }
 }

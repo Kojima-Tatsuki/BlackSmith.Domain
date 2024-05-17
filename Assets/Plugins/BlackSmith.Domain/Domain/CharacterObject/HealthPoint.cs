@@ -68,6 +68,8 @@ namespace BlackSmith.Domain.CharacterObject
         /// <returns>計算後の体力</returns>
         internal HealthPoint TakeDamage(DamageValue damage)
         {
+            if (damage is null) throw new ArgumentNullException(nameof(damage));
+
             var hp = Value.Value - damage.Value;
 
             if (hp < 0)
@@ -78,6 +80,9 @@ namespace BlackSmith.Domain.CharacterObject
 
         internal HealthPoint HealHealth(int heal)
         {
+            if (heal < 0)
+                throw new ArgumentOutOfRangeException(nameof(heal));
+
             var hp = Value.Value + heal;
 
             if (hp > MaximumValue.Value)

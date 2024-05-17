@@ -15,23 +15,29 @@ namespace BlackSmith.Domain.CharacterObject
 
         public int Value { get; }
 
-        internal DamageValue(LevelGapOfAttackerAndReceiver levelGap, AttackValue attack, DefenseValue defence)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="levelGap"></param>
+        /// <param name="attackerAttack">攻め手の攻撃力</param>
+        /// <param name="recieverDefence">受け手の防御力</param>
+        internal DamageValue(LevelGapOfAttackerAndReceiver levelGap, AttackValue attackerAttack, DefenseValue recieverDefence)
         {
-            var a = attack.Value;
-            var d = defence.Value;
+            var a = attackerAttack.Value;
+            var d = recieverDefence.Value;
 
             // 3 レベル差で威力が約2倍になる
             // lev = LGCV ^ levelGap
             var lev = Math.Pow(LevelGapCorrection, levelGap.GetGepFromAttackerToReceiver());
 
-            // レベル差関数 * (attack^2) / (attack + deffence) * 補正値
+            // レベル差関数 * (attackerAttack^2) / (attackerAttack + recieverDefence) * 補正値
             var damage = (int)Math.Floor(lev * a * a / (a + d)); // 切り捨てて計算
 
             Value = UnderClamp(damage);
         }
 
         /// <summary>
-        /// [非推奨]
+        /// [非推奨] 固定ダメージを与える場合に使用する
         /// </summary>
         /// <param name="value"></param>
         internal DamageValue(int value)
@@ -61,19 +67,18 @@ namespace BlackSmith.Domain.CharacterObject
     /// </summary>
     internal record LevelGapOfAttackerAndReceiver
     {
-        private readonly CharacterLevel receiver;
-
         private readonly CharacterLevel attacker;
+        private readonly CharacterLevel receiver;
 
         /// <summary>
         /// インスタンス化を行う
         /// </summary>
         /// <param name="receiver">受け手のレベル</param>
         /// <param name="attacker">攻め手のレベル</param>
-        internal LevelGapOfAttackerAndReceiver(CharacterLevel receiver, CharacterLevel attacker)
+        internal LevelGapOfAttackerAndReceiver(CharacterLevel attacker, CharacterLevel receiver)
         {
-            this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
             this.attacker = attacker ?? throw new ArgumentNullException(nameof(attacker));
+            this.receiver = receiver ?? throw new ArgumentNullException(nameof(receiver));
         }
 
         /// <summary>

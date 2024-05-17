@@ -25,6 +25,8 @@ namespace BlackSmith.Domain.Character.Battle
         // スコープをinternalとしたいため、Interfaceのメソッドを明示的に実装
         HealthPoint ITakeDamageable.TakeDamage(DamageValue damage)
         {
+            if (damage is null) throw new ArgumentNullException(nameof(damage));
+
             BattleModule = BattleModule.TakeDamage(damage);
 
             return BattleModule.HealthPoint;
