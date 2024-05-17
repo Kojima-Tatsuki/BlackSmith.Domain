@@ -12,18 +12,12 @@ public class OnPostprocessEncodeUtf8 : AssetPostprocessor
     {
         foreach(string asset in importedAssets)
         {
-            if (Path.GetExtension(asset) != ".cs")
-            {
+            if (!File.Exists(asset))
                 continue;
-            }
+            if (Path.GetExtension(asset) != ".cs") // C# ファイルのみ対象
+                continue;
             if (asset.IndexOf("Assets/") != 0)
-            {
                 continue;
-            }
-            if(File.Exists(asset) == false)
-            {
-                continue;
-            }
 
             var bs  = File.ReadAllBytes(asset);
             if((bs[0] == 0xEF) && (bs[1] == 0xBB) && (bs[2] == 0xBF))
@@ -32,13 +26,13 @@ public class OnPostprocessEncodeUtf8 : AssetPostprocessor
             }
             else
             {
-                var enc = EncodeUtf8.GetEncode(bs);
+                var enc = EncodeSourceFile.GetEncode(bs);
                 if(enc != Encoding.UTF8)
                 {
                     var text = enc.GetString(bs);
-
                     File.WriteAllText(asset, text, Encoding.UTF8);
-                    Debug.LogWarning("Convert to UTF-8: " + asset);
+
+                    Debug.Log("Convert to UTF-8: " + asset);
                 }
             }
 
@@ -46,8 +40,9 @@ public class OnPostprocessEncodeUtf8 : AssetPostprocessor
             if (crlf_text.IndexOf("\r\n") >= 0)
             {
                 crlf_text = crlf_text.Replace("\r\n", "\n");
-                Debug.LogWarning($"CRLF -> LF: {asset}");
                 File.WriteAllText(asset, crlf_text, Encoding.UTF8);
+
+                Debug.Log($"CRLF -> LF: {asset}");
             }
         }
     }
