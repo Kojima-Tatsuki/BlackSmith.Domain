@@ -3,6 +3,8 @@ using BlackSmith.Domain.Character.Player;
 using System;
 using System.Linq;
 
+#nullable enable
+
 namespace BlackSmith.Domain.CharacterObject
 {
     /// <summary>
@@ -17,12 +19,16 @@ namespace BlackSmith.Domain.CharacterObject
         internal int FromArmorAttack { get; }
         internal int FromStatusEffectAttack { get; }
 
-        internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
+        internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule? equipmentModule, BattleStatusEffectModule? statusEffectModule)
         {
             FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2); // ここは必ず1以上の値
-            FromWeaponAttack = equipmentModule.Weapon?.Attack.Value ?? 0;
-            FromArmorAttack = equipmentModule.Armor?.Attack?.Value ?? 0;
-            FromStatusEffectAttack = statusEffectModule.StatusEffects.Sum(effect => effect.StatusModel.Attack);
+
+            var eqModule = equipmentModule ?? new BattleEquipmentModule(null, null);
+            FromWeaponAttack = eqModule.Weapon?.Attack?.Value ?? 0;
+            FromArmorAttack = eqModule.Armor?.Attack?.Value ?? 0;
+
+            var statModule = statusEffectModule ?? new BattleStatusEffectModule();
+            FromStatusEffectAttack = statModule.StatusEffects.Sum(effect => effect.StatusModel.Attack);
 
             Value = CheckVaild(FromLevelAttack + FromWeaponAttack + FromArmorAttack + FromStatusEffectAttack);
         }

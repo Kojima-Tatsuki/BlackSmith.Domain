@@ -1,67 +1,37 @@
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.CharacterObject;
-using BlackSmith.Domain.Item.Equipment;
-using BlackSmith.Domain.PassiveEffect;
 using NUnit.Framework;
-using System.Collections.Generic;
+using System;
+using System.Collections;
 
 internal class AttackValueTest
 {
-    private static (LevelDependentParameters ldp, BattleEquipmentModule em, BattleStatusEffectModule sem, int result)[] CorrectMockData()
+    private static IEnumerable InstanceTestCases()
     {
         var ldp = new LevelDependentParameters(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(2), new Agility(1));
 
-        var weapon = new EquippableItem(new(
-            name: "MockWeapon",
-            type: EquipmentType.Weapon,
-            attack: new EquipmentAttack(1),
-            deffence: new EquipmentDefense(1),
-            enchancement: new EnhancementParameter(),
-            additional: new AdditionalParameter(),
-            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
+        // BattleModuleを使用しない場合
+        yield return new TestCaseData(ldp, null, null, null).SetCategory("正常系");
 
-        var armor = new EquippableItem(new(
-            name: "MockArmor",
-            type: EquipmentType.Armor,
-            attack: new EquipmentAttack(1),
-            deffence: new EquipmentDefense(1),
-            enchancement: new EnhancementParameter(),
-            additional: new AdditionalParameter(),
-            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
-        var nullEquipmentModule = new BattleEquipmentModule(null, null);
-        var weaponEqupmentModule = new BattleEquipmentModule(weapon, null);
-        var armorEquipmentModule = new BattleEquipmentModule(null, armor);
-        var equipmentModule = new BattleEquipmentModule(weapon, armor);
+        var eqs = BattleEquipmentModuleTest.GetBattleEquipmentModuleMocks();
 
-        var id = new EffectID();
-        var effect = new BattleStatusEffect(id, new BattleStatusEffectModel(0, 1, 1, 0));
-        var statusEffect = new Dictionary<EffectID, BattleStatusEffect>()
-        {
-            { id, effect }
-        };
+        foreach (var eq in eqs)
+            yield return new TestCaseData(ldp, eq, null, null).SetCategory("正常系");
 
-        var nullStatusEffectModule = new BattleStatusEffectModule(null);
-        var statusEffectModule = new BattleStatusEffectModule(statusEffect);
+        var eff = new BattleStatusEffectModule();
 
-        return new (LevelDependentParameters, BattleEquipmentModule, BattleStatusEffectModule, int)[]{
-            new ( ldp, nullEquipmentModule, nullStatusEffectModule, 6),
-            new ( ldp, weaponEqupmentModule, nullStatusEffectModule, 6 + 1),
-            new ( ldp, armorEquipmentModule, nullStatusEffectModule, 6 + 1),
-            new ( ldp, equipmentModule, nullStatusEffectModule, 6 + 2),
-            new ( ldp, nullEquipmentModule, statusEffectModule, 6 + 1),
-            new ( ldp, weaponEqupmentModule, statusEffectModule, 6 + 1 + 1),
-            new ( ldp, armorEquipmentModule, statusEffectModule, 6 + 1 + 1),
-            new ( ldp, equipmentModule, statusEffectModule, 6 + 2 + 1),
-        };
+        yield return new TestCaseData(ldp, null, eff, null).SetCategory("正常系");
     }
 
-    [Test(Description = "攻撃力のインスタンステスト")]
-    [TestCaseSource(nameof(CorrectMockData), Category = "正常系")]
-    public void InstancePasses((LevelDependentParameters lep, BattleEquipmentModule em, BattleStatusEffectModule sem, int result) data)
+    [Test(Description = "攻撃力のインスタンス化テスト")]
+    [TestCaseSource(nameof(InstanceTestCases))]
+    public void AttackValueInstancePasses(LevelDependentParameters levelParams, BattleEquipmentModule? equipmentModule, BattleStatusEffectModule? effectModel, Type? exception)
     {
-        var attack = new AttackValue(data.lep, data.em, data.sem);
-
-        Assert.AreEqual(data.result, attack.Value);
+        if (exception is null)
+            Assert.That(new AttackValue(levelParams, equipmentModule, effectModel),
+                Is.EqualTo(new AttackValue(levelParams, equipmentModule, effectModel)));
+        else
+            Assert.Throws(exception, () => new AttackValue(levelParams, equipmentModule, effectModel));
     }
 }

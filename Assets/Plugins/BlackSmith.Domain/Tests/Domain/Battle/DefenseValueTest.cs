@@ -16,9 +16,10 @@ internal class DefenseValueTest
         // BattleModule‚ğg—p‚µ‚È‚¢ê‡
         yield return new TestCaseData(ldp, null, null, null).SetCategory("³íŒn");
 
-        var eq = BattleEquipmentModuleTest.GetBattleEquipmentModuleMock();
+        var eqs = BattleEquipmentModuleTest.GetBattleEquipmentModuleMocks();
 
-        yield return new TestCaseData(ldp, eq, null, null).SetCategory("³íŒn");
+        foreach (var eq in eqs)
+            yield return new TestCaseData(ldp, eq, null, null).SetCategory("³íŒn");
 
         var eff = new BattleStatusEffectModule();
 

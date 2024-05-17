@@ -9,13 +9,13 @@ using System.Linq;
 
 internal class BattleEquipmentModuleTest
 {
-    public static BattleEquipmentModule[] GetBattleEquipmentModuleMock()
+    public static BattleEquipmentModule[] GetBattleEquipmentModuleMocks()
     {
-        return CorrectMockData().Select(data => new BattleEquipmentModule(data[0], data[1])).ToArray();
+        return CorrectMockDatas().Select(data => new BattleEquipmentModule(data[0], data[1])).ToArray();
     }
 
     // 正常系用モックデータ
-    private static EquippableItem?[][] CorrectMockData()
+    private static EquippableItem?[][] CorrectMockDatas()
     {
         var weapon = new EquippableItem(new(
             name: "MockWeapon",
@@ -44,7 +44,7 @@ internal class BattleEquipmentModuleTest
     }
 
     // 異常系用モックデータ
-    private static EquippableItem?[][] IncorrectMockData()
+    private static EquippableItem?[][] IncorrectMockDatas()
     {
         var currectWeapon = new EquippableItem(new(
             name: "MockWeapon",
@@ -81,7 +81,7 @@ internal class BattleEquipmentModuleTest
     }
 
     [Test(Description = "装備モジュールのインスタンスを生成するテスト")]
-    [TestCaseSource(nameof(CorrectMockData), Category = "正常系")]
+    [TestCaseSource(nameof(CorrectMockDatas), Category = "正常系")]
     public void ModuleInstancePasses(EquippableItem? weapon, EquippableItem? armor)
     {
         try
@@ -95,7 +95,7 @@ internal class BattleEquipmentModuleTest
     }
 
     [Test(Description = "装備モジュールのインスタンスを生成するテスト")]
-    [TestCaseSource(nameof(IncorrectMockData), Category = "異常系")]
+    [TestCaseSource(nameof(IncorrectMockDatas), Category = "異常系")]
     public void ModuleInstanceFail(EquippableItem? weapon, EquippableItem? armor)
     {
         Assert.Throws<ArgumentException>(() =>
