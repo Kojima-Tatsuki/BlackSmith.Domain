@@ -1,6 +1,5 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Usecase.Interface;
 using System;
 

@@ -1,7 +1,14 @@
-﻿using System.IO;
+﻿/*
+ * This file is a part of the project "EncodeUtf8".
+ * https://github.com/catsnipe/EncodeUtf8
+ */
+
+using System.IO;
 using System.Text;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
+
+#nullable enable
 
 /// <summary>
 /// 新規スクリプト生成時にテキストエンコードを UTF8 に矯正します
@@ -29,7 +36,7 @@ public class OnPostprocessEncodeUtf8 : AssetPostprocessor
                 var enc = EncodeSourceFile.GetEncode(bs);
                 if(enc != Encoding.UTF8)
                 {
-                    var text = enc.GetString(bs);
+                    var text = enc?.GetString(bs);
                     File.WriteAllText(asset, text, Encoding.UTF8);
 
                     Debug.Log("Convert to UTF-8: " + asset);

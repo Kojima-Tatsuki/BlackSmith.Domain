@@ -1,11 +1,10 @@
-﻿using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character.Player;
 using System;
 using System.Linq;
 
 #nullable enable
 
-namespace BlackSmith.Domain.CharacterObject
+namespace BlackSmith.Domain.Character.Battle
 {
     /// <summary>
     /// 攻撃力

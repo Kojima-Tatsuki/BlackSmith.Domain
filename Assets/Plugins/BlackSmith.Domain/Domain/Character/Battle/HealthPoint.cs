@@ -1,7 +1,6 @@
-﻿using BlackSmith.Domain.Character;
-using System;
+﻿using System;
 
-namespace BlackSmith.Domain.CharacterObject
+namespace BlackSmith.Domain.Character.Battle
 {
     /// <summary>
     /// =Value= This class is used to represent HP.

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlackSmith.Domain.Character.Battle;
+using System;
 
 namespace BlackSmith.Domain.CharacterObject.Interface
 {

@@ -1,4 +1,9 @@
-﻿using System.IO;
+﻿/*
+ * This file is a part of the project "EncodeUtf8".
+ * https://github.com/catsnipe/EncodeUtf8
+ */
+
+using System.IO;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +15,7 @@ public class EncodeSourceFile : Editor
     private const string ToolName = "Tools/Encode to Utf8";
 
     [MenuItem(ToolName)]
-    static void MenuExec()
+    private static void MenuExec()
     {
         var files = Directory.GetFiles("Assets/", "*.cs", SearchOption.AllDirectories);
 
