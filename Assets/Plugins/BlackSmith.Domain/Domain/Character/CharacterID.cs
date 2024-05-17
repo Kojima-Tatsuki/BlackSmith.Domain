@@ -1,4 +1,4 @@
-namespace BlackSmith.Domain.Character
+﻿namespace BlackSmith.Domain.Character
 {
     /// <summary>プレイヤーや敵を含むすべてのキャラクターを一意に定める識別子</summary>
     public record CharacterID : BasicID

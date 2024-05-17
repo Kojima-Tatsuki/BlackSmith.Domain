@@ -1,38 +1,41 @@
-using BlackSmith.Domain.Character.Battle;
+ï»¿using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
-using BlackSmith.Domain.CharacterObject;
 using NUnit.Framework;
 using System;
 using System.Collections;
 
 #nullable enable
 
-internal class DefenseValueTest
+namespace BlackSmith.Domain.Battle
 {
-    private static IEnumerable InstanceTestCases()
+    internal class DefenseValueTest
     {
-        var ldp = new LevelDependentParameters(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(2), new Agility(1));
+        private static IEnumerable InstanceTestCases()
+        {
+            var ldp = new LevelDependentParameters(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(2), new Agility(1));
 
-        // BattleModule‚ðŽg—p‚µ‚È‚¢ê‡
-        yield return new TestCaseData(ldp, null, null, null).SetCategory("³íŒn");
+            // BattleModuleã‚’ä½¿ç”¨ã—ãªã„å ´åˆ
+            yield return new TestCaseData(ldp, null, null, null).SetCategory("æ­£å¸¸ç³»");
 
-        var eq = BattleEquipmentModuleTest.GetBattleEquipmentModuleMock();
+            var eqs = BattleEquipmentModuleTest.GetBattleEquipmentModuleMocks();
 
-        yield return new TestCaseData(ldp, eq, null, null).SetCategory("³íŒn");
+            foreach (var eq in eqs)
+                yield return new TestCaseData(ldp, eq, null, null).SetCategory("æ­£å¸¸ç³»");
 
-        var eff = new BattleStatusEffectModule();
+            var eff = new BattleStatusEffectModule();
 
-        yield return new TestCaseData(ldp, null, eff, null).SetCategory("³íŒn");
-    }
+            yield return new TestCaseData(ldp, null, eff, null).SetCategory("æ­£å¸¸ç³»");
+        }
 
-    [Test(Description = "–hŒä—Í‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‰»ƒeƒXƒg")]
-    [TestCaseSource(nameof(InstanceTestCases))]
-    public void DefenseValueInstancePasses(LevelDependentParameters levelParams, BattleEquipmentModule? equipmentModule, BattleStatusEffectModule? effectModel, Type? exception)
-    {
-        if (exception is null)
-            Assert.That(new DefenseValue(levelParams, equipmentModule, effectModel),
-                Is.EqualTo(new DefenseValue(levelParams, equipmentModule, effectModel)));
-        else
-            Assert.Throws(exception, () => new DefenseValue(levelParams, equipmentModule, effectModel));
+        [Test(Description = "é˜²å¾¡åŠ›ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ†ã‚¹ãƒˆ")]
+        [TestCaseSource(nameof(InstanceTestCases))]
+        public void DefenseValueInstancePasses(LevelDependentParameters levelParams, BattleEquipmentModule? equipmentModule, BattleStatusEffectModule? effectModel, Type? exception)
+        {
+            if (exception is null)
+                Assert.That(new DefenseValue(levelParams, equipmentModule, effectModel),
+                    Is.EqualTo(new DefenseValue(levelParams, equipmentModule, effectModel)));
+            else
+                Assert.Throws(exception, () => new DefenseValue(levelParams, equipmentModule, effectModel));
+        }
     }
 }

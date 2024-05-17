@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character;
+ï»¿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
 using NUnit.Framework;
@@ -18,10 +18,10 @@ namespace BlackSmith.Usecase.Character
             var repository = new MockPlayerCommonEntityRepository();
             var name = "TestPlayerName";
 
-            yield return new TestCaseData(repository, name, null).SetCategory("³íŒn");
+            yield return new TestCaseData(repository, name, null).SetCategory("æ­£å¸¸ç³»");
 
-            // PlayerName‚ÅƒRƒP‚éê‡
-            yield return new TestCaseData(repository, "", typeof(ArgumentException)).SetCategory("ˆÙíŒn");
+            // PlayerNameã§ã‚³ã‚±ã‚‹å ´åˆ
+            yield return new TestCaseData(repository, "", typeof(ArgumentException)).SetCategory("ç•°å¸¸ç³»");
         }
 
         private static IEnumerable ReconstructCharacterTestCases()
@@ -33,16 +33,16 @@ namespace BlackSmith.Usecase.Character
 
             var model = new PlayerCommonReconstractPrimitiveModel(id.Value, name, level.CumulativeExp.Value);
 
-            yield return new TestCaseData(repository, model, null).SetCategory("³íŒn");
+            yield return new TestCaseData(repository, model, null).SetCategory("æ­£å¸¸ç³»");
 
-            // model‚ÌToCommand‚ÅƒRƒP‚éê‡
+            // modelã®ToCommandã§ã‚³ã‚±ã‚‹å ´åˆ
             var failModel = new PlayerCommonReconstractPrimitiveModel(id.Value, "", level.CumulativeExp.Value);
-            yield return new TestCaseData(repository, failModel, typeof(ArgumentException)).SetCategory("ˆÙíŒn");
+            yield return new TestCaseData(repository, failModel, typeof(ArgumentException)).SetCategory("ç•°å¸¸ç³»");
 
-            // Šù‚É“¯‚¶ID‚ÌƒvƒŒƒCƒ„[‚ª‘¶İ‚·‚éê‡
+            // æ—¢ã«åŒã˜IDã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒå­˜åœ¨ã™ã‚‹å ´åˆ
             var entity = new PlayerCommonEntity(new PlayerCommonReconstractCommand(id, new PlayerName(name), level));
             var failRep = new MockPlayerCommonEntityRepository(new Dictionary<CharacterID, PlayerCommonEntity>() { { entity.ID, entity } });
-            yield return new TestCaseData(failRep, model, typeof(InvalidOperationException)).SetCategory("ˆÙíŒn");
+            yield return new TestCaseData(failRep, model, typeof(InvalidOperationException)).SetCategory("ç•°å¸¸ç³»");
         }
 
         private static IEnumerable DeleteCharacterTestCases()
@@ -57,13 +57,13 @@ namespace BlackSmith.Usecase.Character
             var usecase = new AdjustPlayerCommonUsecase(repository);
             usecase.ReconstructPlayer(model);
 
-            yield return new TestCaseData(repository, id, null).SetCategory("³íŒn");
+            yield return new TestCaseData(repository, id, null).SetCategory("æ­£å¸¸ç³»");
 
-            // ‘¶İ‚µ‚È‚¢ID‚ÌƒvƒŒƒCƒ„[‚ğíœ‚µ‚æ‚¤‚Æ‚µ‚½ê‡
-            yield return new TestCaseData(repository, new CharacterID(), typeof(InvalidOperationException)).SetCategory("ˆÙíŒn");
+            // å­˜åœ¨ã—ãªã„IDã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’å‰Šé™¤ã—ã‚ˆã†ã¨ã—ãŸå ´åˆ
+            yield return new TestCaseData(repository, new CharacterID(), typeof(InvalidOperationException)).SetCategory("ç•°å¸¸ç³»");
         }
 
-        [Test(Description = "CreateCharacter‚ÌƒeƒXƒg")]
+        [Test(Description = "CreateCharacterã®ãƒ†ã‚¹ãƒˆ")]
         [TestCaseSource(nameof(CreateCharacterTestCases))]
         public void CreateCharacterPasses(IPlayerCommonEntityRepository repository, string name, Type? exception)
         {
@@ -79,7 +79,7 @@ namespace BlackSmith.Usecase.Character
                 Assert.Throws(exception, () => usecase.CreateCharacter(name));
         }
 
-        [Test(Description = "ReconstructCharacter‚ÌƒeƒXƒg")]
+        [Test(Description = "ReconstructCharacterã®ãƒ†ã‚¹ãƒˆ")]
         [TestCaseSource(nameof(ReconstructCharacterTestCases))]
         public void ReconstructCharacterPasses(IPlayerCommonEntityRepository repository, PlayerCommonReconstractPrimitiveModel model, Type? exception)
         {
@@ -95,7 +95,7 @@ namespace BlackSmith.Usecase.Character
                 Assert.Throws(exception, () => usecase.ReconstructPlayer(model));
         }
 
-        [Test(Description = "DeletePlayer‚ÌƒeƒXƒg")]
+        [Test(Description = "DeletePlayerã®ãƒ†ã‚¹ãƒˆ")]
         [TestCaseSource(nameof(this.DeleteCharacterTestCases))]
         public void DeleteCharacterPasses(IPlayerCommonEntityRepository repository, CharacterID id, Type? exception)
         {
@@ -131,7 +131,7 @@ namespace BlackSmith.Usecase.Character
         public void Delete(CharacterID id)
         {
             if (!IsExist(id))
-                throw new InvalidOperationException("íœ‘ÎÛ‚ÌƒvƒŒƒCƒ„[‚ª‘¶İ‚µ‚Ü‚¹‚ñ");
+                throw new InvalidOperationException("å‰Šé™¤å¯¾è±¡ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒå­˜åœ¨ã—ã¾ã›ã‚“");
 
             players.Remove(id);
         }
@@ -141,7 +141,7 @@ namespace BlackSmith.Usecase.Character
         public void Register(PlayerCommonEntity character)
         {
             if (IsExist(character.ID))
-                throw new InvalidOperationException("Šù‚ÉƒvƒŒƒCƒ„[‚ª“o˜^‚³‚ê‚Ä‚¢‚Ü‚·");
+                throw new InvalidOperationException("æ—¢ã«ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ãŒç™»éŒ²ã•ã‚Œã¦ã„ã¾ã™");
 
             players.Add(character.ID, character);
         }

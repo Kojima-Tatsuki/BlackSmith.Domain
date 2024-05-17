@@ -1,4 +1,4 @@
-namespace BlackSmith.Domain.Inventory
+﻿namespace BlackSmith.Domain.Inventory
 {
     using Item;
 

@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character.Player;
+ï»¿using BlackSmith.Domain.Character.Player;
 using NUnit.Framework;
 using System;
 
@@ -10,13 +10,13 @@ internal class PlayerLevelTest
     {
         return new PlayerLevel[]
         {
-            new PlayerLevel(), // ŒoŒ±’l‚ğ—^‚¦‚È‚¢ê‡(ƒŒƒxƒ‹1)
-            new PlayerLevel(Experience.RequiredCumulativeExp(100)), // Å‘åƒŒƒxƒ‹
+            new PlayerLevel(), // çµŒé¨“å€¤ã‚’ä¸ãˆãªã„å ´åˆ(ãƒ¬ãƒ™ãƒ«1)
+            new PlayerLevel(Experience.RequiredCumulativeExp(100)), // æœ€å¤§ãƒ¬ãƒ™ãƒ«
         };
     }
 
-    [Test(Description = "PlayerLevelƒCƒ“ƒXƒ^ƒ“ƒX‰»ƒeƒXƒg")]
-    [TestCase(null, null, null, Category ="³íŒn")] // ŒoŒ±’l‚ğ—^‚¦‚È‚¢ê‡
+    [Test(Description = "PlayerLevelã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(null, null, null, Category ="æ­£å¸¸ç³»")] // çµŒé¨“å€¤ã‚’ä¸ãˆãªã„å ´åˆ
     public void PlayerLevelInstancePasses(Experience? exp, Experience? resultExp, Type? exception)
     {
         if (exception is null)
@@ -25,10 +25,10 @@ internal class PlayerLevelTest
             Assert.Throws(exception, () => new PlayerLevel(exp ?? new Experience()));
     }
 
-    [Test(Description = "ƒXƒe[ƒ^ƒXã¸ƒ|ƒCƒ“ƒg‚Ìc‚è”ƒeƒXƒg")]
-    [TestCase(1, 1, 1, null, ExpectedResult = 1, Category = "³íŒn")]
-    [TestCase(5, 10, 5, null, ExpectedResult = 0, Category = "³íŒn")]
-    [TestCase(1, 3, 1, typeof(ArgumentException), ExpectedResult = 0, Category = "ˆÙíŒn")]
+    [Test(Description = "ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ä¸Šæ˜‡ãƒã‚¤ãƒ³ãƒˆã®æ®‹ã‚Šæ•°ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(1, 1, 1, null, ExpectedResult = 1, Category = "æ­£å¸¸ç³»")]
+    [TestCase(5, 10, 5, null, ExpectedResult = 0, Category = "æ­£å¸¸ç³»")]
+    [TestCase(1, 3, 1, typeof(ArgumentException), ExpectedResult = 0, Category = "ç•°å¸¸ç³»")]
     public int GetRemainingParamPointPasses(int level, int str, int agi, Type? exception)
     {
         if (exception is null)
@@ -38,6 +38,6 @@ internal class PlayerLevelTest
             Assert.Throws(exception, () => new LevelDependentParameters(new(Experience.RequiredCumulativeExp(level)), new(str), new(agi))
                            .GetRemainingParamPoint());
         
-        return 0; // ‚±‚±‚É‚Í“’B‚µ‚È‚¢
+        return 0; // ã“ã“ã«ã¯åˆ°é”ã—ãªã„
     }
 }

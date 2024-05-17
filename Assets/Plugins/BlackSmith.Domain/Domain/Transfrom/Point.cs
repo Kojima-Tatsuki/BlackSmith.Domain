@@ -1,4 +1,4 @@
-namespace BlackSmith.Domain.Transfrom
+﻿namespace BlackSmith.Domain.Transfrom
 {
     public class Point
     {

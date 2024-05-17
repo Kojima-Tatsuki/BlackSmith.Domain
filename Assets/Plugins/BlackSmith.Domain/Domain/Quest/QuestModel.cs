@@ -2,7 +2,7 @@
 
 namespace BlackSmith.Domain.Quest
 {
-    class QuestModel
+    internal class QuestModel
     {
         public string QuestName { get; }
 
@@ -13,7 +13,7 @@ namespace BlackSmith.Domain.Quest
         // 依頼の報酬
 
         // 依頼人
-        CharacterID ClientId { get; }
+        private CharacterID ClientId { get; }
 
         internal QuestModel(string questName, string discription, CharacterID clientId)
         {

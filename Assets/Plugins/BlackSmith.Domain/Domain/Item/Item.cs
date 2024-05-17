@@ -59,7 +59,7 @@ namespace BlackSmith.Domain.Item
     /// アイテムの比較を行う
     /// </summary>
     /// <remarks>Dictionaryのコンストラクタの引数として渡すと、処理が早くなる</remarks>
-    class ItemComparer : IEqualityComparer<Item>
+    internal class ItemComparer : IEqualityComparer<Item>
     {
         public bool Equals(Item? x, Item? y)
         {

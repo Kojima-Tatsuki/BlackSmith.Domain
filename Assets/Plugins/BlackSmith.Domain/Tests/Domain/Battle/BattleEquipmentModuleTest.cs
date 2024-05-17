@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character.Battle;
+ï»¿using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Item.Equipment;
 using NUnit.Framework;
@@ -9,13 +9,13 @@ using System.Linq;
 
 internal class BattleEquipmentModuleTest
 {
-    public static BattleEquipmentModule[] GetBattleEquipmentModuleMock()
+    public static BattleEquipmentModule[] GetBattleEquipmentModuleMocks()
     {
-        return CorrectMockData().Select(data => new BattleEquipmentModule(data[0], data[1])).ToArray();
+        return CorrectMockDatas().Select(data => new BattleEquipmentModule(data[0], data[1])).ToArray();
     }
 
-    // ³íŒn—pƒ‚ƒbƒNƒf[ƒ^
-    private static EquippableItem?[][] CorrectMockData()
+    // æ­£å¸¸ç³»ç”¨ãƒ¢ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿
+    private static EquippableItem?[][] CorrectMockDatas()
     {
         var weapon = new EquippableItem(new(
             name: "MockWeapon",
@@ -43,8 +43,8 @@ internal class BattleEquipmentModuleTest
         };
     }
 
-    // ˆÙíŒn—pƒ‚ƒbƒNƒf[ƒ^
-    private static EquippableItem?[][] IncorrectMockData()
+    // ç•°å¸¸ç³»ç”¨ãƒ¢ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿
+    private static EquippableItem?[][] IncorrectMockDatas()
     {
         var currectWeapon = new EquippableItem(new(
             name: "MockWeapon",
@@ -80,8 +80,8 @@ internal class BattleEquipmentModuleTest
         };
     }
 
-    [Test(Description = "‘•”õƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éƒeƒXƒg")]
-    [TestCaseSource(nameof(CorrectMockData), Category = "³íŒn")]
+    [Test(Description = "è£…å‚™ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ãƒ†ã‚¹ãƒˆ")]
+    [TestCaseSource(nameof(CorrectMockDatas), Category = "æ­£å¸¸ç³»")]
     public void ModuleInstancePasses(EquippableItem? weapon, EquippableItem? armor)
     {
         try
@@ -94,8 +94,8 @@ internal class BattleEquipmentModuleTest
         }
     }
 
-    [Test(Description = "‘•”õƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éƒeƒXƒg")]
-    [TestCaseSource(nameof(IncorrectMockData), Category = "ˆÙíŒn")]
+    [Test(Description = "è£…å‚™ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ãƒ†ã‚¹ãƒˆ")]
+    [TestCaseSource(nameof(IncorrectMockDatas), Category = "ç•°å¸¸ç³»")]
     public void ModuleInstanceFail(EquippableItem? weapon, EquippableItem? armor)
     {
         Assert.Throws<ArgumentException>(() =>
