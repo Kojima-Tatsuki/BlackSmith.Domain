@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character.Interface;
+﻿using BlackSmith.Domain.Character.Interface;
 using System;
 
 namespace BlackSmith.Domain.Character.Player

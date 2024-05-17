@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character;
+﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Usecase.Interface;
 using NUnit.Framework;
@@ -17,7 +17,7 @@ namespace BlackSmith.Usecase.Character.Battle
             yield return null;
         }
 
-        [Test(Description = "TakeDamagePlayerByPlayer�̃e�X�g")]
+        [Test(Description = "TakeDamagePlayerByPlayerのテスト")]
         [TestCaseSource(nameof(TakeDamagePlayerByPlayerTestCases))]
         public void TakeDamagePlayerByPlayerPasses(IPlayerBattleEntityRepository repository, CharacterID attackerId, CharacterID recieverId, Type? exception)
         {

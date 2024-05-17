@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character;
+﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.CharacterObject;
 using NUnit.Framework;
 using System;

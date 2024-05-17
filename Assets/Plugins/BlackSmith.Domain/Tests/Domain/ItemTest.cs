@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Item;
+ï»¿using BlackSmith.Domain.Item;
 using NUnit.Framework;
 using System;
 
@@ -6,12 +6,12 @@ using System;
 
 public class ItemTest
 {
-    // Item ‚ÌƒeƒXƒg
-    [Test(Description = "ItemName‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‰»ƒeƒXƒg")]
-    [TestCase("ITEM_NAME", "ITEM_NAME", null, Category = "³íŒn")]
-    [TestCase("I", "I" , null, Category = "³íŒn")]
-    [TestCase("", null, typeof(ArgumentOutOfRangeException), Category = "³íŒn")]
-    [TestCase(null, null, typeof(ArgumentNullException), Category = "³íŒn")]
+    // Item ã®ãƒ†ã‚¹ãƒˆ
+    [Test(Description = "ItemNameã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ†ã‚¹ãƒˆ")]
+    [TestCase("ITEM_NAME", "ITEM_NAME", null, Category = "æ­£å¸¸ç³»")]
+    [TestCase("I", "I" , null, Category = "æ­£å¸¸ç³»")]
+    [TestCase("", null, typeof(ArgumentOutOfRangeException), Category = "æ­£å¸¸ç³»")]
+    [TestCase(null, null, typeof(ArgumentNullException), Category = "æ­£å¸¸ç³»")]
     public void ItemInstance(string itemName, string resultItemName, Type? exception = null)
     {
         if (exception is null)
@@ -20,12 +20,12 @@ public class ItemTest
             Assert.Throws(exception, () => new Item(itemName));
     }
 
-    // ItemName ‚ÌƒeƒXƒg
-    [Test(Description = "ItemName‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‰»ƒeƒXƒg")]
-    [TestCase("ITEM_NAME", "ITEM_NAME", null, Category = "³íŒn")]
-    [TestCase("I", "I", null, Category = "³íŒn")]
-    [TestCase("", null, typeof(ArgumentOutOfRangeException), Category = "³íŒn")]
-    [TestCase(null, null, typeof(ArgumentNullException), Category = "³íŒn")]
+    // ItemName ã®ãƒ†ã‚¹ãƒˆ
+    [Test(Description = "ItemNameã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ†ã‚¹ãƒˆ")]
+    [TestCase("ITEM_NAME", "ITEM_NAME", null, Category = "æ­£å¸¸ç³»")]
+    [TestCase("I", "I", null, Category = "æ­£å¸¸ç³»")]
+    [TestCase("", null, typeof(ArgumentOutOfRangeException), Category = "æ­£å¸¸ç³»")]
+    [TestCase(null, null, typeof(ArgumentNullException), Category = "æ­£å¸¸ç³»")]
     public void ItemNameInstance(string itemName, string resultItemName, Type? exception = null)
     {
         if (exception is null)

@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Item.Equipment;
+﻿using BlackSmith.Domain.Item.Equipment;
 
 namespace BlackSmith.Domain.Inventory
 {

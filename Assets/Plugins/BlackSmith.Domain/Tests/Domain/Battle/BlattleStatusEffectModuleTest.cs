@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character.Battle;
+ï»¿using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.PassiveEffect;
 using NUnit.Framework;
 using System;
@@ -24,8 +24,8 @@ internal class BlattleStatusEffectModuleTest
         };
     }
 
-    [Test(Description = "ƒXƒe[ƒ^ƒXƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éƒeƒXƒg")]
-    [TestCaseSource(nameof(CorrectMockData), Category = "³íŒn")]
+    [Test(Description = "ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ãƒ†ã‚¹ãƒˆ")]
+    [TestCaseSource(nameof(CorrectMockData), Category = "æ­£å¸¸ç³»")]
     public void ModuleInstancePasses(IReadOnlyDictionary<EffectID, BattleStatusEffect>? dict)
     {
         try

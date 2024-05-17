@@ -1,4 +1,4 @@
-using BlackSmith.Domain.CharacterObject;
+﻿using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Domain.CharacterObject.Interface;
 
 namespace BlackSmith.Domain.Character.Battle

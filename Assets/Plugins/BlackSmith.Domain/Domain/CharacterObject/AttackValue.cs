@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character.Battle;
+﻿using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using System;
 using System.Linq;

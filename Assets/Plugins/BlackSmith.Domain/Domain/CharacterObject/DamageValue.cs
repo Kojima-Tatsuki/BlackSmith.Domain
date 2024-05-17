@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character;
+﻿using BlackSmith.Domain.Character;
 using System;
 
 #nullable enable

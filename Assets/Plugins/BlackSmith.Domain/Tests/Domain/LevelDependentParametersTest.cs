@@ -1,4 +1,4 @@
-using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character.Player;
 using NUnit.Framework;
 using System;
 
