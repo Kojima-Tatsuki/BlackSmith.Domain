@@ -59,24 +59,16 @@ namespace BlackSmith.Domain.CharacterObject
 
         public enum LocationType
         {
-            None,
             Head,
             Chest,
             Hands,
             Leg,
-            Acc,
+            // Acc,
         }
 
         public override string ToString()
         {
             return Value.ToString();
-        }
-    }
-
-    internal record NullEquipment : Equipment
-    {
-        internal NullEquipment() : base(new EquipmentName("NULL"), new EquipmentLocation(EquipmentLocation.LocationType.None), new EquipmentID())
-        {
         }
     }
 
