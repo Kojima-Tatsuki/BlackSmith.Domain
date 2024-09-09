@@ -1,12 +1,12 @@
 {
   "name": "com.cactus.blacksmith-domain",
   "displayName": "BlackSmith Domain",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "This package describes the domain logic of BlackSmith.",
   "unity": "2023.2",
   "dependencies": {
-    "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
-    "org.nuget.r3": "1.1.11"
+    "com.cysharp.unitask": "2.5.5",
+    "org.nuget.r3": "1.2.8"
   },
   "author": {
     "name": "Tatsuki Kojima"
