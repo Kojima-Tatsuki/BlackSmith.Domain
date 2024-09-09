@@ -125,8 +125,6 @@ namespace BlackSmith.Domain.Character
                     if (Leg is null)
                         result = true;
                     break;
-                case LocationType.Acc:
-                    break;
                 default:
                     break;
             }
