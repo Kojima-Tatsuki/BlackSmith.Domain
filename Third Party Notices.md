@@ -1,13 +1,15 @@
 # This package contains third-party software components governed by the license(s) indicated below
 
+## R3
 
-## UniRx
-**Source** : https://github.com/neuecc/UniRx  
+**Source** : https://github.com/Cysharp/R3
+
 ### License
+
 ```
 The MIT License (MIT)
 
-Copyright (c) 2018 Yoshifumi Kawai
+Copyright (c) 2024 Cysharp, Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +31,9 @@ SOFTWARE.
 ```
 
 ## UniTask
+
 **Source** : https://github.com/Cysharp/UniTask
+
 ```
 The MIT License (MIT)
 
