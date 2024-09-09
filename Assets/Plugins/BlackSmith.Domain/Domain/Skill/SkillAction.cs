@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlackSmith.Domain.Skill
+﻿namespace BlackSmith.Domain.Skill
 {
     /// <summary>
     /// <see cref="Skill"/>が提供する行動
     /// </summary>
     public class SkillAction
     {
-        public ActionID ActionID { get; }
+        public SkillActionID ActionID { get; }
 
         public ActionExecutionConditions ExecutionConditions { get; }
 
-        internal SkillAction(ActionID id, ActionExecutionConditions executionConditions)
+        internal SkillAction(SkillActionID id, ActionExecutionConditions executionConditions)
         {
             ActionID = id;
             ExecutionConditions = executionConditions;
@@ -28,8 +22,8 @@ namespace BlackSmith.Domain.Skill
 
     }
 
-    public class ActionID : BasicID
+    public record SkillActionID : BasicID
     {
-        internal ActionID(Guid id): base(id) { }
+        protected override string Prefix => "SkillAction-";
     }
 }

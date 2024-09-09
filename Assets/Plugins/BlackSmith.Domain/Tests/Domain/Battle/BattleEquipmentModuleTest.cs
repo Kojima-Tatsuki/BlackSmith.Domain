@@ -1,13 +1,21 @@
-using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.Item;
+ï»¿using BlackSmith.Domain.Character.Battle;
+using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Item.Equipment;
 using NUnit.Framework;
 using System;
+using System.Linq;
 
-public class BattleEquipmentModuleTest
+#nullable enable
+
+internal class BattleEquipmentModuleTest
 {
-    // ³íŒn—pƒ‚ƒbƒNƒf[ƒ^
-    private static EquippableItem?[][] CorrectMockData()
+    public static BattleEquipmentModule[] GetBattleEquipmentModuleMocks()
+    {
+        return CorrectMockDatas().Select(data => new BattleEquipmentModule(data[0], data[1])).ToArray();
+    }
+
+    // æ­£å¸¸ç³»ç”¨ãƒ¢ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿
+    private static EquippableItem?[][] CorrectMockDatas()
     {
         var weapon = new EquippableItem(new(
             name: "MockWeapon",
@@ -16,7 +24,7 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         var armor = new EquippableItem(new(
             name: "MockArmor",
@@ -25,9 +33,9 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
-        return new EquippableItem?[][] { 
+        return new EquippableItem?[][] {
             new EquippableItem?[] { null, null },
             new EquippableItem?[] { weapon, null },
             new EquippableItem?[] { null, armor },
@@ -35,8 +43,8 @@ public class BattleEquipmentModuleTest
         };
     }
 
-    // ˆÙíŒn—pƒ‚ƒbƒNƒf[ƒ^
-    private static EquippableItem?[][] IncorrectMockData()
+    // ç•°å¸¸ç³»ç”¨ãƒ¢ãƒƒã‚¯ãƒ‡ãƒ¼ã‚¿
+    private static EquippableItem?[][] IncorrectMockDatas()
     {
         var currectWeapon = new EquippableItem(new(
             name: "MockWeapon",
@@ -45,7 +53,7 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         var inCorrectWeapon = new EquippableItem(new(
             name: "MockWeapon",
@@ -54,7 +62,7 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         var armor = new EquippableItem(new(
             name: "MockArmor",
@@ -63,7 +71,7 @@ public class BattleEquipmentModuleTest
             deffence: new EquipmentDefense(1),
             enchancement: new EnhancementParameter(),
             additional: new AdditionalParameter(),
-            require: new RequireParameter()));
+            require: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
 
         return new EquippableItem?[][] {
             new EquippableItem?[] { currectWeapon, currectWeapon },
@@ -72,11 +80,12 @@ public class BattleEquipmentModuleTest
         };
     }
 
-    [Test(Description = "‘•”õƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éƒeƒXƒg")]
-    [TestCaseSource(nameof(CorrectMockData), Category = "³íŒn")]
+    [Test(Description = "è£…å‚™ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ãƒ†ã‚¹ãƒˆ")]
+    [TestCaseSource(nameof(CorrectMockDatas), Category = "æ­£å¸¸ç³»")]
     public void ModuleInstancePasses(EquippableItem? weapon, EquippableItem? armor)
     {
-        try {
+        try
+        {
             var module = new BattleEquipmentModule(weapon, armor);
         }
         catch (Exception e)
@@ -85,8 +94,8 @@ public class BattleEquipmentModuleTest
         }
     }
 
-    [Test(Description = "‘•”õƒ‚ƒWƒ…[ƒ‹‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ¶¬‚·‚éƒeƒXƒg")]
-    [TestCaseSource(nameof(IncorrectMockData), Category = "ˆÙíŒn")]
+    [Test(Description = "è£…å‚™ãƒ¢ã‚¸ãƒ¥ãƒ¼ãƒ«ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’ç”Ÿæˆã™ã‚‹ãƒ†ã‚¹ãƒˆ")]
+    [TestCaseSource(nameof(IncorrectMockDatas), Category = "ç•°å¸¸ç³»")]
     public void ModuleInstanceFail(EquippableItem? weapon, EquippableItem? armor)
     {
         Assert.Throws<ArgumentException>(() =>

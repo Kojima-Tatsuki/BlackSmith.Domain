@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BlackSmith.Domain.Inventory;
 using BlackSmith.Domain.Item;
-using BlackSmith.Domain.Inventory;
+using System;
 
 namespace BlackSmith.Usecase.Inventory
 {
@@ -14,7 +12,7 @@ namespace BlackSmith.Usecase.Inventory
         /// <param name="fromInventory">移動元のインベントリ</param>
         /// <param name="toInventory">移動先のインベントリ</param>
         /// <param name="item">移動させるアイテム</param>
-        public void Transfer<T>(IInventoryService<T> fromInventory, IInventoryService<T> toInventory, T item) where T: Item
+        public void Transfer<T>(IInventoryService<T> fromInventory, IInventoryService<T> toInventory, T item) where T : Item
         {
             if (!fromInventory.Contains(item))
                 throw new ArgumentException("itemがfromInventoryに存在しません");

@@ -1,13 +1,12 @@
-﻿using System;
-using UniRx;
+﻿using R3;
 
 namespace BlackSmith.Domain.Character.Player.Event
 {
     // イベントの購読用
     public interface IHealthEventObservable
     {
-        System.IObservable<PlayerHealthChangedEvent> OnPlayerHealthChanged { get; }
-        System.IObservable<PlayerOnDeadEvent> OnPlayerDead { get; }
+        Observable<PlayerHealthChangedEvent> OnPlayerHealthChanged { get; }
+        Observable<PlayerOnDeadEvent> OnPlayerDead { get; }
     }
 
     // イベントの発行用
@@ -26,13 +25,13 @@ namespace BlackSmith.Domain.Character.Player.Event
         /// <summary>
         /// プレイヤーの体力が変更された時に発行する
         /// </summary>
-        public System.IObservable<PlayerHealthChangedEvent> OnPlayerHealthChanged => onPlayerHealthChanged;
+        public Observable<PlayerHealthChangedEvent> OnPlayerHealthChanged => onPlayerHealthChanged;
         private readonly Subject<PlayerHealthChangedEvent> onPlayerHealthChanged;
 
         /// <summary>
         /// プレイヤーが死亡した時に発行する
         /// </summary>
-        public System.IObservable<PlayerOnDeadEvent> OnPlayerDead => onPlayerDeadSubject;
+        public Observable<PlayerOnDeadEvent> OnPlayerDead => onPlayerDeadSubject;
         private readonly Subject<PlayerOnDeadEvent> onPlayerDeadSubject;
 
         internal PlayerEventPublisher()

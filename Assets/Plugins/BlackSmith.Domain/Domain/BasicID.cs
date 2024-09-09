@@ -1,73 +1,41 @@
-using System;
+﻿using System;
+
+#nullable enable
 
 namespace BlackSmith.Domain
 {
-    public abstract class BasicID : IEquatable<BasicID>
+    public abstract record BasicID
     {
-        internal Guid Value { get; }
+        protected abstract string Prefix { get; }
 
-        internal BasicID(Guid id)
+        public string Value => Prefix + guid;
+        private Guid guid { get; }
+
+        internal BasicID()
         {
-            Value = id;
+            guid = Guid.NewGuid();
         }
 
-        public bool Equals(BasicID? other)
+        internal BasicID(string id)
         {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
+            if (!IsValid(id))
+                throw new ArgumentException("指定したIDは適切な値ではありません");
 
-            return Equals(Value.GetHashCode(), other.GetHashCode());
+            guid = GetGuid(id);
         }
 
-        public override bool Equals(object? obj)
+        private bool IsValid(string id)
         {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (!id.StartsWith(Prefix))
+                return false;
+            if (!Guid.TryParse(id.Substring(Prefix.Length), out _))
+                return false;
 
-            if (GetType() != obj.GetType()) return false;
-            return Equals((BasicID)obj);
+            return true;
         }
 
-        public override int GetHashCode() => Value.GetHashCode();
+        private Guid GetGuid(string id) => Guid.Parse(id.Substring(Prefix.Length));
 
-        public override string ToString() => Value.ToString();
-    }
-
-    public interface IDetailBaseValueObject<T> where T : notnull{
-        T Value { get; }
-    }
-
-    public class BaseValueObject<T> : 
-        IDetailBaseValueObject<T>, 
-        IEquatable<BaseValueObject<T>> where T : notnull
-    {
-        T IDetailBaseValueObject<T>.Value => Value;
-        protected T Value { get; }
-
-        public BaseValueObject(T value)
-        {
-            Value = value;
-        }
-
-        public bool Equals(BaseValueObject<T>? other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Value.Equals(other.Value);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-
-            if (GetType() != obj.GetType()) return false;
-            return Equals((BaseValueObject<T>)obj);
-        }
-
-        public override int GetHashCode() => Value.GetHashCode();
-
-        public override string ToString() => Value.ToString() ?? "";
+        public override string ToString() => Prefix + guid;
     }
 }

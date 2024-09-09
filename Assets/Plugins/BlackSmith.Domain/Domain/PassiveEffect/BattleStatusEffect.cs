@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlackSmith.Domain.PassiveEffect
 {
     // 直接的なリポジトリ管理はしない
-    internal class BattleStatusEffect
+    internal record BattleStatusEffect
     {
-        internal EffectID Id { get; }
+        internal EffectID Id { get; } // IDを重複刺せないのであれば、Idのみを使用したEqualsを実装すべき？
 
         internal BattleStatusEffectModel StatusModel { get; }
 
@@ -20,7 +16,7 @@ namespace BlackSmith.Domain.PassiveEffect
         }
     }
 
-    internal class EffectID
+    internal record EffectID
     {
         internal Guid Value { get; }
 
@@ -30,14 +26,14 @@ namespace BlackSmith.Domain.PassiveEffect
         }
     }
 
-    internal class BattleStatusEffectModel
+    internal record BattleStatusEffectModel
     {
         public int MaxHealth { get; }
         public int Attack { get; }
         public int Defense { get; }
         public int MovementSpeed { get; }
 
-        internal BattleStatusEffectModel(int maxHealth,  int attack, int defense, int moveSpeed)
+        internal BattleStatusEffectModel(int maxHealth, int attack, int defense, int moveSpeed)
         {
             MaxHealth = maxHealth;
             Attack = attack;

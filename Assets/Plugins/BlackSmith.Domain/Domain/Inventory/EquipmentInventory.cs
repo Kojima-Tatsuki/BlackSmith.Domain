@@ -1,14 +1,11 @@
 ﻿
+using BlackSmith.Domain.Item.Equipment;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BlackSmith.Domain.Item;
-using BlackSmith.Domain.Item.Equipment;
 
 namespace BlackSmith.Domain.Inventory
 {
-    using Item;
-
     /// <summary>装備中のアイテムを格納するインベントリ</summary>
     internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
     {

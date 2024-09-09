@@ -1,28 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
-using BlackSmith.Domain.Character.Player;
+ï»¿using BlackSmith.Domain.Character.Player;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
 internal class ExperienceTest
 {
-    [Test(Description = "‘ŒoŒ±’l—Ê‚©‚çƒŒƒxƒ‹‚ğŒvZ‚·‚éƒeƒXƒg")]
-    [TestCase(0, ExpectedResult = 1, Category = "³íŒn")]
-    [TestCase(100, ExpectedResult = 2, Category = "³íŒn")]
-    [TestCase(225, ExpectedResult = 3, Category = "³íŒn")]
-    [TestCase(2407011, ExpectedResult = 39, Category = "³íŒn")]
-    [TestCase(2407012, ExpectedResult = 40, Category = "³íŒn")]
-    [TestCase(2407013, ExpectedResult = 40, Category = "³íŒn")]
+    [Test(Description = "ç·çµŒé¨“å€¤é‡ã‹ã‚‰ãƒ¬ãƒ™ãƒ«ã‚’è¨ˆç®—ã™ã‚‹ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(0, ExpectedResult = 1, Category = "æ­£å¸¸ç³»")]
+    [TestCase(100, ExpectedResult = 2, Category = "æ­£å¸¸ç³»")]
+    [TestCase(225, ExpectedResult = 3, Category = "æ­£å¸¸ç³»")]
+    [TestCase(2407011, ExpectedResult = 39, Category = "æ­£å¸¸ç³»")]
+    [TestCase(2407012, ExpectedResult = 40, Category = "æ­£å¸¸ç³»")]
+    [TestCase(2407013, ExpectedResult = 40, Category = "æ­£å¸¸ç³»")]
     public double CurrentLevelPasses(int exp)
     {
         return Experience.CurrentLevel(new Experience(exp));
     }
 
-    [Test(Description = "ƒŒƒxƒ‹‚©‚ç‚»‚ÌƒŒƒxƒ‹‚ğ–‚½‚·Å’áŒoŒ±’l—Ê‚ğŒvZ‚·‚éƒeƒXƒg")]
-    [TestCase(1, ExpectedResult = 0, Category = "³íŒn")]
-    [TestCase(2, ExpectedResult = 100, Category = "³íŒn")]
-    [TestCase(3, ExpectedResult = 225, Category = "³íŒn")]
+    [Test(Description = "ãƒ¬ãƒ™ãƒ«ã‹ã‚‰ãã®ãƒ¬ãƒ™ãƒ«ã‚’æº€ãŸã™æœ€ä½çµŒé¨“å€¤é‡ã‚’è¨ˆç®—ã™ã‚‹ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(1, ExpectedResult = 0, Category = "æ­£å¸¸ç³»")]
+    [TestCase(2, ExpectedResult = 100, Category = "æ­£å¸¸ç³»")]
+    [TestCase(3, ExpectedResult = 225, Category = "æ­£å¸¸ç³»")]
     [TestCase(40, ExpectedResult = 2407012)]
     public int FromLevelPasses(int level)
     {

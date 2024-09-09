@@ -1,8 +1,4 @@
-using BlackSmith.Domain.Item;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace BlackSmith.Domain.Inventory 
+﻿namespace BlackSmith.Domain.Inventory
 {
     using Item;
 

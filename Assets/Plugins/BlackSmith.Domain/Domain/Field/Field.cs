@@ -1,6 +1,5 @@
-﻿using System;
+﻿using BlackSmith.Domain.Character;
 using System.Collections.Generic;
-using BlackSmith.Domain.Character;
 
 namespace BlackSmith.Domain.Field
 {
@@ -18,9 +17,9 @@ namespace BlackSmith.Domain.Field
     /// <summary>街やダンジョンを含むマップ単位</summary>
     public class Field
     {
-        public FieldID ID { get; init; }
+        public FieldID ID { get; }
 
-        public string Name { get; init; } // フィールド名
+        public string Name { get; } // フィールド名
 
         public IReadOnlyCollection<CharacterID> CharacterIds => Chunk.CharacterIds;
         internal Chunk Chunk { get; private set; }
@@ -62,11 +61,9 @@ namespace BlackSmith.Domain.Field
         }
     }
 
-    public class FieldID : BasicID
+    public record FieldID : BasicID
     {
-        internal FieldID() : base(Guid.NewGuid()) { }
-
-        internal FieldID(Guid id) : base(id) { }
+        protected override string Prefix => "Field-";
     }
 
     // この区分けが必要かは検討すべき

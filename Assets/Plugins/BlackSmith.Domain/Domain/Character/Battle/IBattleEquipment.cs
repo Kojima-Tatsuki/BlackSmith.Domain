@@ -1,10 +1,4 @@
-﻿using BlackSmith.Domain.CharacterObject;
-using BlackSmith.Domain.Item.Equipment;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BlackSmith.Domain.Item.Equipment;
 
 namespace BlackSmith.Domain.Character.Battle
 {

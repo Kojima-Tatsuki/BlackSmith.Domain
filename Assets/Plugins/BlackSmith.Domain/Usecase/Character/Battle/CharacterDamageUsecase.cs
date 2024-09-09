@@ -1,7 +1,5 @@
-using BlackSmith.Domain.Character;
+﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.Character.Player;
-using BlackSmith.Domain.CharacterObject;
 using BlackSmith.Usecase.Interface;
 using System;
 
@@ -12,9 +10,9 @@ namespace BlackSmith.Usecase.Character.Battle
     /// </summary>
     public class CharacterDamageUsecase
     {
-        private IPlayerRepository PlayerRepository { get; }
+        private IPlayerBattleEntityRepository PlayerRepository { get; }
 
-        public CharacterDamageUsecase(IPlayerRepository playerRepository)
+        public CharacterDamageUsecase(IPlayerBattleEntityRepository playerRepository)
         {
             PlayerRepository = playerRepository;
         }
@@ -30,9 +28,9 @@ namespace BlackSmith.Usecase.Character.Battle
             var receiver = PlayerRepository.FindByID(receiverId) as IBattleCharacter;
 
             if (attacker is null)
-                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {attackerId}");
+                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {attackerId}. (bHB0WXxR)");
             if (receiver is null)
-                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {receiverId}");
+                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {receiverId}. (DxYWTkAg6)");
 
             var levelGap = new LevelGapOfAttackerAndReceiver(receiver.Level, attacker.Level);
 
@@ -40,7 +38,7 @@ namespace BlackSmith.Usecase.Character.Battle
 
             receiver.TakeDamage(damage);
 
-            PlayerRepository.UpdateCharacter((receiver as PlayerEntity) ?? throw new InvalidOperationException(nameof(receiver)));
+            PlayerRepository.UpdateCharacter((receiver as PlayerBattleEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、PlayerEntityではありません. (jAv4M0Pb)"));
         }
     }
 }

@@ -1,19 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlackSmith.Domain.Skill
+﻿namespace BlackSmith.Domain.Skill
 {
     internal interface ISkill
     {
         /// <summary>スキル名</summary>
-        SkillName Name { get; }
+        SkillName SkillName { get; }
 
         /// <summary>熟練度</summary>
         SkillProficiency Proficiency { get; }
-        
+
         /// <summary>取得条件</summary>
         SkillAcquisitionConditions AcquisitionConditions { get; }
     }

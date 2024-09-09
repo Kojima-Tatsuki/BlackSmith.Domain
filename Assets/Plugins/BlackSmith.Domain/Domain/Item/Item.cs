@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Item
 {
-    public interface IItem: IEquatable<IItem>
+    public interface IItem
     {
         string Name { get; }
     }
 
     /// <summary>このItemに関するデータの変更等を行う際の窓口として使用する</summary>
-    public class Item : IItem, IEquatable<IItem>
+    public record Item : IItem
     {
         public string Name => itemName.Value;
         private protected readonly ItemName itemName;
@@ -20,42 +22,18 @@ namespace BlackSmith.Domain.Item
 
             this.itemName = new ItemName(itemName);
         }
-
-        public bool Equals(IItem? other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Equals(Name, other.Name); // 名前で比較
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-
-            if (GetType() != obj.GetType()) return false;
-            return Equals((Item)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
-        }
     }
 
     /// <summary>アイテムを一意に定めることのできる識別子</summary>
-    public class ItemID : BasicID
+    public record ItemID : BasicID
     {
-        internal ItemID(Guid id) : base(id)
-        {
-        }
+        protected override string Prefix => "Item-";
     }
 
     /// <summary>
     /// アイテム名
     /// </summary>
-    internal class ItemName
+    internal record ItemName
     {
         public string Value { get; }
 
@@ -66,19 +44,14 @@ namespace BlackSmith.Domain.Item
 
             Value = name;
         }
-
-        public override string ToString()
-        {
-            return Value;
-        }
     }
 
-    internal enum ItemType 
+    internal enum ItemType
     {
-        None    = 0x0,  // なし
-        Weapon  = 0x1,  // 武器
-        Armor   = 0x2,  // 防具
-        Consum  = 0x4,  // 消費アイテム
+        None = 0x0,  // なし
+        Weapon = 0x1,  // 武器
+        Armor = 0x2,  // 防具
+        Consum = 0x4,  // 消費アイテム
     }
 
 
@@ -86,7 +59,7 @@ namespace BlackSmith.Domain.Item
     /// アイテムの比較を行う
     /// </summary>
     /// <remarks>Dictionaryのコンストラクタの引数として渡すと、処理が早くなる</remarks>
-    class ItemComparer : IEqualityComparer<Item>
+    internal class ItemComparer : IEqualityComparer<Item>
     {
         public bool Equals(Item? x, Item? y)
         {

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using BlackSmith.Domain.Character;
+using System;
 using System.Collections.Generic;
-using BlackSmith.Domain.Character;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Item
 {
@@ -18,8 +20,8 @@ namespace BlackSmith.Domain.Item
         /// <returns></returns>
         internal CraftingResult Craft(CraftingRecipe recipe, IReadOnlyList<ICraftMaterialItem> materials, CharacterID creator)
         {
-            if (recipe == null)  throw new ArgumentNullException(nameof(recipe));
-            if (materials == null) throw new ArgumentNullException(nameof(materials));
+            if (recipe == null) throw new ArgumentNullException("Not found CraftingRecipe. (BTXyFn8e)");
+            if (materials == null) throw new ArgumentNullException("Not fount CraftMaterials. (fk3XICGo)");
 
             // 素材が揃っているなら必ず製作は成功する
             if (!recipe.IsCraftable(materials))

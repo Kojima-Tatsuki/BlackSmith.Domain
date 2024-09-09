@@ -1,7 +1,6 @@
-using BlackSmith.Domain.Item;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 #nullable enable
 
@@ -105,11 +104,9 @@ namespace BlackSmith.Domain.Inventory
         int IInventoryStateViewable<IItem>.GetContainItemCount(IItem item) => ContainingItemCount(item).Value;
     }
 
-    public class InventoryID : BasicID
+    public record InventoryID : BasicID
     {
-        internal InventoryID(Guid id) : base(id)
-        {
-        }
+        protected override string Prefix => "Inventory-";
     }
 
     public class InventoryCapacity

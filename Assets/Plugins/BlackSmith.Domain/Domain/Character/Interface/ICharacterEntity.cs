@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using BlackSmith.Domain.Character.Player;
-using BlackSmith.Domain.CharacterObject;
-using BlackSmith.Domain.CharacterObject.Interface;
+﻿using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Domain.Character.Interface
 {

@@ -1,17 +1,16 @@
 ﻿using System;
-using BlackSmith.Domain.Character.Interface;
 
 namespace BlackSmith.Domain.Character
 {
     // Expを利用しないため、レベルに変動を起こさせない
-    public class CharacterLevel
+    public record CharacterLevel
     {
         public int Value { get; }
 
         internal CharacterLevel(int level)
         {
             if (!IsVaild(level))
-                throw new ArgumentException($"0以下の値はレベルとして扱えません, value : {level}");
+                throw new ArgumentException($"0以下の値はレベルとして扱えません, value : {level}. (cz7lNbVb)");
 
             Value = level;
         }

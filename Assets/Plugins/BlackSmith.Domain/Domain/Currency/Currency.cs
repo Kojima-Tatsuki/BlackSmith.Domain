@@ -1,9 +1,11 @@
 ﻿using System;
 
+#nullable enable
+
 namespace BlackSmith.Domain.Currency
 {
     /// <summary> お金 </summary>
-    public class Currency
+    public record Currency
     {
         public CurrencyType Type { get; }
 
@@ -23,7 +25,7 @@ namespace BlackSmith.Domain.Currency
         internal Currency Add(Currency other)
         {
             if (!Type.Equals(other.Type))
-                throw new ArgumentException($"通貨単位が一致していません [this: {Type}], [other: {other.Type}]");
+                throw new ArgumentException($"通貨単位が一致していません [this: {Type}], [other: {other.Type}]. (56xTP2kw)");
 
             return new Currency(Type, value.Add(new CurrencyValue(other.Value)).Value);
         }
@@ -31,7 +33,7 @@ namespace BlackSmith.Domain.Currency
         internal Currency Subtract(Currency other)
         {
             if (!Type.Equals(other.Type))
-                throw new ArgumentException($"通貨単位が一致していません [this: {Type}], [other: {other.Type}]");
+                throw new ArgumentException($"通貨単位が一致していません [this: {Type}], [other: {other.Type}]. (XJwx0tXB)");
 
             var otherValue = new CurrencyValue(other.Value);
 
@@ -44,7 +46,7 @@ namespace BlackSmith.Domain.Currency
         /// <param name="money">変換するお金</param>
         /// <returns></returns>
         internal Currency Exchange(CurrencyType type)
-        { 
+        {
             var value = (int)Math.Floor((float)type / (float)Type * Value);
 
             return new(type, value);
@@ -57,45 +59,19 @@ namespace BlackSmith.Domain.Currency
         /// <returns>一致していれば真を返す</returns>
         public bool EqualsType(Currency other) => Type.Equals(other.Type);
 
-        public bool Equals(Currency? other)
-        {
-            if (other is null) return false;
-            if (ReferenceEquals(this, other)) return true;
-
-            return Value.Equals(other.Value) && EqualsType(other);
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is null) return false;
-            if (ReferenceEquals(this, obj)) return true;
-
-            if (GetType() != obj.GetType()) return false;
-            return Equals((Currency)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
         public override string? ToString()
         {
             return $"Type : {Type}, Value : {Value}";
         }
 
-        public static bool operator ==(Currency x, Currency y) => x.Equals(y);
-
-        public static bool operator !=(Currency x, Currency y) => !x.Equals(y);
-
-        private class CurrencyValue
+        private record CurrencyValue
         {
             public int Value { get; }
 
             internal CurrencyValue(int value)
             {
                 if (!IsValidValue(value))
-                    throw new AggregateException($"通貨の値として不正な値が入力されました: value = {value}");
+                    throw new AggregateException($"通貨の値として不正な値が入力されました: value = {value}. (QOd6vrjA)");
 
                 Value = value;
             }
@@ -137,7 +113,7 @@ namespace BlackSmith.Domain.Currency
     /// </summary>
     public enum CurrencyType
     {
-        Sakura  = 1, // 桜式通貨
-        Aren    = 2, // アレン式通貨
+        Sakura = 1, // 桜式通貨
+        Aren = 2, // アレン式通貨
     }
 }

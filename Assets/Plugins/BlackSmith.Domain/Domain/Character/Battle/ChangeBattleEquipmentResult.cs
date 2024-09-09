@@ -1,13 +1,10 @@
-﻿using BlackSmith.Domain.Item;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BlackSmith.Domain.Item.Equipment;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Character.Battle
 {
-    internal class ChangeBattleEquipmentResult
+    internal record ChangeBattleEquipmentResult
     {
         public EquippableItem? CurrentEquipment { get; }
         public EquippableItem? PrevEquipment { get; }

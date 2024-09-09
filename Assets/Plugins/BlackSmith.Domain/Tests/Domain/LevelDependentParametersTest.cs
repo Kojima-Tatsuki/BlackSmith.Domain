@@ -1,41 +1,62 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using BlackSmith.Domain.Character.Player;
+ï»¿using BlackSmith.Domain.Character.Player;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
+using System;
+
+#nullable enable
 
 internal class LevelDependentParametersTest
 {
-    [Test(Description = "LevelDependentParametersTest‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‰»ƒeƒXƒg")]
-    public void InstancePasses()
+    public static LevelDependentParameters GetLevelDependentParametersMock() => new LevelDependentParameters();
+
+    [Test(Description = "LevelDependentParametersã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(0, 1, 1, null, Category = "æ­£å¸¸ç³»")]
+    public void LevelDependentParametersInstancePasses(int level, int str, int agi, Type? exception)
     {
-        Assert.That(() => new LevelDependentParameters() != null);
-
-        var level = new PlayerLevel();
-        var str = new Strength(1);
-        var agi = new Agility(1);
-
-        Assert.That(() => new LevelDependentParameters(level, str, agi) != null);
+        if (exception is null)
+            Assert.That(new LevelDependentParameters(new(new(level)), new(str), new(agi)),
+                Is.EqualTo(new LevelDependentParameters(new(new(level)), new(str), new(agi))));
+        else
+            Assert.Throws(exception, () => new LevelDependentParameters(new(new(level)), new(str), new(agi)));
     }
 
-    [Test(Description = "ƒXƒe[ƒ^ƒXã¸ƒ|ƒCƒ“ƒg‚Ìc‚è”ƒeƒXƒg")]
-    [TestCase(1, 1, 1, ExpectedResult = 1, Category = "³íŒn")]
-    [TestCase(5, 10, 5, ExpectedResult = 0, Category = "³íŒn")]
-    
+    [Test(Description = "ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ä¸Šæ˜‡ãƒã‚¤ãƒ³ãƒˆã®æ®‹ã‚Šæ•°ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(1, 1, 1, ExpectedResult = 1, Category = "æ­£å¸¸ç³»")]
+    [TestCase(5, 10, 5, ExpectedResult = 0, Category = "æ­£å¸¸ç³»")]
+
     public int GetRemainingParamPointPasses(int level, int str, int agi)
     {
-        return new LevelDependentParameters(new (Experience.RequiredCumulativeExp(level)), new (str), new (agi))
+        return new LevelDependentParameters(new(Experience.RequiredCumulativeExp(level)), new(str), new(agi))
             .GetRemainingParamPoint();
     }
 
     [Test()]
-    [TestCase(1, 3, 1, Category = "ˆÙíŒn")]
+    [TestCase(1, 3, 1, Category = "ç•°å¸¸ç³»")]
     public void GetRemainingParamPointFail(int level, int str, int agi)
     {
-        Assert.Throws(Is.TypeOf<ArgumentException>().And.Message.EqualTo($"w’è‚µ‚½STR, AGI‚ÍŠ„“–‰Â”\—Ê‚ğ’´‰ß‚µ‚Ä‚¢‚Ü‚· STR: {str}, AGI: {agi}"),
+        Assert.Throws(Is.TypeOf<ArgumentException>().And.Message.EqualTo($"æŒ‡å®šã—ãŸSTR, AGIã¯å‰²å½“å¯èƒ½é‡ã‚’è¶…éã—ã¦ã„ã¾ã™ STR: {str}, AGI: {agi}"),
         () => new LevelDependentParameters(new(Experience.RequiredCumulativeExp(level)), new(str), new(agi))
                 .GetRemainingParamPoint());
+    }
+
+    [Test(Description = "Strengthã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(1, null, Category = "æ­£å¸¸ç³»")]
+    [TestCase(0, typeof(ArgumentException), Category = "ç•°å¸¸ç³»")]
+    public void StrengthInstancePasses(int value, Type? excaption)
+    {
+        if (excaption is null)
+            Assert.That(new Strength(value), Is.EqualTo(new Strength(value)));
+        else
+            Assert.Throws(excaption, () => new Strength(value));
+    }
+
+    [Test(Description = "Agilityã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ãƒ†ã‚¹ãƒˆ")]
+    [TestCase(1, null, Category = "æ­£å¸¸ç³»")]
+    [TestCase(0, typeof(ArgumentException), Category = "ç•°å¸¸ç³»")]
+    public void AgilityInstancePasses(int value, Type? excaption)
+    {
+        if (excaption is null)
+            Assert.That(new Agility(value), Is.EqualTo(new Agility(value)));
+        else
+            Assert.Throws(excaption, () => new Agility(value));
     }
 }

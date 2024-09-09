@@ -1,13 +1,10 @@
-using System;
-using BlackSmith.Domain.Character.Interface;
-
 namespace BlackSmith.Domain.Character.Player
 {
     /// <summary>
     /// キャラクターのレベル
     /// </summary>
     /// <remarks>Expでもってすべての計算を行っている</remarks>
-    public class PlayerLevel : CharacterLevel
+    public record PlayerLevel : CharacterLevel
     {
         public int MaxValue { get; } = 100;
 

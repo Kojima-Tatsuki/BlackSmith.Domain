@@ -1,21 +1,27 @@
+﻿using BlackSmith.Domain.Character.Player;
 using System;
 using System.Collections.Generic;
-using BlackSmith.Domain.Character.Player;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Skill
 {
     /// <summary>スキル</summary>
-    public class Skill
+    public abstract class Skill : ISkill
     {
-        internal SkillName SkillName { get; }
+        public SkillID ID { get; }
+
+        public SkillName SkillName { get; }
 
         /// <summary>スキル熟練度</summary>
-        internal SkillProficiency Proficiency { get; }
+        public SkillProficiency Proficiency { get; }
 
-        internal SkillAcquisitionConditions AcquisitionConditions { get; }
+        /// <summary>スキルの取得条件</summary>
+        public SkillAcquisitionConditions AcquisitionConditions { get; }
 
-        internal Skill(SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions)
+        internal Skill(SkillID id, SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions)
         {
+            ID = id ?? throw new ArgumentNullException(nameof(id));
             SkillName = skillName ?? throw new ArgumentNullException(nameof(skillName));
             Proficiency = new SkillProficiency(exp) ?? throw new ArgumentNullException(nameof(exp));
             AcquisitionConditions = acquisitionConditions ?? throw new ArgumentNullException(nameof(acquisitionConditions));
@@ -23,6 +29,12 @@ namespace BlackSmith.Domain.Skill
 
         /// <summary>スキルが取得できるか</summary>
         internal bool CanSkillAcquisition(SkillAcquisitionConditions requireParaeters) => AcquisitionConditions.CanSkillAcquisition(requireParaeters);
+    }
+
+    /// <summary>スキルのID</summary>
+    public record SkillID : BasicID
+    {
+        protected override string Prefix => "Skill-";
     }
 
     /// <summary>スキル名</summary>
@@ -88,18 +100,34 @@ namespace BlackSmith.Domain.Skill
         }
     }
 
+    /// <summary>スキルと熟練度の組み合わせ</summary>
+    /// <remarks>スキル習得条件の記述などで用いる</remarks>
+    public record SkillAndProficiency
+    {
+        public Skill Skill { get; }
+        public SkillProficiency Proficiency { get; }
+
+        internal SkillAndProficiency(Skill skill, SkillProficiency proficiency)
+        {
+            Skill = skill;
+            Proficiency = proficiency;
+        }
+    }
+
     /// <summary>スキルの取得条件</summary>
     public class SkillAcquisitionConditions
     {
         public PlayerLevel Level { get; }
         public Strength Strength { get; }
         public Agility Agility { get; }
+        public IReadOnlyCollection<SkillAndProficiency> RequiredSkills { get; }
 
-        internal SkillAcquisitionConditions(PlayerLevel level, Strength strength, Agility agility)
+        internal SkillAcquisitionConditions(PlayerLevel level, Strength strength, Agility agility, IReadOnlyCollection<SkillAndProficiency>? requireSkills = null)
         {
             Level = level;
             Strength = strength;
             Agility = agility;
+            RequiredSkills = requireSkills ?? new List<SkillAndProficiency>();
         }
 
         internal static SkillAcquisitionConditions FromDependentParams(LevelDependentParameters parameters)

@@ -1,104 +1,103 @@
-using BlackSmith.Domain.Item;
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 
 #nullable enable
 
 namespace BlackSmith.Domain.Inventory
 {
-    using Item;
     using Currency;
+    using Item;
 
     public interface IInventoryService : IInventoryService<IItem>, IInventoryStateViewable<IItem> { }
 
     public interface IInventoryStateViewable : IInventoryStateViewable<IItem> { }
 
     /// <summary>
-    /// ƒCƒ“ƒxƒ“ƒgƒŠ‚Ì‘€ì‚ğ‚·‚éÛ‚Ég‚¤Interface
+    /// ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã®æ“ä½œã‚’ã™ã‚‹éš›ã«ä½¿ã†Interface
     /// </summary>
-    /// <typeparam name="T">ƒCƒ“ƒxƒ“ƒgƒŠ‚ÉŠi”[‚·‚éƒAƒCƒeƒ€‚ÌŒ^</typeparam>
+    /// <typeparam name="T">ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã«æ ¼ç´ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã®å‹</typeparam>
     public interface IInventoryService<T> : IInventoryStateViewable<T> where T : IItem
     {
         /// <summary>
-        /// ƒAƒCƒeƒ€‚ğ’Ç‰Á‚·‚é
+        /// ã‚¢ã‚¤ãƒ†ãƒ ã‚’è¿½åŠ ã™ã‚‹
         /// </summary>
-        /// <param name="item">’Ç‰Á‚·‚éƒAƒCƒeƒ€</param>
-        /// <param name="count">’Ç‰Á‚·‚éŒÂ”</param>
-        /// <returns>’Ç‰Á‚µ‚½ƒAƒCƒeƒ€</returns>
+        /// <param name="item">è¿½åŠ ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ </param>
+        /// <param name="count">è¿½åŠ ã™ã‚‹å€‹æ•°</param>
+        /// <returns>è¿½åŠ ã—ãŸã‚¢ã‚¤ãƒ†ãƒ </returns>
         T AddItem(T item, int count = 1!);
 
         /// <summary>
-        /// ƒAƒCƒeƒ€‚ğæ‚èœ‚­
+        /// ã‚¢ã‚¤ãƒ†ãƒ ã‚’å–ã‚Šé™¤ã
         /// </summary>
-        /// <param name="item">æ‚èœ‚­ƒAƒCƒeƒ€</param>
-        /// <param name="count">æ‚èœ‚­ŒÂ”</param>
-        /// <returns>æ‚èœ‚¢‚½ƒAƒCƒeƒ€</returns>
+        /// <param name="item">å–ã‚Šé™¤ãã‚¢ã‚¤ãƒ†ãƒ </param>
+        /// <param name="count">å–ã‚Šé™¤ãå€‹æ•°</param>
+        /// <returns>å–ã‚Šé™¤ã„ãŸã‚¢ã‚¤ãƒ†ãƒ </returns>
         T RemoveItem(T item, int count = 1!);
 
         /// <summary>
-        /// ƒAƒCƒeƒ€‚ªƒCƒ“ƒxƒ“ƒgƒŠ“à‚É‚ ‚é‚©‚ğ•Ô‚·
+        /// ã‚¢ã‚¤ãƒ†ãƒ ãŒã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªå†…ã«ã‚ã‚‹ã‹ã‚’è¿”ã™
         /// </summary>
-        /// <param name="item">’Tõ‚·‚éƒAƒCƒeƒ€</param>
-        /// <returns>‘¶İ‚·‚ê‚Î^‚ğ•Ô‚·</returns>
+        /// <param name="item">æ¢ç´¢ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ </param>
+        /// <returns>å­˜åœ¨ã™ã‚Œã°çœŸã‚’è¿”ã™</returns>
         bool Contains(T item);
 
         bool IsAddable(T item, int count = 1!);
     }
 
-    /// <summary>1‚Â‚¸‚Â‚µ‚©‘€ì‚ªs‚¦‚È‚¢ƒCƒ“ƒxƒ“ƒgƒŠ</summary>
-    public interface IOneByInventoryService<T>: IInventoryStateViewable<T> where T: IItem
+    /// <summary>1ã¤ãšã¤ã—ã‹æ“ä½œãŒè¡Œãˆãªã„ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒª</summary>
+    public interface IOneByInventoryService<T> : IInventoryStateViewable<T> where T : IItem
     {
         /// <summary>
-        /// ƒAƒCƒeƒ€‚ğ’Ç‰Á‚·‚é
+        /// ã‚¢ã‚¤ãƒ†ãƒ ã‚’è¿½åŠ ã™ã‚‹
         /// </summary>
-        /// <param name="item">’Ç‰Á‚·‚éƒAƒCƒeƒ€</param>
-        /// <returns>’Ç‰Á‚µ‚½ƒAƒCƒeƒ€</returns>
+        /// <param name="item">è¿½åŠ ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ </param>
+        /// <returns>è¿½åŠ ã—ãŸã‚¢ã‚¤ãƒ†ãƒ </returns>
         T AddItem(T item);
 
         /// <summary>
-        /// ƒAƒCƒeƒ€‚ğæ‚èœ‚­
+        /// ã‚¢ã‚¤ãƒ†ãƒ ã‚’å–ã‚Šé™¤ã
         /// </summary>
-        /// <param name="item">æ‚èœ‚­ƒAƒCƒeƒ€</param>
-        /// <returns>æ‚èœ‚¢‚½ƒAƒCƒeƒ€</returns>
+        /// <param name="item">å–ã‚Šé™¤ãã‚¢ã‚¤ãƒ†ãƒ </param>
+        /// <returns>å–ã‚Šé™¤ã„ãŸã‚¢ã‚¤ãƒ†ãƒ </returns>
         T RemoveItem(T item);
 
         /// <summary>
-        /// ƒAƒCƒeƒ€‚ªƒCƒ“ƒxƒ“ƒgƒŠ“à‚É‚ ‚é‚©‚ğ•Ô‚·
+        /// ã‚¢ã‚¤ãƒ†ãƒ ãŒã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªå†…ã«ã‚ã‚‹ã‹ã‚’è¿”ã™
         /// </summary>
-        /// <param name="item">’Tõ‚·‚éƒAƒCƒeƒ€</param>
-        /// <returns>‘¶İ‚·‚ê‚Î^‚ğ•Ô‚·</returns>
+        /// <param name="item">æ¢ç´¢ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ </param>
+        /// <returns>å­˜åœ¨ã™ã‚Œã°çœŸã‚’è¿”ã™</returns>
         bool Contains(T item);
 
         bool IsAddable(T item);
     }
 
     /// <summary>
-    /// ƒCƒ“ƒxƒ“ƒgƒŠ‚Ìî•ñ‚ğ•\¦‰Â”\
+    /// ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã®æƒ…å ±ã‚’è¡¨ç¤ºå¯èƒ½
     /// </summary>
-    /// <typeparam name="T">ƒCƒ“ƒxƒ“ƒgƒŠ‚ÉŠi”[‚·‚éƒAƒCƒeƒ€‚ÌŒ^</typeparam>
+    /// <typeparam name="T">ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã«æ ¼ç´ã™ã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã®å‹</typeparam>
     public interface IInventoryStateViewable<T> where T : IItem
     {
         /// <summary>
-        /// Ši”[‚³‚ê‚Ä‚¢‚é‚·‚×‚Ä‚ÌƒAƒCƒeƒ€‚Æ‚»‚ÌŒÂ”‚ğ•Ô‚·
+        /// æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ã™ã¹ã¦ã®ã‚¢ã‚¤ãƒ†ãƒ ã¨ãã®å€‹æ•°ã‚’è¿”ã™
         /// </summary>
-        /// <returns>ƒAƒCƒeƒ€‚Æ‚»‚ÌŒÂ”‚Ì«‘Œ^</returns>
+        /// <returns>ã‚¢ã‚¤ãƒ†ãƒ ã¨ãã®å€‹æ•°ã®è¾æ›¸å‹</returns>
         IReadOnlyDictionary<T, int> GetInventory();
 
         /// <summary>
-        /// Ši”[‚³‚ê‚Ä‚¢‚éƒAƒCƒeƒ€‚ğ‚·‚×‚Ä•Ô‚·
+        /// æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã™ã¹ã¦è¿”ã™
         /// </summary>
-        /// <returns>Ši”[‚³‚ê‚Ä‚¢‚éƒAƒCƒeƒ€</returns>
+        /// <returns>æ ¼ç´ã•ã‚Œã¦ã„ã‚‹ã‚¢ã‚¤ãƒ†ãƒ </returns>
         IReadOnlyCollection<T> GetContainItems();
 
         /// <summary>
-        /// ‘ÎÛ‚ÌƒAƒCƒeƒ€‚ÌŠ”‚ğ•Ô‚·
+        /// å¯¾è±¡ã®ã‚¢ã‚¤ãƒ†ãƒ ã®æ‰€æŒæ•°ã‚’è¿”ã™
         /// </summary>
-        /// <param name="item">‘ÎÛ‚ÌƒAƒCƒeƒ€</param>
-        /// <returns>Š”</returns>
+        /// <param name="item">å¯¾è±¡ã®ã‚¢ã‚¤ãƒ†ãƒ </param>
+        /// <returns>æ‰€æŒæ•°</returns>
         int GetContainItemCount(T item);
     }
 
     /// <summary>
-    /// ‹à‘K‚ğˆµ‚¤
+    /// é‡‘éŠ­ã‚’æ‰±ã†
     /// </summary>
     public interface IWallet
     {
@@ -107,9 +106,9 @@ namespace BlackSmith.Domain.Inventory
         public void SubtractMoney(Currency money);
 
         /// <summary>
-        /// Š‹à‚ğ•Ô‚·
+        /// æ‰€æŒé‡‘ã‚’è¿”ã™
         /// </summary>
-        /// <returns>Š‹à</returns>
+        /// <returns>æ‰€æŒé‡‘</returns>
         IReadOnlyCollection<Currency> GetMoney();
 
         Currency GetMoney(CurrencyType type);

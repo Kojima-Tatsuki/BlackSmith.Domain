@@ -5,7 +5,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>
     /// 経験値量
     /// </summary>
-    public class Experience
+    public record Experience
     {
         // 1Lv -> 2Lv になる為に倒す敵の数
         private static readonly int InitKillRequirement = 5;

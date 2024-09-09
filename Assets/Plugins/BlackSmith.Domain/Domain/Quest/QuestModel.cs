@@ -1,21 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BlackSmith.Domain.Character;
 
 namespace BlackSmith.Domain.Quest
 {
-    class QuestModel
+    internal class QuestModel
     {
-        public string QuestName { get; init; }
+        public string QuestName { get; }
 
-        public string Discription { get; init; }
+        public string Discription { get; }
 
-        internal QuestModel(string questName, string discription)
+        // 依頼の締め切り、有効期限
+
+        // 依頼の報酬
+
+        // 依頼人
+        private CharacterID ClientId { get; }
+
+        internal QuestModel(string questName, string discription, CharacterID clientId)
         {
             QuestName = questName;
             Discription = discription;
+            ClientId = clientId;
         }
     }
 }

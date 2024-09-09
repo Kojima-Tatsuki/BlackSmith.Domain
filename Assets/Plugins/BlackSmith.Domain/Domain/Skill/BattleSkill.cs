@@ -1,12 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlackSmith.Domain.Skill
 {
     internal class BattleSkill
     {
+        public SkillID ID { get; }
+        
+        public IReadOnlyList<SkillActionID> ActionIds => actionIds;
+        private readonly List<SkillActionID> actionIds;
+
+        internal BattleSkill(SkillID id, IReadOnlyList<SkillActionID> actionIds)
+        {
+            ID = id;
+            this.actionIds = actionIds.ToList();
+        }
     }
 }
