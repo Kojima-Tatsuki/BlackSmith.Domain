@@ -1,7 +1,9 @@
 {
     "name": "BlackSmith.Domain",
     "rootNamespace": "BlackSmith",
-    "references": [],
+    "references": [
+        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -9,6 +11,12 @@
     "precompiledReferences": [],
     "autoReferenced": false,
     "defineConstraints": [],
-    "versionDefines": [],
+    "versionDefines": [
+        {
+            "name": "org.nuget.r3",
+            "expression": "",
+            "define": ""
+        }
+    ],
     "noEngineReferences": true
 }
