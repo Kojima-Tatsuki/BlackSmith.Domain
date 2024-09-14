@@ -2,6 +2,7 @@
 using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
+using Cysharp.Threading.Tasks;
 using System;
 
 namespace BlackSmith.Usecase.Character
@@ -23,15 +24,15 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="id">書き換えるプレイヤーのID</param>
         /// <param name="newName">書き換え先の名前</param>
-        public void RenamePlayer(CharacterID id, string newName)
+        public async UniTask RenamePlayer(CharacterID id, string newName)
         {
             var name = new PlayerName(newName);
 
-            var entity = repository.FindByID(id) as ICharacterEntity ?? throw new ArgumentException($"指定したidのキャラクターは存在しません, {id}");
+            var entity = (await repository.FindByID(id)) as ICharacterEntity ?? throw new ArgumentException($"指定したidのキャラクターは存在しません, {id}");
 
             entity.ChangeName(name);
 
-            repository.UpdateCharacter((entity as PlayerCommonEntity) ?? throw new InvalidOperationException(nameof(entity)));
+            await repository.UpdateCharacter((entity as PlayerCommonEntity) ?? throw new InvalidOperationException(nameof(entity)));
         }
 
         public static bool IsValidPlayerName(string name)

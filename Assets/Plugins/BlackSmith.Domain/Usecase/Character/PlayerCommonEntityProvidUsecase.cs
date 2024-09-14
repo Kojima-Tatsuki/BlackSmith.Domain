@@ -1,8 +1,8 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
+using Cysharp.Threading.Tasks;
 using System;
-using System.Collections.Generic;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -18,21 +18,12 @@ namespace BlackSmith.Usecase.Character
             repository = playerRepository;
         }
 
-        /// <summary>
-        /// すべてのプレイヤーのデータを返す
-        /// </summary>
-        /// <returns>すべてのプレイヤーのデータ</returns>
-        public IReadOnlyCollection<PlayerCommonEntity> GetAllPlayerCommonEntities()
+        public async UniTask<PlayerCommonEntity> GetPlayerData(CharacterID id)
         {
-            return repository.GetAllPlayers();
-        }
-
-        public PlayerCommonEntity GetPlayerData(CharacterID id)
-        {
-            if (!repository.IsExist(id))
+            if (!(await repository.IsExist(id)))
                 throw new Exception($"指定したidのキャラクターは存在しません {id}");
 
-            var entity = repository.FindByID(id) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
+            var entity = (await repository.FindByID(id)) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
 
             return entity;
         }
