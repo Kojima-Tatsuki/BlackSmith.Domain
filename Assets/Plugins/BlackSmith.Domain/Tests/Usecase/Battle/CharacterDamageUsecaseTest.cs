@@ -2,6 +2,7 @@
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
+using Cysharp.Threading.Tasks;
 using NUnit.Framework;
 using System;
 using System.Collections;
@@ -40,28 +41,30 @@ namespace BlackSmith.Usecase.Character.Battle
 
         [Test(Description = "TakeDamagePlayerByPlayerのテスト")]
         [TestCaseSource(nameof(TakeDamagePlayerByPlayerTestCases))]
-        public void TakeDamagePlayerByPlayerPasses(IPlayerBattleEntityRepository repository, CharacterID attackerId, CharacterID recieverId, Type? exception)
+        public void TakeDamagePlayerByPlayerPasses(IPlayerBattleEntityRepository repository, CharacterID attackerId, CharacterID recieverId, Type? exception) => UniTask.ToCoroutine(async () =>
         {
-            var usecase = new CharacterDamageUsecase(repository);
-
-            if (exception == null)
             {
-                var attacker = repository.FindByID(attackerId);
-                var reciever = repository.FindByID(recieverId);
-                var health = reciever?.HealthPoint ?? throw new NullReferenceException(nameof(reciever));
-                var expected = health.TakeDamage(new DamageValue(
-                    new LevelGapOfAttackerAndReceiver(
-                        attacker?.Level ?? throw new NullReferenceException(nameof(attacker)), 
-                        reciever.Level), 
-                    attacker.Attack, reciever.Defense));
+                var usecase = new CharacterDamageUsecase(repository);
 
-                usecase.TakeDamagePlayerByPlayer(attackerId, recieverId);
+                if (exception == null)
+                {
+                    var attacker = await repository.FindByID(attackerId);
+                    var reciever = await repository.FindByID(recieverId);
+                    var health = reciever?.HealthPoint ?? throw new NullReferenceException(nameof(reciever));
+                    var expected = health.TakeDamage(new DamageValue(
+                        new LevelGapOfAttackerAndReceiver(
+                            attacker?.Level ?? throw new NullReferenceException(nameof(attacker)),
+                            reciever.Level),
+                        attacker.Attack, reciever.Defense));
 
-                Assert.That(repository.FindByID(recieverId)?.HealthPoint, Is.EqualTo(expected));
+                    await usecase.TakeDamagePlayerByPlayer(attackerId, recieverId);
+
+                    Assert.That((await repository.FindByID(recieverId))?.HealthPoint, Is.EqualTo(expected));
+                }
+                else
+                    Assert.Throws(exception, async () => await usecase.TakeDamagePlayerByPlayer(attackerId, recieverId));
             }
-            else
-                Assert.Throws(exception, () => usecase.TakeDamagePlayerByPlayer(attackerId, recieverId));
-        }
+        });
     }
 
     internal class MockPlayerBattleEntityRepository: IPlayerBattleEntityRepository
@@ -78,28 +81,35 @@ namespace BlackSmith.Usecase.Character.Battle
             this.characters = characters;
         }
 
-        public void Delete(CharacterID id)
+        public async UniTask Delete(CharacterID id)
         {
+            await UniTask.Delay(10);
             throw new NotImplementedException();
         }
 
-        public PlayerBattleEntity FindByID(CharacterID id)
+        public async UniTask<PlayerBattleEntity?> FindByID(CharacterID id)
         {
+            await UniTask.Delay(10);
+            if (!characters.ContainsKey(id))
+                return null;
             return characters[id];
         }
 
-        public bool IsExist(CharacterID id)
+        public async UniTask<bool> IsExist(CharacterID id)
         {
+            await UniTask.Delay(10);
             throw new NotImplementedException();
         }
 
-        public void Register(PlayerBattleEntity character)
+        public async UniTask Register(PlayerBattleEntity character)
         {
+            await UniTask.Delay(10);
             throw new NotImplementedException();
         }
 
-        public void UpdateCharacter(PlayerBattleEntity character)
+        public async UniTask UpdateCharacter(PlayerBattleEntity character)
         {
+            await UniTask.Delay(10);
             characters[character.ID] = character;
         }
     }

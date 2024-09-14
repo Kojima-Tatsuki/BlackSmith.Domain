@@ -1,6 +1,7 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Usecase.Interface;
+using Cysharp.Threading.Tasks;
 using System;
 
 namespace BlackSmith.Usecase.Character.Battle
@@ -22,10 +23,10 @@ namespace BlackSmith.Usecase.Character.Battle
         /// </summary>
         /// <param name="attackerId">攻め手のキャラクターID</param>
         /// <param name="receiverId">受け手のキャラクターID</param>
-        public void TakeDamagePlayerByPlayer(CharacterID attackerId, CharacterID receiverId)
+        public async UniTask TakeDamagePlayerByPlayer(CharacterID attackerId, CharacterID receiverId)
         {
-            var attacker = PlayerRepository.FindByID(attackerId);
-            var receiver = PlayerRepository.FindByID(receiverId) as IBattleCharacter;
+            var attacker = await PlayerRepository.FindByID(attackerId);
+            var receiver = await PlayerRepository.FindByID(receiverId) as IBattleCharacter;
 
             if (attacker is null)
                 throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {attackerId}. (bHB0WXxR)");
@@ -38,7 +39,7 @@ namespace BlackSmith.Usecase.Character.Battle
 
             receiver.TakeDamage(damage);
 
-            PlayerRepository.UpdateCharacter((receiver as PlayerBattleEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、PlayerEntityではありません. (jAv4M0Pb)"));
+            await PlayerRepository.UpdateCharacter((receiver as PlayerBattleEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、PlayerEntityではありません. (jAv4M0Pb)"));
         }
     }
 }
