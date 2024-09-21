@@ -4,7 +4,6 @@
     "references": [
         "BlackSmith.Domain",
         "UniTask",
-        "UniTask.Linq",
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],

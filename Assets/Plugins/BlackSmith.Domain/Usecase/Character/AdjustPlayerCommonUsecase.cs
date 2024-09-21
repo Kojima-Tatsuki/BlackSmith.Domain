@@ -2,6 +2,7 @@
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
 using Cysharp.Threading.Tasks;
+using System.Diagnostics;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -40,7 +41,8 @@ namespace BlackSmith.Usecase.Character
 
             var entity = PlayerFactory.Reconstruct(command);
 
-            await repository.Register(entity);
+            if (!await repository.IsExist(entity.ID))
+                await repository.Register(entity);
 
             return entity;
         }
