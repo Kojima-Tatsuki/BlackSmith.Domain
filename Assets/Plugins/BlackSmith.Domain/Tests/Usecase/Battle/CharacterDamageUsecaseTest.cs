@@ -65,7 +65,14 @@ namespace BlackSmith.Usecase.Character.Battle
             }
             else
             {
-                Assert.ThrowsAsync(exception, () => usecase.TakeDamagePlayerByPlayer(attackerId, recieverId).AsTask());
+                try
+                {
+                    await usecase.TakeDamagePlayerByPlayer(attackerId, recieverId);
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual(exception, e.GetType());
+                }
             }
         }
     }

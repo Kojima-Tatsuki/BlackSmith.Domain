@@ -53,7 +53,6 @@ namespace BlackSmith.Usecase.Character
                 }
                 catch (Exception e)
                 {
-                    Debug.Log(e.Message);
                     Assert.AreEqual(exception, e.GetType());
                 }
             }
@@ -107,7 +106,6 @@ namespace BlackSmith.Usecase.Character
                 }
                 catch (Exception e)
                 {
-                    Debug.Log(e.Message);
                     Assert.AreEqual(exception, e.GetType());
                 }
             }
@@ -125,7 +123,6 @@ namespace BlackSmith.Usecase.Character
 
             var model = new PlayerCommonReconstractPrimitiveModel(id.Value, name, level.CumulativeExp.Value);
 
-            Debug.Log("Reconstructing player");
             var usecase = new AdjustPlayerCommonUsecase(repository);
             UniTask.Void(async () => await usecase.ReconstructPlayer(model));
 
@@ -140,10 +137,7 @@ namespace BlackSmith.Usecase.Character
         [TestCaseSource(nameof(DeleteCharacterTestCases))]
         public async Task DeleteCharacterPasses(IPlayerCommonEntityRepository repository, CharacterID id, Type? exception)
         {
-            Debug.Log("Start Delete Test");
             var usecase = new AdjustPlayerCommonUsecase(repository);
-
-            Debug.Log("Created Usecase");
 
             if (exception is null)
             {
@@ -155,10 +149,8 @@ namespace BlackSmith.Usecase.Character
             }
             else
             {
-                Debug.Log("Start Exception Test");
                 try
                 {
-                    Debug.Log("in Try");
                     await usecase.DeletePlayer(id);
 
                     // この書き方だとThrowsAsyncで非同期処理が走ってくれない
@@ -166,7 +158,6 @@ namespace BlackSmith.Usecase.Character
                 }
                 catch (Exception e)
                 {
-                    Debug.Log($"{e.Message}, {e.GetType()}");
                     Assert.AreEqual(exception, e.GetType());
                 }
             }
@@ -190,12 +181,10 @@ namespace BlackSmith.Usecase.Character
 
         public async UniTask Delete(CharacterID id)
         {
-            Debug.Log("Start Delete");
             if (!await IsExist(id))
                 throw new InvalidOperationException("削除対象のプレイヤーが存在しません");
 
             var removed = players.Remove(id);
-            Debug.Log($"Deleted, {removed}");
         }
 
         public async UniTask<PlayerCommonEntity?> FindByID(CharacterID id)
@@ -206,10 +195,8 @@ namespace BlackSmith.Usecase.Character
 
         public async UniTask<bool> IsExist(CharacterID id)
         {
-            Debug.Log($"IsExist: {id}, Dictionary: {players.Count}");
             await UniTask.Delay(10, delayType: DelayType.Realtime);
             var result = players.ContainsKey(id);
-            Debug.Log($"IsExist: {result}");
             return result;
         }
 
@@ -219,8 +206,6 @@ namespace BlackSmith.Usecase.Character
                 throw new InvalidOperationException("既にプレイヤーが登録されています");
 
             players.Add(character.ID, character);
-
-            Debug.Log($"Registered Player: {character.ID}");
         }
 
         public async UniTask UpdateCharacter(PlayerCommonEntity character)
