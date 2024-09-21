@@ -1,6 +1,8 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
+using Cysharp.Threading.Tasks;
+using System.Diagnostics;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -22,24 +24,25 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="name">作成するプレイヤーの名前</param>
         /// <returns>作成したプレイヤーエンティティ</returns>
-        public PlayerCommonEntity CreateCharacter(string playerName)
+        public async UniTask<PlayerCommonEntity> CreateCharacter(string playerName)
         {
             var name = new PlayerName(playerName);
 
             var entity = PlayerFactory.Create(name);
 
-            repository.Register(entity);
+            await repository.Register(entity);
 
             return entity;
         }
 
-        public PlayerCommonEntity ReconstructPlayer(PlayerCommonReconstractPrimitiveModel model)
+        public async UniTask<PlayerCommonEntity> ReconstructPlayer(PlayerCommonReconstractPrimitiveModel model)
         {
             var command = model.ToCommand();
 
             var entity = PlayerFactory.Reconstruct(command);
 
-            repository.Register(entity);
+            if (!await repository.IsExist(entity.ID))
+                await repository.Register(entity);
 
             return entity;
         }
@@ -48,9 +51,9 @@ namespace BlackSmith.Usecase.Character
         /// プレイヤーデータの削除を行う
         /// </summary>
         /// <param name="id">削除するプレイヤーのID</param>
-        public void DeletePlayer(CharacterID id)
+        public async UniTask DeletePlayer(CharacterID id)
         {
-            repository.Delete(id);
+            await repository.Delete(id);
         }
 
         public record PlayerCommonReconstractPrimitiveModel
