@@ -1,8 +1,4 @@
-﻿using BlackSmith.Domain.Character;
-using BlackSmith.Domain.Character.Player;
-using BlackSmith.Usecase.Interface;
-using Cysharp.Threading.Tasks;
-using System;
+﻿using BlackSmith.Domain.Character.Player;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -11,21 +7,14 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class PlayerCommonEntityProvidUsecase
     {
-        private readonly IPlayerCommonEntityRepository repository;
-
-        public PlayerCommonEntityProvidUsecase(IPlayerCommonEntityRepository playerRepository)
+        /// <summary>
+        /// Commandを用いて再構築を行う, リポジトリへの登録は行わない
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        public static PlayerCommonEntity BuildCommonEntity(PlayerCommonReconstractCommand command)
         {
-            repository = playerRepository;
-        }
-
-        public async UniTask<PlayerCommonEntity> GetPlayerData(CharacterID id)
-        {
-            if (!(await repository.IsExist(id)))
-                throw new Exception($"指定したidのキャラクターは存在しません {id}");
-
-            var entity = (await repository.FindByID(id)) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
-
-            return entity;
+            return PlayerFactory.Reconstruct(command);
         }
     }
 }

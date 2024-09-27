@@ -2,7 +2,7 @@
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
 using Cysharp.Threading.Tasks;
-using System.Diagnostics;
+using System;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -35,14 +35,34 @@ namespace BlackSmith.Usecase.Character
             return entity;
         }
 
-        public async UniTask<PlayerCommonEntity> ReconstructPlayer(PlayerCommonReconstractPrimitiveModel model)
+        /// <summary>
+        /// CommonPlayerEntityの再構築を行い、Repositoryに登録する
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        public async UniTask<PlayerCommonEntity> ReconstructPlayer(PlayerCommonReconstractCommand command)
         {
-            var command = model.ToCommand();
-
             var entity = PlayerFactory.Reconstruct(command);
 
             if (!await repository.IsExist(entity.ID))
                 await repository.Register(entity);
+
+            return entity;
+        }
+
+        /// <summary>
+        /// プレイヤーデータの取得を行う
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        public async UniTask<PlayerCommonEntity> GetPlayerData(CharacterID id)
+        {
+            if (!(await repository.IsExist(id)))
+                throw new Exception($"指定したidのキャラクターは存在しません {id}");
+
+            var entity = (await repository.FindByID(id)) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
 
             return entity;
         }
@@ -54,29 +74,6 @@ namespace BlackSmith.Usecase.Character
         public async UniTask DeletePlayer(CharacterID id)
         {
             await repository.Delete(id);
-        }
-
-        public record PlayerCommonReconstractPrimitiveModel
-        {
-            public string Id { get; }
-            public string Name { get; }
-            public int Exp { get; }
-
-            public PlayerCommonReconstractPrimitiveModel(string id, string name, int exp)
-            {
-                Id = id;
-                Name = name;
-                Exp = exp;
-            }
-
-            internal PlayerCommonReconstractCommand ToCommand()
-            {
-                var id = new CharacterID(Id);
-                var name = new PlayerName(Name);
-                var level = new PlayerLevel(new Experience(Exp));
-
-                return new PlayerCommonReconstractCommand(id, name, level);
-            }
         }
     }
 }
