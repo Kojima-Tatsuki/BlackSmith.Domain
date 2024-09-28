@@ -55,12 +55,11 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        public async UniTask<PlayerCommonEntity> GetPlayerData(CharacterID id)
+        /// <exception cref="ArgumentException">指定したIdのキャラクターが存在しない場合</exception>
+        public async UniTask<PlayerCommonEntity> GetCharacter(CharacterID id)
         {
-            if (!(await repository.IsExist(id)))
-                throw new Exception($"指定したidのキャラクターは存在しません {id}");
+            if (!await repository.IsExist(id))
+                throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
 
             var entity = (await repository.FindByID(id)) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
 
