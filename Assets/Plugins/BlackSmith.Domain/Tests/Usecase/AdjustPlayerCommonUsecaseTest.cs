@@ -71,7 +71,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
 
             // 既に同じIDのプレイヤーが存在する場合
-            var entity = new PlayerCommonEntity(new PlayerCommonReconstractCommand(id, new PlayerName(name), level));
+            var entity = PlayerFactory.Reconstruct(new PlayerCommonReconstractCommand(id, new PlayerName(name), level));
             var failRep = new MockPlayerCommonEntityRepository(new Dictionary<CharacterID, PlayerCommonEntity>() { { entity.ID, entity } });
             yield return new TestCaseData(failRep, command, typeof(InvalidOperationException)).SetCategory("異常系");
         }
@@ -115,7 +115,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
             var id = new CharacterID();
             var level = new PlayerLevel();
 
-            var entity = new PlayerCommonEntity(new(id.Value, name, level.CumulativeExp.Value));
+            var entity = PlayerFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
 
             var repository = new MockPlayerCommonEntityRepository(new Dictionary<CharacterID, PlayerCommonEntity>
             {
@@ -144,7 +144,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
 
                 Assert.That(await repository.IsExist(id), Is.False);
 
-                await repository.Register(new PlayerCommonEntity(new(id.Value, "TestPlayerName", 0))); // 消した後は追加して、元に戻す
+                await repository.Register(PlayerFactory.Reconstruct(new(id.Value, "TestPlayerName", 0))); // 消した後は追加して、元に戻す
             }
             else
             {
@@ -173,7 +173,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
             var id = new CharacterID();
             var level = new PlayerLevel();
 
-            var entity = new PlayerCommonEntity(new(id.Value, name, level.CumulativeExp.Value));
+            var entity = PlayerFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
 
             repository.Register(entity).Forget();
 

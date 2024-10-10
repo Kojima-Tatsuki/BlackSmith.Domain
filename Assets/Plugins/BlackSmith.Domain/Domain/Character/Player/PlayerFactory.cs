@@ -33,7 +33,7 @@ namespace BlackSmith.Domain.Character.Player
 
             var command = new PlayerCommonReconstractCommand(id, name, level);
 
-            return new PlayerCommonEntity(command);
+            return Reconstruct(command);
         }
     }
 
