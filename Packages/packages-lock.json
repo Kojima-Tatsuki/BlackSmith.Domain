@@ -52,6 +52,13 @@
       },
       "url": "https://unitynuget-registry.azurewebsites.net"
     },
+    "org.nuget.newtonsoft.json": {
+      "version": "13.0.3",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://unitynuget-registry.azurewebsites.net"
+    },
     "org.nuget.r3": {
       "version": "1.2.8",
       "depth": 0,
