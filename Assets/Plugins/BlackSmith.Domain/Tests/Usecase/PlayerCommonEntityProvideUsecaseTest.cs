@@ -1,9 +1,9 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
+using BlackSmith.Usecase.JsonConverters;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections;
-using UnityEngine;
 
 namespace BlackSmith.Usecase.Character.PlayerCommonEntityProvideUsecaseTest
 {
@@ -33,31 +33,14 @@ namespace BlackSmith.Usecase.Character.PlayerCommonEntityProvideUsecaseTest
         public void CommandSerializationTest()
         {
             var id = new CharacterID();
-            var idSerialized = JsonConvert.SerializeObject(id);
-            Debug.Log(idSerialized);
-            var idDeserialized = JsonConvert.DeserializeObject<CharacterID>(idSerialized);
-            Debug.Log(idSerialized + ", " + idDeserialized);
-
-            Assert.That(id, Is.EqualTo(idDeserialized));
-            
-
             var name = new PlayerName("TestPlayerName");
-            var nameSerialized = JsonConvert.SerializeObject(name);
-            var nameDeserialized = JsonConvert.DeserializeObject<PlayerName>(nameSerialized);
-
-            Assert.That(name, Is.EqualTo(nameDeserialized));
-
-
             var level = new PlayerLevel(new Experience());
-            var levelSerialized = JsonConvert.SerializeObject(level);
-            var levelDeserialized = JsonConvert.DeserializeObject<PlayerLevel>(levelSerialized);
-
-            Assert.That(level, Is.EqualTo(levelDeserialized));
-
 
             var command = new PlayerCommonReconstractCommand(id, name, level);
-            var commandSerialized = JsonConvert.SerializeObject(command);
-            var commandDeseroalized = JsonConvert.DeserializeObject<PlayerCommonReconstractCommand>(commandSerialized);
+
+            var serialized = PlayerCommonEntityProvidUsecase.Serialize(command);
+
+            var commandDeseroalized = PlayerCommonEntityProvidUsecase.Deserialize(serialized);
 
             Assert.That(command, Is.EqualTo(commandDeseroalized));
         }

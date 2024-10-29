@@ -1,4 +1,6 @@
 ﻿using BlackSmith.Domain.Character.Player;
+using BlackSmith.Usecase.JsonConverters;
+using Newtonsoft.Json;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -15,6 +17,24 @@ namespace BlackSmith.Usecase.Character
         public static PlayerCommonEntity BuildCommonEntity(PlayerCommonReconstractCommand command)
         {
             return PlayerFactory.Reconstruct(command);
+        }
+
+        public static string Serialize(PlayerCommonReconstractCommand command)
+        {
+            return JsonConvert.SerializeObject(command);
+        }
+
+        public static PlayerCommonReconstractCommand Deserialize(string json)
+        {
+            var commandJsonConverters = new JsonConverter[]
+{
+                new PlayerCommonReconstractCommandJsonConverter(),
+                new CharacterIDJsonConverter(),
+                new PlayerNameJsonConverter(),
+                new PlayerLevelJsonConverter(),
+                new ExperienceJsonConverter()
+            };
+            return JsonConvert.DeserializeObject<PlayerCommonReconstractCommand>(json, commandJsonConverters);
         }
     }
 }
