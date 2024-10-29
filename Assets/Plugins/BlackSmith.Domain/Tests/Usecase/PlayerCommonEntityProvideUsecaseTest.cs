@@ -1,7 +1,5 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Player;
-using BlackSmith.Usecase.JsonConverters;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using System.Collections;
 

@@ -15,6 +15,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
 {
     internal class CreateCharacterMethodTest
     {
+        #region CreateCharacter
         private static IEnumerable CreateCharacterTestCases()
         {
             var repository = new MockPlayerCommonEntityRepository();
@@ -211,6 +212,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
                 }
             }
         }
+        #endregion
     }
 
     internal class MockPlayerCommonEntityRepository : IPlayerCommonEntityRepository
