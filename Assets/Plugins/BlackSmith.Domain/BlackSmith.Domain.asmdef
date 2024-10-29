@@ -16,6 +16,11 @@
             "name": "org.nuget.r3",
             "expression": "",
             "define": ""
+        },
+        {
+            "name": "org.nuget.newtonsoft.json",
+            "expression": "",
+            "define": ""
         }
     ],
     "noEngineReferences": true

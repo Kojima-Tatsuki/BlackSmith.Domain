@@ -1,8 +1,6 @@
-﻿using BlackSmith.Domain.Character;
-using BlackSmith.Domain.Character.Player;
-using BlackSmith.Usecase.Interface;
-using Cysharp.Threading.Tasks;
-using System;
+﻿using BlackSmith.Domain.Character.Player;
+using BlackSmith.Usecase.JsonConverters;
+using Newtonsoft.Json;
 
 namespace BlackSmith.Usecase.Character
 {
@@ -11,21 +9,32 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class PlayerCommonEntityProvidUsecase
     {
-        private readonly IPlayerCommonEntityRepository repository;
-
-        public PlayerCommonEntityProvidUsecase(IPlayerCommonEntityRepository playerRepository)
+        /// <summary>
+        /// Commandを用いて再構築を行う, リポジトリへの登録は行わない
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns></returns>
+        public static PlayerCommonEntity BuildCommonEntity(PlayerCommonReconstractCommand command)
         {
-            repository = playerRepository;
+            return PlayerFactory.Reconstruct(command);
         }
 
-        public async UniTask<PlayerCommonEntity> GetPlayerData(CharacterID id)
+        public static string Serialize(PlayerCommonReconstractCommand command)
         {
-            if (!(await repository.IsExist(id)))
-                throw new Exception($"指定したidのキャラクターは存在しません {id}");
+            return JsonConvert.SerializeObject(command);
+        }
 
-            var entity = (await repository.FindByID(id)) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
-
-            return entity;
+        public static PlayerCommonReconstractCommand Deserialize(string json)
+        {
+            var commandJsonConverters = new JsonConverter[]
+{
+                new PlayerCommonReconstractCommandJsonConverter(),
+                new CharacterIDJsonConverter(),
+                new PlayerNameJsonConverter(),
+                new PlayerLevelJsonConverter(),
+                new ExperienceJsonConverter()
+            };
+            return JsonConvert.DeserializeObject<PlayerCommonReconstractCommand>(json, commandJsonConverters);
         }
     }
 }
