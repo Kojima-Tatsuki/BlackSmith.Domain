@@ -14,17 +14,17 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        public static PlayerCommonEntity BuildCommonEntity(PlayerCommonReconstractCommand command)
+        public static PlayerCommonEntity BuildCommonEntity(PlayerCommonReconstructCommand command)
         {
             return PlayerFactory.Reconstruct(command);
         }
 
-        public static string Serialize(PlayerCommonReconstractCommand command)
+        public static string Serialize(PlayerCommonReconstructCommand command)
         {
             return JsonConvert.SerializeObject(command);
         }
 
-        public static PlayerCommonReconstractCommand Deserialize(string json)
+        public static PlayerCommonReconstructCommand Deserialize(string json)
         {
             var commandJsonConverters = new JsonConverter[]
 {
@@ -34,7 +34,7 @@ namespace BlackSmith.Usecase.Character
                 new PlayerLevelJsonConverter(),
                 new ExperienceJsonConverter()
             };
-            return JsonConvert.DeserializeObject<PlayerCommonReconstractCommand>(json, commandJsonConverters);
+            return JsonConvert.DeserializeObject<PlayerCommonReconstructCommand>(json, commandJsonConverters);
         }
     }
 }

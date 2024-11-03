@@ -13,14 +13,14 @@ namespace BlackSmith.Usecase.Character.PlayerCommonEntityProvideUsecaseTest
             var name = new PlayerName("TestPlayerName");
             var level = new PlayerLevel(new Experience());
 
-            var command = new PlayerCommonReconstractCommand(id, name, level);
+            var command = new PlayerCommonReconstructCommand(id, name, level);
 
             yield return new TestCaseData(command).SetCategory("正常系");
         }
 
         [Test(Description = "BuildCommonEntityのテスト")]
         [TestCaseSource(nameof(BuildCommonEntityTestCases))]
-        public void BuildCommonEntityPasses(PlayerCommonReconstractCommand command)
+        public void BuildCommonEntityPasses(PlayerCommonReconstructCommand command)
         {
             var entity = PlayerCommonEntityProvidUsecase.BuildCommonEntity(command);
 
@@ -34,7 +34,7 @@ namespace BlackSmith.Usecase.Character.PlayerCommonEntityProvideUsecaseTest
             var name = new PlayerName("TestPlayerName");
             var level = new PlayerLevel(new Experience());
 
-            var command = new PlayerCommonReconstractCommand(id, name, level);
+            var command = new PlayerCommonReconstructCommand(id, name, level);
 
             var serialized = PlayerCommonEntityProvidUsecase.Serialize(command);
 
