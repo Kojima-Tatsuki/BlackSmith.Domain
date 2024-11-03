@@ -67,19 +67,19 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
             var id = new CharacterID();
             var level = new PlayerLevel();
 
-            var command = new PlayerCommonReconstractCommand(id.Value, name, level.CumulativeExp.Value);
+            var command = new PlayerCommonReconstructCommand(id.Value, name, level.CumulativeExp.Value);
 
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
 
             // 既に同じIDのプレイヤーが存在する場合
-            var entity = PlayerFactory.Reconstruct(new PlayerCommonReconstractCommand(id, new PlayerName(name), level));
+            var entity = PlayerFactory.Reconstruct(new PlayerCommonReconstructCommand(id, new PlayerName(name), level));
             var failRep = new MockPlayerCommonEntityRepository(new Dictionary<CharacterID, PlayerCommonEntity>() { { entity.ID, entity } });
             yield return new TestCaseData(failRep, command, typeof(InvalidOperationException)).SetCategory("異常系");
         }
 
         [Test(Description = "ReconstructCharacterのテスト")]
         [TestCaseSource(nameof(ReconstructCharacterTestCases))]
-        public async Task ReconstructCharacterPasses(IPlayerCommonEntityRepository repository, PlayerCommonReconstractCommand command, Type? exception)
+        public async Task ReconstructCharacterPasses(IPlayerCommonEntityRepository repository, PlayerCommonReconstructCommand command, Type? exception)
         {
             var usecase = new AdjustPlayerCommonUsecase(repository);
 

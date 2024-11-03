@@ -17,7 +17,7 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <remarks>再利用する際は、ファクトリーで変更メソッドを呼び出す？</remarks>
         /// <param name="id"></param>
-        internal PlayerCommonEntity(PlayerCommonReconstractCommand command)
+        internal PlayerCommonEntity(PlayerCommonReconstructCommand command)
         {
             ID = command.Id;
             Name = command.Name;
@@ -31,7 +31,7 @@ namespace BlackSmith.Domain.Character.Player
             Name = name ?? throw new ArgumentNullException("Not found PlayerName. (O94YoFRG)");
         }
 
-        public PlayerCommonReconstractCommand GetReconstractCommand() => new(ID, Name, Level);
+        public PlayerCommonReconstructCommand GetReconstractCommand() => new(ID, Name, Level);
 
         /// <summary>
         /// 内部情報を文字列として表示する

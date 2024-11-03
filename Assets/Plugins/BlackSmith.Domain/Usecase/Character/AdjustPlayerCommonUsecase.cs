@@ -40,7 +40,7 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        public async UniTask<PlayerCommonEntity> ReconstructPlayer(PlayerCommonReconstractCommand command)
+        public async UniTask<PlayerCommonEntity> ReconstructPlayer(PlayerCommonReconstructCommand command)
         {
             var entity = PlayerFactory.Reconstruct(command);
 

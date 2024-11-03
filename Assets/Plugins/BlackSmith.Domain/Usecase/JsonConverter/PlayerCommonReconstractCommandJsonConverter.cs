@@ -12,7 +12,7 @@ namespace BlackSmith.Usecase.JsonConverters
     {
         public override bool CanConvert(Type objectType)
         {
-            return objectType == typeof(PlayerCommonReconstractCommand);
+            return objectType == typeof(PlayerCommonReconstructCommand);
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
@@ -26,7 +26,7 @@ namespace BlackSmith.Usecase.JsonConverters
             var name = jo["Name"]?.ToObject<PlayerName>(serializer) ?? throw new JsonSerializationException("Json param key \"Name\" is not found.");
             var level = jo["Level"]?.ToObject<PlayerLevel>(serializer) ?? throw new JsonSerializationException("Json param key \"Level\" is not found.");
 
-            return new PlayerCommonReconstractCommand(id, name, level);
+            return new PlayerCommonReconstructCommand(id, name, level);
         }
 
         public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
