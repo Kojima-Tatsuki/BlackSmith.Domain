@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace BlackSmith.Domain.Character
 {
@@ -7,12 +8,13 @@ namespace BlackSmith.Domain.Character
     {
         public int Value { get; }
 
-        internal CharacterLevel(int level)
+        [JsonConstructor]
+        internal CharacterLevel(int value)
         {
-            if (!IsVaild(level))
-                throw new ArgumentException($"0以下の値はレベルとして扱えません, value : {level}. (cz7lNbVb)");
+            if (!IsVaild(value))
+                throw new ArgumentException($"0以下の値はレベルとして扱えません, value : {value}. (cz7lNbVb)");
 
-            Value = level;
+            Value = value;
         }
 
         private bool IsVaild(int value)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace BlackSmith.Domain.Character.Player
 {
@@ -18,6 +19,7 @@ namespace BlackSmith.Domain.Character.Player
 
         public int Value { get; }
 
+        [JsonConstructor]
         internal Experience(int value = 0)
         {
             Value = value;
