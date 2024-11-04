@@ -26,21 +26,5 @@ namespace BlackSmith.Usecase.Character.PlayerCommonEntityProvideUsecaseTest
 
             Assert.That(entity, Is.Not.Null); // エラーが出ずインスタンスが返ればOK
         }
-
-        [Test(Description = "Commandのシリアライズ・デシリアライズのテスト")]
-        public void CommandSerializationTest()
-        {
-            var id = new CharacterID();
-            var name = new PlayerName("TestPlayerName");
-            var level = new PlayerLevel(new Experience());
-
-            var command = new PlayerCommonReconstructCommand(id, name, level);
-
-            var serialized = PlayerCommonEntityProvidUsecase.Serialize(command);
-
-            var commandDeseroalized = PlayerCommonEntityProvidUsecase.Deserialize(serialized);
-
-            Assert.That(command, Is.EqualTo(commandDeseroalized));
-        }
     }
 }

@@ -1,3 +1,4 @@
+﻿using Newtonsoft.Json;
 using System;
 
 #nullable enable
@@ -40,6 +41,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <param name="level"></param>
         /// <param name="str"></param>
         /// <param name="agi"></param>
+        [JsonConstructor]
         internal LevelDependentParameters(PlayerLevel level, Strength str, Agility agi)
         {
             Level = level;
@@ -100,6 +102,7 @@ namespace BlackSmith.Domain.Character.Player
         public int Value => value.Value;
         private readonly BasePlayerParameter value;
 
+        [JsonConstructor]
         internal Strength(int value)
             => this.value = new BasePlayerParameter(value);
     }
@@ -112,6 +115,7 @@ namespace BlackSmith.Domain.Character.Player
         public int Value => value.Value;
         private readonly BasePlayerParameter value;
 
+        [JsonConstructor]
         internal Agility(int value)
             => this.value = new BasePlayerParameter(value);
     }
@@ -123,6 +127,7 @@ namespace BlackSmith.Domain.Character.Player
     {
         public int Value { get; }
 
+        [JsonConstructor]
         internal BasePlayerParameter(int value)
         {
             if (!IsValid(value))

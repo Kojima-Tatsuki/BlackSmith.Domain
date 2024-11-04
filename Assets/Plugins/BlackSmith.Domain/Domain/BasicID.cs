@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 #nullable enable
 
@@ -16,16 +17,18 @@ namespace BlackSmith.Domain
             guid = Guid.NewGuid();
         }
 
-        internal BasicID(string id)
+        internal BasicID(string value)
         {
-            if (!IsValid(id))
-                throw new ArgumentException("指定したIDは適切な値ではありません");
+            if (!IsValid(value))
+                throw new ArgumentException($"指定したIDは適切な値ではありません. value: {value}");
 
-            guid = GetGuid(id);
+            guid = GetGuid(value);
         }
 
         private bool IsValid(string id)
         {
+            if (id is null)
+                return false;
             if (!id.StartsWith(Prefix))
                 return false;
             if (!Guid.TryParse(id.Substring(Prefix.Length), out _))

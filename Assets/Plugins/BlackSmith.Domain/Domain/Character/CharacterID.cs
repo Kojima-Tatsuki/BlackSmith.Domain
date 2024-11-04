@@ -1,4 +1,6 @@
-﻿namespace BlackSmith.Domain.Character
+﻿using Newtonsoft.Json;
+
+namespace BlackSmith.Domain.Character
 {
     /// <summary>プレイヤーや敵を含むすべてのキャラクターを一意に定める識別子</summary>
     public record CharacterID : BasicID
@@ -7,6 +9,7 @@
 
         public CharacterID() : base() { }
 
-        public CharacterID(string id) : base(id) { }
+        [JsonConstructor]
+        public CharacterID(string value) : base(value) { }
     }
 }
