@@ -1,3 +1,7 @@
+﻿using Newtonsoft.Json;
+
+#nullable enable
+
 namespace BlackSmith.Domain.Character.Player
 {
     /// <summary>
@@ -13,9 +17,10 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         public Experience CumulativeExp { get; }
 
-        internal PlayerLevel(Experience exp = null!) : base(Experience.CurrentLevel(exp ?? new Experience()))
+        [JsonConstructor]
+        internal PlayerLevel(Experience? cumulativeExp = null) : base(Experience.CurrentLevel(cumulativeExp ?? new Experience()))
         {
-            CumulativeExp = exp ?? new Experience();
+            CumulativeExp = cumulativeExp ?? new Experience();
         }
 
         /// <summary>
