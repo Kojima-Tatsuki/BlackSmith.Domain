@@ -14,7 +14,7 @@ namespace BlackSmith.Domain.Character.Player
             var command = new PlayerCommonReconstructCommand(characterId, playerName, playerLevel);
 
             var serialized = JsonConvert.SerializeObject(command);
-            var deserialized = JsonConvert.DeserializeObject(serialized);
+            var deserialized = JsonConvert.DeserializeObject<PlayerCommonReconstructCommand>(serialized);
 
             Assert.That(command, Is.EqualTo(deserialized));
         }
