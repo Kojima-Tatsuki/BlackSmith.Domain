@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Newtonsoft.Json;
+using NUnit.Framework;
 using System;
 
 #nullable enable
@@ -18,6 +19,17 @@ namespace BlackSmith.Domain.Character.Player
                     Is.EqualTo(new LevelDependentParameters(new(new(level)), new(str), new(agi))));
             else
                 Assert.Throws(exception, () => new LevelDependentParameters(new(new(level)), new(str), new(agi)));
+        }
+
+        [Test(Description = "LevelDependentParametersのシリアライズ・デシリアライズテスト")]
+        public void LevelDependentParametersSerializePasses()
+        {
+            var level = new LevelDependentParameters(new(new(1)), new(1), new(1));
+
+            var serialized = JsonConvert.SerializeObject(level);
+            var deserialized = JsonConvert.DeserializeObject<LevelDependentParameters>(serialized);
+
+            Assert.That(level, Is.EqualTo(deserialized));
         }
 
         [Test(Description = "ステータス上昇ポイントの残り数テスト")]
@@ -50,6 +62,17 @@ namespace BlackSmith.Domain.Character.Player
                 Assert.Throws(excaption, () => new Strength(value));
         }
 
+        [Test(Description = "Strengthのシリアライズ・デシリアライズテスト")]
+        public void StrengthSerializePasses()
+        {
+            var strength = new Strength(1);
+
+            var serialized = JsonConvert.SerializeObject(strength);
+            var deserialized = JsonConvert.DeserializeObject<Strength>(serialized);
+
+            Assert.That(strength, Is.EqualTo(deserialized));
+        }
+
         [Test(Description = "Agilityインスタンス化テスト")]
         [TestCase(1, null, Category = "正常系")]
         [TestCase(0, typeof(ArgumentException), Category = "異常系")]
@@ -59,6 +82,17 @@ namespace BlackSmith.Domain.Character.Player
                 Assert.That(new Agility(value), Is.EqualTo(new Agility(value)));
             else
                 Assert.Throws(excaption, () => new Agility(value));
+        }
+
+        [Test(Description = "Agilityのシリアライズ・デシリアライズテスト")]
+        public void AgilitySerializePasses()
+        {
+            var agility = new Agility(1);
+
+            var serialized = JsonConvert.SerializeObject(agility);
+            var deserialized = JsonConvert.DeserializeObject<Agility>(serialized);
+
+            Assert.That(agility, Is.EqualTo(deserialized));
         }
     }
 }

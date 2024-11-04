@@ -35,7 +35,7 @@ namespace BlackSmith.Domain.Character.Player
             var serialized = JsonConvert.SerializeObject(experience);
             var deserialized = JsonConvert.DeserializeObject<Experience>(serialized);
 
-            Assert.AreEqual(experience.Value, deserialized.Value);
+            Assert.That(experience, Is.EqualTo(deserialized));
         }
     }
 }
