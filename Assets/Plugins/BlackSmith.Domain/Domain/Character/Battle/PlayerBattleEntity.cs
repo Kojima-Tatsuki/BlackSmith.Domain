@@ -75,16 +75,4 @@ namespace BlackSmith.Domain.Character.Battle
             return ID.Equals(other.ID);
         }
     }
-
-    internal record PlayerBattleReconstractCommand
-    {
-        public CharacterID Id { get; }
-        public CharacterBattleModule Module { get; }
-
-        public PlayerBattleReconstractCommand(CharacterID id, CharacterBattleModule module)
-        {
-            Id = id;
-            Module = module;
-        }
-    }
 }

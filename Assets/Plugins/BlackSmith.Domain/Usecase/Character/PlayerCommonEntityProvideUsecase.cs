@@ -5,7 +5,7 @@ namespace BlackSmith.Usecase.Character
     /// <summary>
     /// Presenter層にPlayerEntityDataを渡すクラス
     /// </summary>
-    public class PlayerCommonEntityProvidUsecase
+    public class PlayerCommonEntityProvideUsecase
     {
         /// <summary>
         /// Commandを用いて再構築を行う, リポジトリへの登録は行わない

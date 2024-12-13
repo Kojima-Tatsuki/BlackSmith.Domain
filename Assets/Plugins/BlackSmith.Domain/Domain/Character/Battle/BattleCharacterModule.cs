@@ -9,18 +9,18 @@ namespace BlackSmith.Domain.Character.Battle
     /// <summary>
     /// 戦闘時のキャラクターのモデル
     /// </summary>
-    internal record CharacterBattleModule
+    public record CharacterBattleModule
     {
-        internal CharacterLevel Level { get; }
+        public CharacterLevel Level { get; }
 
-        internal HealthPoint HealthPoint { get; }
-        internal AttackValue Attack { get; }
-        internal DefenseValue Defense { get; }
+        public HealthPoint HealthPoint { get; }
+        public AttackValue Attack { get; }
+        public DefenseValue Defense { get; }
 
-        internal LevelDependentParameters LevelDependentParameters { get; }
+        public LevelDependentParameters LevelDependentParameters { get; }
 
-        internal BattleEquipmentModule EquipmentModule { get; }
-        internal BattleStatusEffectModule StatusEffectModule { get; }
+        public BattleEquipmentModule EquipmentModule { get; }
+        public BattleStatusEffectModule StatusEffectModule { get; }
 
         internal CharacterBattleModule(HealthPoint health, LevelDependentParameters levelDepParams, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
         {
