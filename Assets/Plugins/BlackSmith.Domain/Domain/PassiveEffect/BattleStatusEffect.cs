@@ -6,7 +6,7 @@ namespace BlackSmith.Domain.PassiveEffect
     // 直接的なリポジトリ管理はしない
     public record BattleStatusEffect
     {
-        internal EffectID Id { get; } // IDを重複させないのであれば、Idのみを使用したEqualsを実装すべき？
+        public EffectID Id { get; } // IDを重複させないのであれば、Idのみを使用したEqualsを実装すべき？
 
         public BattleStatusEffectModel StatusModel { get; }
 
@@ -18,7 +18,7 @@ namespace BlackSmith.Domain.PassiveEffect
         }
     }
 
-    internal record EffectID
+    public record EffectID
     {
         public Guid Value { get; }
 
@@ -37,12 +37,12 @@ namespace BlackSmith.Domain.PassiveEffect
         public int MovementSpeed { get; }
 
         [JsonConstructor]
-        internal BattleStatusEffectModel(int maxHealth, int attack, int defense, int moveSpeed)
+        internal BattleStatusEffectModel(int maxHealth, int attack, int defense, int movementSpeed)
         {
             MaxHealth = maxHealth;
             Attack = attack;
             Defense = defense;
-            MovementSpeed = moveSpeed;
+            MovementSpeed = movementSpeed;
         }
     }
 }

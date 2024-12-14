@@ -3,23 +3,24 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Character.Battle
 {
     internal class BlattleStatusEffectModuleTest
     {
-        private static IReadOnlyDictionary<EffectID, BattleStatusEffect>?[] CorrectMockData()
+        private static IReadOnlyCollection<BattleStatusEffect>?[] CorrectMockData()
         {
             var id = new EffectID();
             var effect = new BattleStatusEffect(id, new BattleStatusEffectModel(0, 0, 0, 0));
 
-            return new Dictionary<EffectID, BattleStatusEffect>?[] {
-                new Dictionary<EffectID, BattleStatusEffect>()
+            return new List<BattleStatusEffect>?[] {
+                new List<BattleStatusEffect>()
                 {
-                    {id, effect},
+                    {effect},
                 },
-                new Dictionary<EffectID, BattleStatusEffect>()
+                new List < BattleStatusEffect >()
                 {
 
                 },
@@ -29,7 +30,7 @@ namespace BlackSmith.Domain.Character.Battle
 
         [Test(Description = "ステータスモジュールのインスタンスを生成するテスト")]
         [TestCaseSource(nameof(CorrectMockData), Category = "正常系")]
-        public void ModuleInstancePasses(IReadOnlyDictionary<EffectID, BattleStatusEffect>? dict)
+        public void ModuleInstancePasses(IReadOnlyCollection<BattleStatusEffect>? dict)
         {
             try
             {
@@ -44,15 +45,14 @@ namespace BlackSmith.Domain.Character.Battle
         [Test(Description = "BattleStatusEffectModuleのシリアライズ・デシリアライズテスト")]
         public void BattleStatusEffectModuleSerializeTestPasses()
         {
-            var dict = new Dictionary<EffectID, BattleStatusEffect>()
+            var effects = new List<BattleStatusEffect>()
             {
-                { new EffectID(), new BattleStatusEffect(new EffectID(), new BattleStatusEffectModel(0, 0, 0, 0)) },
+                { new BattleStatusEffect(new EffectID(), new BattleStatusEffectModel(0, 0, 0, 0)) },
+                { new BattleStatusEffect(new EffectID(), new BattleStatusEffectModel(1, 1, 1, 1)) },
             };
-            var module = new BattleStatusEffectModule(dict);
+            var module = new BattleStatusEffectModule(effects);
 
-            Debug.Log(module);
             var serialized = JsonConvert.SerializeObject(module);
-            Debug.Log(serialized);
             var deserialized = JsonConvert.DeserializeObject<BattleStatusEffectModule>(serialized);
 
             Assert.That(module, Is.EqualTo(deserialized));

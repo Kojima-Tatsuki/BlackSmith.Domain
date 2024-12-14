@@ -21,6 +21,11 @@
             "name": "org.nuget.newtonsoft.json",
             "expression": "",
             "define": ""
+        },
+        {
+            "name": "org.nuget.system.collections.immutable",
+            "expression": "",
+            "define": ""
         }
     ],
     "noEngineReferences": true
