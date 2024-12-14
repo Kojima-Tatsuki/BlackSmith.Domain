@@ -1,5 +1,6 @@
 ﻿using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Item.Equipment;
+using Newtonsoft.Json;
 using System;
 
 #nullable enable
@@ -7,7 +8,7 @@ using System;
 namespace BlackSmith.Domain.Character.Battle
 {
     /// <summary>
-    /// 戦闘時のキャラクターのモデル
+    /// 戦闘時のキャラクターのモジュール
     /// </summary>
     public record CharacterBattleModule
     {
@@ -22,16 +23,17 @@ namespace BlackSmith.Domain.Character.Battle
         public BattleEquipmentModule EquipmentModule { get; }
         public BattleStatusEffectModule StatusEffectModule { get; }
 
-        internal CharacterBattleModule(HealthPoint health, LevelDependentParameters levelDepParams, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
+        [JsonConstructor]
+        internal CharacterBattleModule(HealthPoint healthPoint, LevelDependentParameters levelDependentParameters, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
         {
-            HealthPoint = health;
-            LevelDependentParameters = levelDepParams;
+            HealthPoint = healthPoint;
+            LevelDependentParameters = levelDependentParameters;
             Level = LevelDependentParameters.Level;
             EquipmentModule = equipmentModule;
             StatusEffectModule = statusEffectModule;
 
-            Attack = new AttackValue(levelDepParams, equipmentModule, statusEffectModule);
-            Defense = new DefenseValue(levelDepParams, equipmentModule, statusEffectModule);
+            Attack = new AttackValue(levelDependentParameters, equipmentModule, statusEffectModule);
+            Defense = new DefenseValue(levelDependentParameters, equipmentModule, statusEffectModule);
         }
 
         internal CharacterBattleModule TakeDamage(DamageValue damage)

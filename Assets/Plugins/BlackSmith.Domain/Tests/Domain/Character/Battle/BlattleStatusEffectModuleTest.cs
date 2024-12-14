@@ -1,40 +1,61 @@
-﻿using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.PassiveEffect;
+﻿using BlackSmith.Domain.PassiveEffect;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
-internal class BlattleStatusEffectModuleTest
+namespace BlackSmith.Domain.Character.Battle
 {
-    private static IReadOnlyDictionary<EffectID, BattleStatusEffect>?[] CorrectMockData()
+    internal class BlattleStatusEffectModuleTest
     {
-        var id = new EffectID();
-        var effect = new BattleStatusEffect(id, new BattleStatusEffectModel(0, 0, 0, 0));
-
-        return new Dictionary<EffectID, BattleStatusEffect>?[] {
-            new Dictionary<EffectID, BattleStatusEffect>()
-            {
-                {id, effect},
-            },
-            new Dictionary<EffectID, BattleStatusEffect>()
-            {
-
-            },
-            null
-        };
-    }
-
-    [Test(Description = "ステータスモジュールのインスタンスを生成するテスト")]
-    [TestCaseSource(nameof(CorrectMockData), Category = "正常系")]
-    public void ModuleInstancePasses(IReadOnlyDictionary<EffectID, BattleStatusEffect>? dict)
-    {
-        try
+        private static IReadOnlyDictionary<EffectID, BattleStatusEffect>?[] CorrectMockData()
         {
-            var module = new BattleStatusEffectModule(dict);
+            var id = new EffectID();
+            var effect = new BattleStatusEffect(id, new BattleStatusEffectModel(0, 0, 0, 0));
+
+            return new Dictionary<EffectID, BattleStatusEffect>?[] {
+                new Dictionary<EffectID, BattleStatusEffect>()
+                {
+                    {id, effect},
+                },
+                new Dictionary<EffectID, BattleStatusEffect>()
+                {
+
+                },
+                null
+            };
         }
-        catch (Exception e)
+
+        [Test(Description = "ステータスモジュールのインスタンスを生成するテスト")]
+        [TestCaseSource(nameof(CorrectMockData), Category = "正常系")]
+        public void ModuleInstancePasses(IReadOnlyDictionary<EffectID, BattleStatusEffect>? dict)
         {
-            Assert.Fail(e.Message);
+            try
+            {
+                var module = new BattleStatusEffectModule(dict);
+            }
+            catch (Exception e)
+            {
+                Assert.Fail(e.Message);
+            }
+        }
+
+        [Test(Description = "BattleStatusEffectModuleのシリアライズ・デシリアライズテスト")]
+        public void BattleStatusEffectModuleSerializeTestPasses()
+        {
+            var dict = new Dictionary<EffectID, BattleStatusEffect>()
+            {
+                { new EffectID(), new BattleStatusEffect(new EffectID(), new BattleStatusEffectModel(0, 0, 0, 0)) },
+            };
+            var module = new BattleStatusEffectModule(dict);
+
+            Debug.Log(module);
+            var serialized = JsonConvert.SerializeObject(module);
+            Debug.Log(serialized);
+            var deserialized = JsonConvert.DeserializeObject<BattleStatusEffectModule>(serialized);
+
+            Assert.That(module, Is.EqualTo(deserialized));
         }
     }
 }

@@ -39,7 +39,7 @@ namespace BlackSmith.Domain.Character.Player
         public override string ToString()
         {
             var result = "";
-            result += $"Name : {Name.Value}\n";
+            result += $"ItemName : {Name.Value}\n";
             result += $"ID : {ID}\n";
             result += $"Level : {Level.Value}";
 

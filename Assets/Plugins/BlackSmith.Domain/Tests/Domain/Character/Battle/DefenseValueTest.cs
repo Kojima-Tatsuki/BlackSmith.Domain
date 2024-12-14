@@ -1,5 +1,6 @@
 ﻿using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Collections;
@@ -36,6 +37,18 @@ namespace BlackSmith.Domain.Battle
                     Is.EqualTo(new DefenseValue(levelParams, equipmentModule, effectModel)));
             else
                 Assert.Throws(exception, () => new DefenseValue(levelParams, equipmentModule, effectModel));
+        }
+
+        [Test(Description = "防御力のシリアライズ・デシリアライズテスト")]
+        public void DefenseValueSerializeTestPasses()
+        {
+            var ldp = new LevelDependentParameters(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(2), new Agility(1));
+            var defense = new DefenseValue(ldp);
+
+            var serialized = JsonConvert.SerializeObject(defense);
+            var deserialized = JsonConvert.DeserializeObject<DefenseValue>(serialized);
+
+            Assert.That(defense, Is.EqualTo(deserialized));
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BlackSmith.Domain.Item.Equipment;
+using Newtonsoft.Json;
 using System;
 
 #nullable enable
@@ -10,6 +11,7 @@ namespace BlackSmith.Domain.Character.Battle
         public EquippableItem? Weapon { get; }
         public EquippableItem? Armor { get; }
 
+        [JsonConstructor]
         internal BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
         {
             if (weapon != null && weapon.EquipType != EquipmentType.Weapon)

@@ -1,4 +1,5 @@
 ﻿using BlackSmith.Domain.PassiveEffect;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,10 @@ namespace BlackSmith.Domain.Character.Battle
 {
     public record BattleStatusEffectModule
     {
-        internal IReadOnlyCollection<BattleStatusEffect> StatusEffects => StatusEffectDictionary.Values.ToList();
+        public IReadOnlyCollection<BattleStatusEffect> StatusEffects => StatusEffectDictionary.Values.ToList();
         private IReadOnlyDictionary<EffectID, BattleStatusEffect> StatusEffectDictionary { get; }
 
+        [JsonConstructor]
         internal BattleStatusEffectModule(IReadOnlyDictionary<EffectID, BattleStatusEffect>? statusEffects = null)
         {
             statusEffects ??= new Dictionary<EffectID, BattleStatusEffect>();

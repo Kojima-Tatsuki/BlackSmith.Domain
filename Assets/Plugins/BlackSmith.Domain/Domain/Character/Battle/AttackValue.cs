@@ -1,4 +1,5 @@
 ﻿using BlackSmith.Domain.Character.Player;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 
@@ -18,6 +19,7 @@ namespace BlackSmith.Domain.Character.Battle
         internal int FromArmorAttack { get; }
         internal int FromStatusEffectAttack { get; }
 
+        [JsonConstructor]
         internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule? equipmentModule, BattleStatusEffectModule? statusEffectModule)
         {
             FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2); // ここは必ず1以上の値
