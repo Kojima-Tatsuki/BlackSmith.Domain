@@ -42,7 +42,7 @@ namespace BlackSmith.Domain.Battle
             yield return new TestCaseData(reciever, 0, null).SetCategory("正常系");
 
             // 最大値を超える回復量の場合
-            var healValue = reciever.HealthPoint.MaximumValue.Value + 1; // 最大値を超える回復量
+            var healValue = reciever.HealthPoint.MaxValue + 1; // 最大値を超える回復量
             yield return new TestCaseData(reciever, healValue, null).SetCategory("正常系");
 
             // HealValueが負の値の場合

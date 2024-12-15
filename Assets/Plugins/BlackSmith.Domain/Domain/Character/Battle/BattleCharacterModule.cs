@@ -1,5 +1,6 @@
 ﻿using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Item.Equipment;
+using Newtonsoft.Json;
 using System;
 
 #nullable enable
@@ -7,31 +8,32 @@ using System;
 namespace BlackSmith.Domain.Character.Battle
 {
     /// <summary>
-    /// 戦闘時のキャラクターのモデル
+    /// 戦闘時のキャラクターのモジュール
     /// </summary>
-    internal record CharacterBattleModule
+    public record CharacterBattleModule
     {
-        internal CharacterLevel Level { get; }
+        public CharacterLevel Level { get; }
 
-        internal HealthPoint HealthPoint { get; }
-        internal AttackValue Attack { get; }
-        internal DefenseValue Defense { get; }
+        public HealthPoint HealthPoint { get; }
 
-        internal LevelDependentParameters LevelDependentParameters { get; }
+        public LevelDependentParameters LevelDependentParameters { get; }
 
-        internal BattleEquipmentModule EquipmentModule { get; }
-        internal BattleStatusEffectModule StatusEffectModule { get; }
+        public BattleEquipmentModule EquipmentModule { get; }
+        public BattleStatusEffectModule StatusEffectModule { get; }
 
-        internal CharacterBattleModule(HealthPoint health, LevelDependentParameters levelDepParams, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
+        // プロパティにすると、シリアライズ対象となるため、メソッドにしている
+        // AttackValueとDefenseValueは、それぞれのモジュールを使用して計算する(シリアライズ・デシリアライズ対象外)
+        public AttackValue GetAttack() => new AttackValue(LevelDependentParameters, EquipmentModule, StatusEffectModule);
+        public DefenseValue GetDefense() => new DefenseValue(LevelDependentParameters, EquipmentModule, StatusEffectModule);
+
+        [JsonConstructor]
+        internal CharacterBattleModule(HealthPoint healthPoint, LevelDependentParameters levelDependentParameters, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
         {
-            HealthPoint = health;
-            LevelDependentParameters = levelDepParams;
+            HealthPoint = healthPoint;
+            LevelDependentParameters = levelDependentParameters;
             Level = LevelDependentParameters.Level;
             EquipmentModule = equipmentModule;
             StatusEffectModule = statusEffectModule;
-
-            Attack = new AttackValue(levelDepParams, equipmentModule, statusEffectModule);
-            Defense = new DefenseValue(levelDepParams, equipmentModule, statusEffectModule);
         }
 
         internal CharacterBattleModule TakeDamage(DamageValue damage)

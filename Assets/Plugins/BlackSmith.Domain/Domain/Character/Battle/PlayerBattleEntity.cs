@@ -12,8 +12,9 @@ namespace BlackSmith.Domain.Character.Battle
 
         public CharacterLevel Level => BattleModule.Level;
         public HealthPoint HealthPoint => BattleModule.HealthPoint;
-        public AttackValue Attack => BattleModule.Attack;
-        public DefenseValue Defense => BattleModule.Defense;
+
+        public AttackValue Attack => BattleModule.GetAttack();
+        public DefenseValue Defense => BattleModule.GetDefense();
 
         internal PlayerBattleEntity(PlayerBattleReconstractCommand command)
         {
@@ -67,24 +68,14 @@ namespace BlackSmith.Domain.Character.Battle
             return new ChangeBattleEquipmentResult(null, prev);
         }
 
+        public PlayerBattleReconstractCommand GetReconstractCommand() => new(ID, BattleModule);
+
         public bool Equals(PlayerBattleEntity other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return ID.Equals(other.ID);
-        }
-    }
-
-    internal record PlayerBattleReconstractCommand
-    {
-        public CharacterID Id { get; }
-        public CharacterBattleModule Module { get; }
-
-        public PlayerBattleReconstractCommand(CharacterID id, CharacterBattleModule module)
-        {
-            Id = id;
-            Module = module;
         }
     }
 }
