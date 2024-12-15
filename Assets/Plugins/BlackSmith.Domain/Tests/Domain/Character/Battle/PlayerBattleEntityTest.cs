@@ -15,7 +15,7 @@ namespace BlackSmith.Domain.Battle
         {
             var level = new PlayerLevel(Experience.RequiredCumulativeExp(10));
             var reciever = new PlayerBattleEntity(
-                new PlayerBattleReconstractCommand(new CharacterID(), 
+                new PlayerBattleReconstructCommand(new CharacterID(), 
                     new CharacterBattleModule(new HealthPoint(level), 
                         new LevelDependentParameters(level, new Strength(10), new Agility(20)), 
                         new BattleEquipmentModule(null, null), 
@@ -32,7 +32,7 @@ namespace BlackSmith.Domain.Battle
         {
             var level = new PlayerLevel(Experience.RequiredCumulativeExp(10));
             var reciever = new PlayerBattleEntity(
-                new PlayerBattleReconstractCommand(new CharacterID(), 
+                new PlayerBattleReconstructCommand(new CharacterID(), 
                     new CharacterBattleModule(new HealthPoint(level), 
                         new LevelDependentParameters(level, new Strength(10), new Agility(20)), 
                         new BattleEquipmentModule(null, null), 

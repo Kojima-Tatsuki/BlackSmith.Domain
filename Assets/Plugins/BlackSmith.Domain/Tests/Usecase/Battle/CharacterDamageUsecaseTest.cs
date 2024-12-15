@@ -20,14 +20,14 @@ namespace BlackSmith.Usecase.Character.Battle
         {
             var attackerLevel = new PlayerLevel(Experience.RequiredCumulativeExp(10));
             var attacker = new PlayerBattleEntity(
-                new PlayerBattleReconstractCommand(new CharacterID(),
+                new PlayerBattleReconstructCommand(new CharacterID(),
                     new CharacterBattleModule(new HealthPoint(attackerLevel),
                         new LevelDependentParameters(attackerLevel, new Strength(10), new Agility(20)),
                         new BattleEquipmentModule(null, null),
                         new BattleStatusEffectModule())));
             var recieverLevel = new PlayerLevel(Experience.RequiredCumulativeExp(10));
             var reciever = new PlayerBattleEntity(
-                new PlayerBattleReconstractCommand(new CharacterID(),
+                new PlayerBattleReconstructCommand(new CharacterID(),
                     new CharacterBattleModule(new HealthPoint(recieverLevel),
                         new LevelDependentParameters(recieverLevel, new Strength(10), new Agility(20)),
                         new BattleEquipmentModule(null, null),

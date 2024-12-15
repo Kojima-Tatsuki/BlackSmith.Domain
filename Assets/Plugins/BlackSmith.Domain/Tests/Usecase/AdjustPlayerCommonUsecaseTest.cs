@@ -31,7 +31,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
         [TestCaseSource(nameof(CreateCharacterTestCases))]
         public async Task CreateCharacterPasses(IPlayerCommonEntityRepository repository, string name, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonUsecase(repository);
+            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -81,7 +81,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
         [TestCaseSource(nameof(ReconstructCharacterTestCases))]
         public async Task ReconstructCharacterPasses(IPlayerCommonEntityRepository repository, PlayerCommonReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonUsecase(repository);
+            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -134,7 +134,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
         [TestCaseSource(nameof(DeleteCharacterTestCases))]
         public async Task DeleteCharacterPasses(IPlayerCommonEntityRepository repository, CharacterID id, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonUsecase(repository);
+            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -182,23 +182,20 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
 
             // 存在しないIDのプレイヤーを取得しようとした場合
             var donotExistId = new CharacterID();
-            yield return new TestCaseData(repository, donotExistId, null, typeof(ArgumentException)).SetCategory("異常系");
+            yield return new TestCaseData(repository, donotExistId, null, null).SetCategory("正常系");
         }
 
         [Test(Description = "GetPlayerDataのテスト")]
         [TestCaseSource(nameof(GetCharacterTestCases))]
         public async Task GetCharacterPasses(IPlayerCommonEntityRepository repository, CharacterID id, PlayerCommonEntity? target, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonUsecase(repository);
+            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
             if (exception is null)
             {
                 var character = await usecase.GetCharacter(id);
 
-                if (target is null)
-                    throw new InvalidOperationException("比較対象が引数で与えられていません");
-
-                Assert.That(character.Equals(target));
+                Assert.That(target, Is.EqualTo(character));
             }
             else
             {

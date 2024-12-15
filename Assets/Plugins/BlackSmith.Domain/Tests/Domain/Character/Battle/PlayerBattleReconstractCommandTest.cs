@@ -16,10 +16,10 @@ namespace BlackSmith.Domain.Character.Battle
             var statusModule = new BattleStatusEffectModule();
 
             var module = new CharacterBattleModule(health, levelDependParams, equipmentModule, statusModule);
-            var command = new PlayerBattleReconstractCommand(id, module);
+            var command = new PlayerBattleReconstructCommand(id, module);
 
             var serialized = JsonConvert.SerializeObject(command);
-            var deserialized = JsonConvert.DeserializeObject<PlayerBattleReconstractCommand>(serialized);
+            var deserialized = JsonConvert.DeserializeObject<PlayerBattleReconstructCommand>(serialized);
 
             Assert.That(command, Is.EqualTo(deserialized));
         }
