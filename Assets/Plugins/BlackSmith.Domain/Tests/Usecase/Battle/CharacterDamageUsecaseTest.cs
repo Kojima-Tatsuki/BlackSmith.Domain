@@ -20,14 +20,14 @@ namespace BlackSmith.Usecase.Character.Battle
         {
             var attackerLevel = new PlayerLevel(Experience.RequiredCumulativeExp(10));
             var attacker = new PlayerBattleEntity(
-                new PlayerBattleReconstractCommand(new CharacterID(),
+                new PlayerBattleReconstructCommand(new CharacterID(),
                     new CharacterBattleModule(new HealthPoint(attackerLevel),
                         new LevelDependentParameters(attackerLevel, new Strength(10), new Agility(20)),
                         new BattleEquipmentModule(null, null),
                         new BattleStatusEffectModule())));
             var recieverLevel = new PlayerLevel(Experience.RequiredCumulativeExp(10));
             var reciever = new PlayerBattleEntity(
-                new PlayerBattleReconstractCommand(new CharacterID(),
+                new PlayerBattleReconstructCommand(new CharacterID(),
                     new CharacterBattleModule(new HealthPoint(recieverLevel),
                         new LevelDependentParameters(recieverLevel, new Strength(10), new Agility(20)),
                         new BattleEquipmentModule(null, null),
@@ -90,15 +90,19 @@ namespace BlackSmith.Usecase.Character.Battle
             this.characters = characters;
         }
 
-        public async UniTask Delete(CharacterID id)
+        public async UniTask Register(PlayerBattleEntity character)
         {
-            await UniTask.Delay(10);
-            Debug.Log("Deleted");
+            await UniTask.CompletedTask;
+
+            if (characters.ContainsKey(character.ID))
+                throw new InvalidOperationException("既に存在するキャラクターです");
+            characters.Add(character.ID, character);
         }
 
         public async UniTask<PlayerBattleEntity?> FindByID(CharacterID id)
         {
-            await UniTask.Delay(10);
+            await UniTask.CompletedTask;
+
             if (!characters.ContainsKey(id))
                 return null;
             return characters[id];
@@ -106,20 +110,28 @@ namespace BlackSmith.Usecase.Character.Battle
 
         public async UniTask<bool> IsExist(CharacterID id)
         {
-            await UniTask.Delay(10);
-            throw new NotImplementedException();
-        }
+            await UniTask.CompletedTask;
 
-        public async UniTask Register(PlayerBattleEntity character)
-        {
-            await UniTask.Delay(10);
-            throw new NotImplementedException();
+            return characters.ContainsKey(id);
         }
 
         public async UniTask UpdateCharacter(PlayerBattleEntity character)
         {
-            await UniTask.Delay(10);
+            await UniTask.CompletedTask;
+
+            if (!characters.ContainsKey(character.ID))
+                throw new InvalidOperationException("存在しないキャラクターです");
             characters[character.ID] = character;
+        }
+
+        public async UniTask Delete(CharacterID id)
+        {
+            await UniTask.CompletedTask;
+
+            if (!characters.ContainsKey(id))
+                throw new InvalidOperationException("存在しないキャラクターです");
+
+            characters.Remove(id);
         }
     }
 }

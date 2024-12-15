@@ -2,13 +2,13 @@
 
 namespace BlackSmith.Domain.Character.Battle
 {
-    public record PlayerBattleReconstractCommand
+    public record PlayerBattleReconstructCommand
     {
         public CharacterID Id { get; }
         public CharacterBattleModule Module { get; }
 
         [JsonConstructor]
-        internal PlayerBattleReconstractCommand(CharacterID id, CharacterBattleModule module)
+        internal PlayerBattleReconstructCommand(CharacterID id, CharacterBattleModule module)
         {
             Id = id;
             Module = module;

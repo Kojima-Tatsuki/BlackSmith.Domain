@@ -16,7 +16,7 @@ namespace BlackSmith.Domain.Character.Battle
         public AttackValue Attack => BattleModule.GetAttack();
         public DefenseValue Defense => BattleModule.GetDefense();
 
-        internal PlayerBattleEntity(PlayerBattleReconstractCommand command)
+        internal PlayerBattleEntity(PlayerBattleReconstructCommand command)
         {
             ID = command.Id;
             BattleModule = command.Module;
@@ -68,7 +68,7 @@ namespace BlackSmith.Domain.Character.Battle
             return new ChangeBattleEquipmentResult(null, prev);
         }
 
-        public PlayerBattleReconstractCommand GetReconstractCommand() => new(ID, BattleModule);
+        public PlayerBattleReconstructCommand GetReconstractCommand() => new(ID, BattleModule);
 
         public bool Equals(PlayerBattleEntity other)
         {
