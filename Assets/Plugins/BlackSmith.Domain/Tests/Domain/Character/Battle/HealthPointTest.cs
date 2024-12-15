@@ -3,7 +3,6 @@ using BlackSmith.Domain.Character.Battle;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
-using UnityEngine;
 
 #nullable enable
 

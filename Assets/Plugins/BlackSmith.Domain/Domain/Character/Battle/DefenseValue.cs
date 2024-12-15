@@ -19,6 +19,12 @@ namespace BlackSmith.Domain.Character.Battle
         internal int FromArmorDefense { get; }
         internal int FromStatusEffectDefense { get; }
 
+        /// <summary>
+        /// <see cref="LevelDependentParameters"/>, <see cref="BattleEquipmentModule"/>, <see cref="BattleStatusEffectModule"/>から求められる値の為、直接的なシリアライズ・デシリアライズは行わない
+        /// </summary>
+        /// <param name="levelParams"></param>
+        /// <param name="equipmentModule"></param>
+        /// <param name="statusEffectModule"></param>
         internal DefenseValue(LevelDependentParameters levelParams, BattleEquipmentModule? equipmentModule = null, BattleStatusEffectModule? statusEffectModule = null)
         {
             FromLevelDefence = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2);

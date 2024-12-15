@@ -12,8 +12,9 @@ namespace BlackSmith.Domain.Character.Battle
 
         public CharacterLevel Level => BattleModule.Level;
         public HealthPoint HealthPoint => BattleModule.HealthPoint;
-        public AttackValue Attack => BattleModule.Attack;
-        public DefenseValue Defense => BattleModule.Defense;
+
+        public AttackValue Attack => BattleModule.GetAttack();
+        public DefenseValue Defense => BattleModule.GetDefense();
 
         internal PlayerBattleEntity(PlayerBattleReconstractCommand command)
         {

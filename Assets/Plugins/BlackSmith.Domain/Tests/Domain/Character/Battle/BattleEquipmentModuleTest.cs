@@ -1,5 +1,4 @@
-﻿using BlackSmith.Domain.Character.Battle;
-using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character.Player;
 using BlackSmith.Domain.Item.Equipment;
 using Newtonsoft.Json;
 using NUnit.Framework;

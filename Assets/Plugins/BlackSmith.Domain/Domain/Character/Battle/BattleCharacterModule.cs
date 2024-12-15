@@ -15,13 +15,16 @@ namespace BlackSmith.Domain.Character.Battle
         public CharacterLevel Level { get; }
 
         public HealthPoint HealthPoint { get; }
-        public AttackValue Attack { get; }
-        public DefenseValue Defense { get; }
 
         public LevelDependentParameters LevelDependentParameters { get; }
 
         public BattleEquipmentModule EquipmentModule { get; }
         public BattleStatusEffectModule StatusEffectModule { get; }
+
+        // プロパティにすると、シリアライズ対象となるため、メソッドにしている
+        // AttackValueとDefenseValueは、それぞれのモジュールを使用して計算する(シリアライズ・デシリアライズ対象外)
+        public AttackValue GetAttack() => new AttackValue(LevelDependentParameters, EquipmentModule, StatusEffectModule);
+        public DefenseValue GetDefense() => new DefenseValue(LevelDependentParameters, EquipmentModule, StatusEffectModule);
 
         [JsonConstructor]
         internal CharacterBattleModule(HealthPoint healthPoint, LevelDependentParameters levelDependentParameters, BattleEquipmentModule equipmentModule, BattleStatusEffectModule statusEffectModule)
@@ -31,9 +34,6 @@ namespace BlackSmith.Domain.Character.Battle
             Level = LevelDependentParameters.Level;
             EquipmentModule = equipmentModule;
             StatusEffectModule = statusEffectModule;
-
-            Attack = new AttackValue(levelDependentParameters, equipmentModule, statusEffectModule);
-            Defense = new DefenseValue(levelDependentParameters, equipmentModule, statusEffectModule);
         }
 
         internal CharacterBattleModule TakeDamage(DamageValue damage)

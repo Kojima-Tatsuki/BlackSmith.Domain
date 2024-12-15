@@ -1,5 +1,4 @@
 ﻿using BlackSmith.Domain.Character.Player;
-using Newtonsoft.Json;
 using System;
 using System.Linq;
 
@@ -19,7 +18,12 @@ namespace BlackSmith.Domain.Character.Battle
         internal int FromArmorAttack { get; }
         internal int FromStatusEffectAttack { get; }
 
-        [JsonConstructor]
+        /// <summary>
+        /// <see cref="LevelDependentParameters"/>, <see cref="BattleEquipmentModule"/>, <see cref="BattleStatusEffectModule"/>から求められる値の為、直接的なシリアライズ・デシリアライズは行わない
+        /// </summary>
+        /// <param name="levelParams"></param>
+        /// <param name="equipmentModule"></param>
+        /// <param name="statusEffectModule"></param>
         internal AttackValue(LevelDependentParameters levelParams, BattleEquipmentModule? equipmentModule, BattleStatusEffectModule? statusEffectModule)
         {
             FromLevelAttack = CheckVaild((levelParams.STR.Value + levelParams.AGI.Value) * 2); // ここは必ず1以上の値
