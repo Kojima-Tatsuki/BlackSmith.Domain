@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace BlackSmith.Domain.PassiveEffect
 {
     // 直接的なリポジトリ管理はしない
-    internal record BattleStatusEffect
+    public record BattleStatusEffect
     {
-        internal EffectID Id { get; } // IDを重複刺せないのであれば、Idのみを使用したEqualsを実装すべき？
+        public EffectID Id { get; } // IDを重複させないのであれば、Idのみを使用したEqualsを実装すべき？
 
-        internal BattleStatusEffectModel StatusModel { get; }
+        public BattleStatusEffectModel StatusModel { get; }
 
+        [JsonConstructor]
         internal BattleStatusEffect(EffectID id, BattleStatusEffectModel statusModel)
         {
             Id = id;
@@ -16,29 +18,31 @@ namespace BlackSmith.Domain.PassiveEffect
         }
     }
 
-    internal record EffectID
+    public record EffectID
     {
-        internal Guid Value { get; }
+        public Guid Value { get; }
 
-        internal EffectID()
+        [JsonConstructor]
+        internal EffectID(Guid? value = null)
         {
-            Value = Guid.NewGuid();
+            Value = value ?? Guid.NewGuid();
         }
     }
 
-    internal record BattleStatusEffectModel
+    public record BattleStatusEffectModel
     {
         public int MaxHealth { get; }
         public int Attack { get; }
         public int Defense { get; }
         public int MovementSpeed { get; }
 
-        internal BattleStatusEffectModel(int maxHealth, int attack, int defense, int moveSpeed)
+        [JsonConstructor]
+        internal BattleStatusEffectModel(int maxHealth, int attack, int defense, int movementSpeed)
         {
             MaxHealth = maxHealth;
             Attack = attack;
             Defense = defense;
-            MovementSpeed = moveSpeed;
+            MovementSpeed = movementSpeed;
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using BlackSmith.Domain.Item.Equipment;
-
-namespace BlackSmith.Domain.Item.Equiment
+﻿namespace BlackSmith.Domain.Item.Equipment
 {
     public record Weapon : EquippableItem
     {

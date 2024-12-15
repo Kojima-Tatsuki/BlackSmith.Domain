@@ -9,7 +9,7 @@ namespace BlackSmith.Domain.Character.Player
     /// レベルを元に変動するパラメータを格納する
     /// </summary>
     /// <remarks>Value Object</remarks>
-    internal record LevelDependentParameters
+    public record LevelDependentParameters
     {
         /// <summary>
         /// 現在のプレイヤーのレベル

@@ -1,4 +1,5 @@
 ﻿using BlackSmith.Domain.Character.Player;
+using Newtonsoft.Json;
 using System;
 
 namespace BlackSmith.Domain.Item.Equipment
@@ -24,14 +25,33 @@ namespace BlackSmith.Domain.Item.Equipment
 
         public RequireParameter RequireParameter { get; }
 
-        internal EquippableItem(CreateCommand command) : base(command.Name)
+        internal EquippableItem(CreateCommand command) : base(command.ItemName)
         {
             Attack = command.Attack;
-            Defense = command.Defence;
-            EquipType = command.Type;
-            EnhancementParameter = command.Enhancement;
-            AdditionalParameter = command.Additional;
-            RequireParameter = command.Require;
+            Defense = command.Defense;
+            EquipType = command.EquipType;
+            EnhancementParameter = command.EnhancementParameter;
+            AdditionalParameter = command.AdditionalParameter;
+            RequireParameter = command.RequireParameter;
+        }
+
+        // Serialize/Deserialize用のコンストラクタ
+        [JsonConstructor]
+        private EquippableItem(
+            string itemName,
+            EquipmentType equipType,
+            EquipmentAttack attack,
+            EquipmentDefense defense,
+            EnhancementParameter enhancementParameter,
+            AdditionalParameter additionalParameter,
+            RequireParameter requireParameter) : base(itemName)
+        {
+            EquipType = equipType;
+            Attack = attack;
+            Defense = defense;
+            EnhancementParameter = enhancementParameter;
+            AdditionalParameter = additionalParameter;
+            RequireParameter = requireParameter;
         }
 
         IEquipableItem IEquipableItem.Enchant(EnhancementParameter parameter) => Enchant(parameter);
@@ -39,7 +59,7 @@ namespace BlackSmith.Domain.Item.Equipment
         {
             return new EquippableItem(
                 new CreateCommand(
-                    Name,
+                    ItemName,
                     EquipType,
                     Attack,
                     Defense,
@@ -57,30 +77,31 @@ namespace BlackSmith.Domain.Item.Equipment
 
         internal record CreateCommand
         {
-            public string Name { get; }
-            public EquipmentType Type { get; }
+            public string ItemName { get; }
+            public EquipmentType EquipType { get; }
             public EquipmentAttack Attack { get; }
-            public EquipmentDefense Defence { get; }
-            public EnhancementParameter Enhancement { get; }
-            public AdditionalParameter Additional { get; }
-            public RequireParameter Require { get; }
+            public EquipmentDefense Defense { get; }
+            public EnhancementParameter EnhancementParameter { get; }
+            public AdditionalParameter AdditionalParameter { get; }
+            public RequireParameter RequireParameter { get; }
 
+            [JsonConstructor]
             internal CreateCommand(
-                string name,
+                string itemName,
                 EquipmentType type,
                 EquipmentAttack attack,
-                EquipmentDefense deffence,
-                EnhancementParameter enchancement,
-                AdditionalParameter additional,
-                RequireParameter require)
+                EquipmentDefense defense,
+                EnhancementParameter enhancementParameter,
+                AdditionalParameter additionalParameter,
+                RequireParameter requireParameter)
             {
-                Name = name;
-                Type = type;
+                ItemName = itemName;
+                EquipType = type;
                 Attack = attack;
-                Defence = deffence;
-                Additional = additional;
-                Enhancement = enchancement;
-                Require = require;
+                Defense = defense;
+                EnhancementParameter = enhancementParameter;
+                AdditionalParameter = additionalParameter;
+                RequireParameter = requireParameter;
             }
         }
     }
@@ -105,9 +126,11 @@ namespace BlackSmith.Domain.Item.Equipment
     }
 
     /// <summary>装備攻撃力</summary>
-    public class EquipmentAttack
+    public record EquipmentAttack
     {
         public int Value { get; }
+
+        [JsonConstructor]
         internal EquipmentAttack(int value)
         {
             Value = value;
@@ -115,9 +138,11 @@ namespace BlackSmith.Domain.Item.Equipment
     }
 
     /// <summary>装備防御力</summary>
-    public class EquipmentDefense
+    public record EquipmentDefense
     {
         public int Value { get; }
+
+        [JsonConstructor]
         internal EquipmentDefense(int value)
         {
             Value = value;
@@ -125,7 +150,7 @@ namespace BlackSmith.Domain.Item.Equipment
     }
 
     /// <summary>装備を強化した際に付与されるパラメータ</summary>
-    public class EnhancementParameter
+    public record EnhancementParameter
     {
         public int Sharpness { get; } // 鋭さ
         public int Quickness { get; } // 速さ
@@ -142,6 +167,7 @@ namespace BlackSmith.Domain.Item.Equipment
             Durability = 0;
         }
 
+        [JsonConstructor]
         internal EnhancementParameter(int sharpness, int quickness, int accuracy, int heaviness, int durability)
         {
             Sharpness = sharpness;
@@ -157,7 +183,7 @@ namespace BlackSmith.Domain.Item.Equipment
         /// <summary>
         /// 強化を行う. 強化は必ず成功する.
         /// </summary>
-        /// <param name="type">強化するパラメータの種類</param>
+        /// <param itemName="equipType">強化するパラメータの種類</param>
         /// <returns>強化結果</returns>
         internal EnhancementParameter AddEnhance(EnhanceType type)
         {
@@ -202,7 +228,7 @@ namespace BlackSmith.Domain.Item.Equipment
     }
 
     /// <summary>装備が作成される際にランダムで付与される追加パラメータ</summary>
-    public class AdditionalParameter
+    public record AdditionalParameter
     {
         public int Attack { get; }
         public int Defense { get; }
@@ -211,13 +237,14 @@ namespace BlackSmith.Domain.Item.Equipment
     }
 
     /// <summary>装備を行う際に要求されるパラメータ</summary>
-    public class RequireParameter
+    public record RequireParameter
     {
         public PlayerLevel Level { get; }
 
-        internal Strength Strength { get; }
-        internal Agility Agility { get; }
+        public Strength Strength { get; }
+        public Agility Agility { get; }
 
+        [JsonConstructor]
         internal RequireParameter(PlayerLevel level, Strength strength, Agility agility)
         {
             Level = level;

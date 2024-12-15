@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace BlackSmith.Domain.Character.Battle
 {
@@ -7,26 +8,32 @@ namespace BlackSmith.Domain.Character.Battle
     /// </summary>
     public record HealthPoint
     {
-        internal HealthPointValue Value { get; }
+        public int Value => HealthPointValue.Value;
+        private HealthPointValue HealthPointValue { get; }
 
-        internal MaxHealthPointValue MaximumValue { get; }
+        public int MaxValue => MaxHealthPointValue.Value;
+        private MaxHealthPointValue MaxHealthPointValue { get; }
 
         /// <summary>
         /// 現在値と最大値を指定してインスタンス化する
         /// </summary>
         /// <param name="value">現在値</param>
-        /// <param name="max">最大値</param>
-        internal HealthPoint(HealthPointValue value, MaxHealthPointValue max)
+        /// <param name="maxValue">最大値</param>
+        internal HealthPoint(HealthPointValue value, MaxHealthPointValue maxValue)
         {
             if (value is null) throw new ArgumentNullException(nameof(value));
-            if (max is null) throw new ArgumentNullException(nameof(max));
+            if (maxValue is null) throw new ArgumentNullException(nameof(maxValue));
 
-            if (!IsValidValue(value, max))
-                throw new ArgumentException($"不正な値が引数として渡されました, [value, max] : [{value}, {max}]");
+            if (!IsValidValue(value, maxValue))
+                throw new ArgumentException($"不正な値が引数として渡されました, [value, maxValue] : [{value}, {maxValue}]");
 
-            Value = value;
-            MaximumValue = max;
+            HealthPointValue = value;
+            MaxHealthPointValue = maxValue;
         }
+
+        // JSONシリアライズ/デシリアライズ用
+        [JsonConstructor]
+        private HealthPoint(int value, int maxValue) : this(new HealthPointValue(value), new MaxHealthPointValue(maxValue)) { }
 
         /// <summary>
         /// 最大値を指定してインスタンス化する
@@ -38,10 +45,10 @@ namespace BlackSmith.Domain.Character.Battle
             var value = new HealthPointValue(maxValue.Value); // 現在値の初期値を最大値と定める
 
             if (!IsValidValue(value, max))
-                throw new ArgumentException($"不正な値が引数として渡されました, [value, max] : [{value}, {max}]");
+                throw new ArgumentException($"不正な値が引数として渡されました, [value, maxValue] : [{value}, {max}]");
 
-            Value = value;
-            MaximumValue = max;
+            HealthPointValue = value;
+            MaxHealthPointValue = max;
         }
 
         /// <summary>
@@ -55,8 +62,8 @@ namespace BlackSmith.Domain.Character.Battle
             // 攻撃力の6倍の体力を作りたい
             var maxValue = level.Value * 10;
 
-            Value = new HealthPointValue(maxValue);
-            MaximumValue = new MaxHealthPointValue(maxValue);
+            HealthPointValue = new HealthPointValue(maxValue);
+            MaxHealthPointValue = new MaxHealthPointValue(maxValue);
         }
 
         /// <summary>
@@ -69,12 +76,12 @@ namespace BlackSmith.Domain.Character.Battle
         {
             if (damage is null) throw new ArgumentNullException(nameof(damage));
 
-            var hp = Value.Value - damage.Value;
+            var hp = Value - damage.Value;
 
             if (hp < 0)
                 hp = 0; // HPが0を下回らないようにする
 
-            return new HealthPoint(new HealthPointValue(hp), MaximumValue);
+            return new HealthPoint(new HealthPointValue(hp), MaxHealthPointValue);
         }
 
         internal HealthPoint HealHealth(int heal)
@@ -82,15 +89,15 @@ namespace BlackSmith.Domain.Character.Battle
             if (heal < 0)
                 throw new ArgumentOutOfRangeException(nameof(heal));
 
-            var hp = Value.Value + heal;
+            var hp = Value + heal;
 
-            if (hp > MaximumValue.Value)
-                return new HealthPoint(MaximumValue);
+            if (hp > MaxValue)
+                return new HealthPoint(MaxHealthPointValue);
 
-            return new HealthPoint(new HealthPointValue(hp), MaximumValue);
+            return new HealthPoint(new HealthPointValue(hp), MaxHealthPointValue);
         }
 
-        private bool IsValidValue(HealthPointValue value, MaxHealthPointValue max)
+        private static bool IsValidValue(HealthPointValue value, MaxHealthPointValue max)
         {
             if (max.Value < 0)
                 return false; // 最小値が最大値を上回っています
@@ -105,7 +112,7 @@ namespace BlackSmith.Domain.Character.Battle
         /// <returns>以下であれば真を返す</returns>
         internal bool IsDead()
         {
-            if (Value.Value <= 0)
+            if (Value <= 0)
                 return true;
 
             return false;
@@ -113,7 +120,7 @@ namespace BlackSmith.Domain.Character.Battle
 
         public override string ToString()
         {
-            return $"{Value} / {MaximumValue}";
+            return $"{Value} / {MaxValue}";
         }
 
         /// <summary>
@@ -122,15 +129,16 @@ namespace BlackSmith.Domain.Character.Battle
         /// <returns>itemの数字の若い方から、現在値、最大値</returns>
         public (int current, int max) GetValues()
         {
-            return (Value.Value, MaximumValue.Value);
+            return (HealthPointValue.Value, MaxHealthPointValue.Value);
         }
     }
 
     internal record HealthPointValue
     {
-        internal int Value { get; }
+        public int Value { get; }
 
-        public HealthPointValue(int value)
+        [JsonConstructor]
+        internal HealthPointValue(int value)
         {
             if (!IsInvalid(value))
                 throw new ArgumentException(nameof(value));

@@ -1,5 +1,6 @@
 ﻿using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Character.Battle;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 
@@ -75,18 +76,6 @@ namespace BlackSmith.Domain.Battle
             }
         }
 
-        [Test(Description = "HelthPointValueインスタンス化テスト")]
-        [TestCase(10, 10, null, Category = "正常系")]
-        [TestCase(0, 0, null, Category = "正常系")]
-        [TestCase(-1, null, typeof(ArgumentException), Category = "異常系")]
-        public void HealthPointValueInstancePasses(int value, int result, Type? exception = null)
-        {
-            if (exception is null)
-                Assert.That(new HealthPointValue(value), Is.EqualTo(new HealthPointValue(result)));
-            else
-                Assert.Throws(exception, () => new HealthPointValue(value));
-        }
-
         // HealthPointの比較テスト
         [Test(Description = "HealthPointの比較テスト")]
         [TestCase(10, 10, false, true, false, true, Category = "正常系")]
@@ -103,6 +92,32 @@ namespace BlackSmith.Domain.Battle
             Assert.AreEqual(moreeq, health1 >= health2);
         }
 
+        [Test(Description = "HealthPointのシリアライズ・デシリアライズテスト")]
+        public void HealthPointSerializeTestPasses()
+        {
+            var health = new HealthPoint(new HealthPointValue(10), new MaxHealthPointValue(10));
+
+            var serialized = JsonConvert.SerializeObject(health);
+            var deserialized = JsonConvert.DeserializeObject<HealthPoint>(serialized);
+
+            Assert.That(health, Is.EqualTo(deserialized));
+        }
+    }
+
+    internal class HealthPointValueTest
+    {
+        [Test(Description = "HelthPointValueインスタンス化テスト")]
+        [TestCase(10, 10, null, Category = "正常系")]
+        [TestCase(0, 0, null, Category = "正常系")]
+        [TestCase(-1, null, typeof(ArgumentException), Category = "異常系")]
+        public void HealthPointValueInstancePasses(int value, int result, Type? exception = null)
+        {
+            if (exception is null)
+                Assert.That(new HealthPointValue(value), Is.EqualTo(new HealthPointValue(result)));
+            else
+                Assert.Throws(exception, () => new HealthPointValue(value));
+        }
+
         [Test(Description = "MaxHealthPointValueインスタンス化テスト")]
         [TestCase(10, 10, null, Category = "正常系")]
         [TestCase(0, 0, null, Category = "正常系")]
@@ -113,6 +128,43 @@ namespace BlackSmith.Domain.Battle
                 Assert.That(new MaxHealthPointValue(value), Is.EqualTo(new MaxHealthPointValue(result)));
             else
                 Assert.Throws(exception, () => new MaxHealthPointValue(value));
+        }
+
+        [Test(Description = "HealthPointValueのシリアライズ・デシリアライズテスト")]
+        public void HealthPointValueSerializeTestPasses()
+        {
+            var health = new HealthPointValue(10);
+
+            var serialized = JsonConvert.SerializeObject(health);
+            var deserialized = JsonConvert.DeserializeObject<HealthPointValue>(serialized);
+
+            Assert.That(health, Is.EqualTo(deserialized));
+        }
+    }
+
+    internal class MaxHealthPointValueTest
+    {
+        [Test(Description = "MaxHealthPointValueインスタンス化テスト")]
+        [TestCase(10, 10, null, Category = "正常系")]
+        [TestCase(0, 0, null, Category = "正常系")]
+        [TestCase(-1, null, typeof(ArgumentException), Category = "異常系")]
+        public void MaxHealthPointValueInstancePasses(int value, int result, Type? exception = null)
+        {
+            if (exception is null)
+                Assert.That(new MaxHealthPointValue(value), Is.EqualTo(new MaxHealthPointValue(result)));
+            else
+                Assert.Throws(exception, () => new MaxHealthPointValue(value));
+        }
+
+        [Test(Description = "MaxHealthPointValueのシリアライズ・デシリアライズテスト")]
+        public void MaxHealthPointValueSerializeTestPasses()
+        {
+            var health = new MaxHealthPointValue(10);
+
+            var serialized = JsonConvert.SerializeObject(health);
+            var deserialized = JsonConvert.DeserializeObject<MaxHealthPointValue>(serialized);
+
+            Assert.That(health, Is.EqualTo(deserialized));
         }
     }
 }

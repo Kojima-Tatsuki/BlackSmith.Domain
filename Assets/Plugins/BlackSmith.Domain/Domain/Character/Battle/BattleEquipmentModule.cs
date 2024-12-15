@@ -1,16 +1,18 @@
 ﻿using BlackSmith.Domain.Item.Equipment;
+using Newtonsoft.Json;
 using System;
 
 #nullable enable
 
 namespace BlackSmith.Domain.Character.Battle
 {
-    internal record BattleEquipmentModule
+    public record BattleEquipmentModule
     {
         public EquippableItem? Weapon { get; }
         public EquippableItem? Armor { get; }
 
-        public BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
+        [JsonConstructor]
+        internal BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
         {
             if (weapon != null && weapon.EquipType != EquipmentType.Weapon)
                 throw new ArgumentException($"Unexpected type of equipment. {weapon?.EquipType}. (lJTQ1VIJ)");
@@ -21,7 +23,7 @@ namespace BlackSmith.Domain.Character.Battle
             Armor = armor;
         }
 
-        public BattleEquipmentModule ChangeEquipment(EquippableItem item)
+        internal BattleEquipmentModule ChangeEquipment(EquippableItem item)
         {
             switch (item.EquipType)
             {
@@ -34,7 +36,7 @@ namespace BlackSmith.Domain.Character.Battle
             }
         }
 
-        public BattleEquipmentModule RemoveEquipment(EquipmentType type)
+        internal BattleEquipmentModule RemoveEquipment(EquipmentType type)
         {
             switch (type)
             {
