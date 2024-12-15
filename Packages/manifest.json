@@ -2,8 +2,8 @@
   "dependencies": {
     "com.cysharp.unitask": "2.5.10",
     "com.unity.ide.visualstudio": "2.0.22",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
     "com.unity.test-framework": "2.0.1-exp.2",
-    "org.nuget.newtonsoft.json": "13.0.3",
     "org.nuget.r3": "1.2.9",
     "org.nuget.system.collections.immutable": "9.0.0"
   },
@@ -11,16 +11,12 @@
     {
       "name": "Unity NuGet",
       "url": "https://unitynuget-registry.azurewebsites.net",
-      "scopes": [
-        "org.nuget"
-      ]
+      "scopes": ["org.nuget"]
     },
     {
       "name": "OpenUPM",
       "url": "https://package.openupm.com",
-      "scopes": [
-        "com.cysharp"
-      ]
+      "scopes": ["com.cysharp"]
     }
   ]
 }
