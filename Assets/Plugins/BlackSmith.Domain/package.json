@@ -6,7 +6,7 @@
   "unity": "2023.2",
   "dependencies": {
     "com.cysharp.unitask": "2.5.5",
-    "org.nuget.newtonsoft.json": "13.0.3",
+    "com.unity.nuget.newtonsoft-json": "3.2.1",
     "org.nuget.r3": "1.2.8",
     "org.nuget.system.collections.immutable": "9.0.0"
   },
