@@ -9,7 +9,7 @@ using System;
 
 namespace BlackSmith.Usecase.Character.Battle
 {
-    internal class AdjustPlayerBattleEntityUsecase
+    public class AdjustPlayerBattleEntityUsecase
     {
         private readonly IPlayerBattleEntityRepository repository;
 
