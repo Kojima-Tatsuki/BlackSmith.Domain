@@ -60,7 +60,7 @@ namespace BlackSmith.Usecase.Character.Battle
         public async UniTask DeletePlayer(CharacterID id)
         {
             if (!await repository.IsExist(id))
-                throw new ArgumentException($"指定したidのキャラクターは存在しません {id}");
+                throw new InvalidOperationException($"指定したidのキャラクターは存在しません {id}");
 
             await repository.Delete(id);
         }

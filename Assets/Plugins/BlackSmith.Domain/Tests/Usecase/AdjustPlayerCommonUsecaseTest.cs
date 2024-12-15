@@ -11,11 +11,10 @@ using UnityEngine;
 
 #nullable enable
 
-namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
+namespace BlackSmith.Usecase.Character
 {
-    internal class CreateCharacterMethodTest
+    internal class AdjustPlayerCommonEntityUsecaseTest
     {
-        #region CreateCharacter
         private static IEnumerable CreateCharacterTestCases()
         {
             var repository = new MockPlayerCommonEntityRepository();
@@ -56,10 +55,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
                 }
             }
         }
-    }
 
-    internal class ReconstructCharacterMethodTest
-    {
         private static IEnumerable ReconstructCharacterTestCases()
         {
             var repository = new MockPlayerCommonEntityRepository();
@@ -106,10 +102,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
                 }
             }
         }
-    }
 
-    internal class DeleteCharacterMethodTest
-    {
         private static IEnumerable DeleteCharacterTestCases()
         {
             var name = "TestPlayerName";
@@ -138,7 +131,6 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
 
             if (exception is null)
             {
-
                 Assert.That(await repository.IsExist(id), Is.True);
 
                 await usecase.DeletePlayer(id);
@@ -162,10 +154,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
                 }
             }
         }
-    }
 
-    internal class GetCharacterMethodTest
-    {
         private static IEnumerable GetCharacterTestCases()
         {
             var repository = new MockPlayerCommonEntityRepository();
@@ -209,7 +198,6 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
                 }
             }
         }
-        #endregion
     }
 
     internal class MockPlayerCommonEntityRepository : IPlayerCommonEntityRepository
@@ -236,13 +224,13 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
 
         public async UniTask<PlayerCommonEntity?> FindByID(CharacterID id)
         {
-            await UniTask.Delay(10, delayType: DelayType.Realtime);
+            await UniTask.CompletedTask;
             return players[id] ?? throw new InvalidOperationException();
         }
 
         public async UniTask<bool> IsExist(CharacterID id)
         {
-            await UniTask.Delay(10, delayType: DelayType.Realtime);
+            await UniTask.CompletedTask;
             var result = players.ContainsKey(id);
             return result;
         }
@@ -257,7 +245,7 @@ namespace BlackSmith.Usecase.Character.AdjustPlayerCommonUsecaseTest
 
         public async UniTask UpdateCharacter(PlayerCommonEntity character)
         {
-            await UniTask.Delay(10, delayType: DelayType.Realtime);
+            await UniTask.CompletedTask;
             players[character.ID] = character;
         }
     }
