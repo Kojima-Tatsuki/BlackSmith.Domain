@@ -68,6 +68,8 @@ namespace BlackSmith.Domain.Character.Battle
             return new ChangeBattleEquipmentResult(null, prev);
         }
 
+        public PlayerBattleReconstractCommand GetReconstractCommand() => new(ID, BattleModule);
+
         public bool Equals(PlayerBattleEntity other)
         {
             if (other is null) return false;
