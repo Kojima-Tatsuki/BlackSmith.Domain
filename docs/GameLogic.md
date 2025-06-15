@@ -2,7 +2,8 @@
 
 ## 概要
 
-BlackSmith.Domain は Unity ベースのゲームプロジェクト用ドメインライブラリです。ドメイン駆動設計（DDD）の原則に従い、ドメインロジックと Unity 固有の実装を分離したクリーンアーキテクチャを採用しています。
+BlackSmith.Domain は Unity ベースのゲームプロジェクト用ドメインライブラリです。\
+ドメイン駆動設計（DDD）の原則に従い、ドメインロジックと Unity 固有の実装を分離したクリーンアーキテクチャを採用しています。
 
 ## アーキテクチャ
 
@@ -247,10 +248,10 @@ public record BattleStatusEffectModel
 
 ### 外部ライブラリ
 
-- **UniTask** (2.5.5): 非同期処理サポート
-- **R3** (1.2.8): リアクティブプログラミング
-- **Newtonsoft.Json** (3.2.1): JSONシリアライゼーション
-- **System.Collections.Immutable** (9.0.0): イミュータブルコレクション
+- **UniTask**: 非同期処理サポート
+- **R3**: リアクティブプログラミング
+- **Newtonsoft.Json**: JSONシリアライゼーション
+- **System.Collections.Immutable**: イミュータブルコレクション
 
 ### ドメイン間依存関係
 
