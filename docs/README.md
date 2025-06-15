@@ -4,49 +4,70 @@
 
 ## ドキュメント構成
 
-### [GameLogic.md](./GameLogic.md)
-ゲームロジック全体の概要と主要システムの説明。
-- プロジェクト概要とアーキテクチャ
-- 7つの主要ドメイン（Character、Item、Inventory、Field、Skill、PassiveEffect、Quest）
-- ユースケース層とビジネスルール
-- 技術的特徴と依存関係
+### 📁 [domains/](./domains/) - ドメイン別詳細仕様
+各ドメインの完全仕様（モデル + ビジネスルール + ゲームロジック）
+- **[Character.md](./domains/Character.md)** - プレイヤー・レベル・戦闘システム
+- **[Item.md](./domains/Item.md)** - アイテム・装備・強化システム  
+- **[Inventory.md](./domains/Inventory.md)** - インベントリ・通貨システム
+- **[Field.md](./domains/Field.md)** - 世界・フィールドシステム
+- **[Skill.md](./domains/Skill.md)** - スキル・熟練度システム
+- **[PassiveEffect.md](./domains/PassiveEffect.md)** - ステータス効果システム
+- **[Quest.md](./domains/Quest.md)** - クエスト・依頼システム
 
-### [Architecture.md](./Architecture.md)
-アーキテクチャ設計の詳細説明。
-- ドメイン駆動設計（DDD）とクリーンアーキテクチャの実装
-- レイヤー構成と責務分離
-- 設計パターン（値オブジェクト、ファクトリー、コマンド、リポジトリ）
-- 依存関係管理と拡張性設計
+### 📁 [systems/](./systems/) - 複合システム仕様
+複数ドメインを統合した統合システム
+- **[BattleSystem.md](./systems/BattleSystem.md)** - 戦闘システム (Character + Item + PassiveEffect)
+- **[CraftingSystem.md](./systems/CraftingSystem.md)** - クラフトシステム (Item + Inventory + Skill)
+- **[EquipmentSystem.md](./systems/EquipmentSystem.md)** - 装備システム (Character + Item + Inventory)
+- **[LevelingSystem.md](./systems/LevelingSystem.md)** - レベリングシステム (Character + Skill + PassiveEffect)
 
-### [DomainModels.md](./DomainModels.md)
-ドメインモデルの詳細仕様。
-- 基盤クラス（BasicID）
-- 各ドメインのエンティティ・値オブジェクト
-- ファクトリー・コマンドパターンの実装
-- ドメイン間の統合モジュール
+### 📁 [integration/](./integration/) - ドメイン統合
+ドメイン間の相互作用と統合パターン
+- **[DomainInteractions.md](./integration/DomainInteractions.md)** - ドメイン間依存関係とデータフロー
+- **[SystemIntegration.md](./integration/SystemIntegration.md)** - システム統合パターンとアーキテクチャ
 
-### [BusinessRules.md](./BusinessRules.md)
-ビジネスルールと制約の詳細。
-- キャラクターシステム（レベル、経験値、ステータス、戦闘）
-- アイテムシステム（装備、強化、クラフト）
-- インベントリシステム（容量、移動制限）
-- 通貨システム（両替レート、取引制限）
-- スキルシステム（習得条件、熟練度）
-- フィールド・ステータス効果・クエストシステム
+### 📄 基盤ドキュメント
+- **[Architecture.md](./Architecture.md)** - 全体アーキテクチャ設計
+- **[GameLogic.md](./GameLogic.md)** - ゲームロジック概要（レガシー）
+- **[DomainModels.md](./DomainModels.md)** - ドメインモデル概要（レガシー）
+- **[BusinessRules.md](./BusinessRules.md)** - ビジネスルール概要（レガシー）
 
 ## 推奨読み順
 
-1. **[GameLogic.md](./GameLogic.md)** - 全体像の把握
-2. **[Architecture.md](./Architecture.md)** - 設計思想の理解
-3. **[DomainModels.md](./DomainModels.md)** - 実装詳細の確認
-4. **[BusinessRules.md](./BusinessRules.md)** - ルール詳細の理解
+### 📚 新規参入者向け
+1. **[Architecture.md](./Architecture.md)** - 全体アーキテクチャの理解
+2. **[domains/Character.md](./domains/Character.md)** - 中核ドメインの理解
+3. **[systems/BattleSystem.md](./systems/BattleSystem.md)** - 統合システムの理解
+4. 必要に応じて他のドメイン・システムドキュメントを参照
+
+### 🔧 開発者向け
+1. 担当ドメインの `domains/*.md` を熟読
+2. 関連する `systems/*.md` で統合パターンを確認
+3. `integration/*.md` でドメイン間連携を理解
+
+### 🏗️ アーキテクト向け
+1. **[Architecture.md](./Architecture.md)** - 設計思想
+2. **[integration/](./integration/)** - 統合パターン
+3. **[systems/](./systems/)** - 複合システム設計
+
+## 情報検索ガイド
+
+### ドメイン固有の情報を探す場合
+- **キャラクター関連**: [domains/Character.md](./domains/Character.md)
+- **アイテム・装備関連**: [domains/Item.md](./domains/Item.md) + [systems/EquipmentSystem.md](./systems/EquipmentSystem.md)
+- **レベル・成長関連**: [domains/Character.md](./domains/Character.md) + [systems/LevelingSystem.md](./systems/LevelingSystem.md)
+
+### システム横断的な情報を探す場合
+- **戦闘処理**: [systems/BattleSystem.md](./systems/BattleSystem.md)
+- **アイテム作成**: [systems/CraftingSystem.md](./systems/CraftingSystem.md)
+- **ドメイン間連携**: [integration/DomainInteractions.md](./integration/DomainInteractions.md)
 
 ## 対象読者
 
-- **ゲーム開発者**: システム仕様とビジネスルールの理解
-- **アーキテクト**: 設計パターンとアーキテクチャの参考
-- **QAエンジニア**: テスト設計とバリデーション仕様
-- **新規参画者**: プロジェクト理解のためのオンボーディング
+- **ゲーム開発者**: ドメイン仕様とビジネスルールの理解
+- **アーキテクト**: 設計パターンと統合アーキテクチャの参考
+- **QAエンジニア**: テスト設計とシステム検証
+- **新規参画者**: プロジェクト理解とオンボーディング
 
 ## 関連リソース
 
@@ -56,4 +77,5 @@
 
 ## 更新履歴
 
+- 2025-06-15: ドメイン分割構造への移行完了
 - 2025-06-15: 初版作成
