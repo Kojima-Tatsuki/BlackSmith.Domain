@@ -8,12 +8,14 @@
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
-    "precompiledReferences": [],
+    "precompiledReferences": [
+        ""
+    ],
     "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [
         {
-            "name": "org.nuget.r3",
+            "name": "com.cysharp.r3",
             "expression": "",
             "define": ""
         },
