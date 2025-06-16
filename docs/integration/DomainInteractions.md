@@ -5,6 +5,8 @@
 BlackSmith.Domain における7つのドメイン間の依存関係、データフロー、相互作用パターンを詳細に説明します。\
 各ドメインがどのように連携し、システム全体の整合性を保っているかを示します。
 
+**実装状況**: 【部分実装】基本的な依存関係は実装済み。複雑な相互作用パターンは未実装。
+
 ## ドメイン依存関係マップ
 
 ### 全体依存関係図
@@ -49,7 +51,7 @@ graph TD
 
 ## ドメイン間データフロー
 
-### 1. Character ⟷ Item 相互作用
+### 1. Character ⟷ Item 相互作用 【部分実装】
 
 #### データフロー
 ```
@@ -59,7 +61,7 @@ Character → Item: 装備変更要求
 Item → Character: 戦闘パラメータ補正
 ```
 
-#### 主要インターフェース
+#### 主要インターフェース 【未実装】
 ```csharp
 // Character から Item への要求
 public interface IEquipmentRequirementChecker
@@ -76,7 +78,7 @@ public interface IEquipmentEffectProvider
 }
 ```
 
-#### 具体的な相互作用例
+#### 具体的な相互作用例 【未実装】
 ```csharp
 public class CharacterItemInteraction
 {
@@ -99,13 +101,13 @@ public class CharacterItemInteraction
     
     private bool CanEquipByLevel(PlayerCommonEntity player, EquippableItem equipment)
     {
-        // Character ドメインのレベル制限ロジック
+        // Character ドメインのレベル制限ロジック 【未実装】
         return true; // 将来実装
     }
     
     private bool CanEquipByStats(PlayerCommonEntity player, EquippableItem equipment)
     {
-        // Character ドメインのステータス制限ロジック
+        // Character ドメインのステータス制限ロジック 【未実装】
         return true; // 将来実装
     }
     
@@ -131,7 +133,7 @@ public class CharacterItemInteraction
 }
 ```
 
-### 2. Character ⟷ Skill 相互作用
+### 2. Character ⟷ Skill 相互作用 【未実装】
 
 #### データフロー
 ```
@@ -140,7 +142,7 @@ Skill → Character: スキル効果適用、成長補正
 Character ⟷ Skill: 経験値・熟練度相互更新
 ```
 
-#### 相互作用パターン
+#### 相互作用パターン 【未実装】
 ```csharp
 public class CharacterSkillInteraction
 {
@@ -208,7 +210,7 @@ public class CharacterSkillInteraction
 }
 ```
 
-### 3. Character ⟷ PassiveEffect 相互作用
+### 3. Character ⟷ PassiveEffect 相互作用 【未実装】
 
 #### データフロー
 ```
@@ -217,7 +219,7 @@ PassiveEffect → Character: ステータス補正・効果適用
 PassiveEffect ⟷ Character: 効果持続時間管理
 ```
 
-#### 効果適用パターン
+#### 効果適用パターン 【未実装】
 ```csharp
 public class CharacterEffectInteraction
 {
@@ -275,7 +277,7 @@ public class CharacterEffectInteraction
 }
 ```
 
-### 4. Item ⟷ Inventory 相互作用
+### 4. Item ⟷ Inventory 相互作用 【部分実装】
 
 #### データフロー
 ```
@@ -284,7 +286,7 @@ Inventory → Item: 所有・管理情報
 Item ⟷ Inventory: アイテム移動・変更通知
 ```
 
-#### 管理パターン
+#### 管理パターン 【部分実装】
 ```csharp
 public class ItemInventoryInteraction
 {
@@ -323,7 +325,7 @@ public class ItemInventoryInteraction
     
     private int GetMaxStackSize(IItem item)
     {
-        // Item ドメインのスタック制限ルール
+        // Item ドメインのスタック制限ルール 【部分実装】
         return item switch
         {
             ICraftMaterialItem => 999,
@@ -334,6 +336,7 @@ public class ItemInventoryInteraction
     
     private bool CanMoveItemType(IItem item, BaseInventory from, BaseInventory to)
     {
+        // アイテム移動制限ロジック 【部分実装】
         return (from, to, item) switch
         {
             (EquipmentInventory, InfiniteSlotInventory, EquippableItem) => true,
@@ -345,7 +348,7 @@ public class ItemInventoryInteraction
 }
 ```
 
-### 5. Quest → 複数ドメイン 統合相互作用
+### 5. Quest → 複数ドメイン 統合相互作用 【未実装】
 
 #### データフロー
 ```
@@ -356,7 +359,7 @@ Quest → Skill: スキル習得・使用条件
 Character/Item/Field/Skill → Quest: 進行状況更新
 ```
 
-#### 統合管理パターン
+#### 統合管理パターン 【未実装】
 ```csharp
 public class QuestDomainIntegration
 {
@@ -409,6 +412,7 @@ public class QuestDomainIntegration
     
     private QuestObjective CheckLevelObjective(QuestObjective objective, PlayerCommonEntity player)
     {
+        // レベル目標確認ロジック 【未実装】
         var targetLevel = ExtractTargetLevel(objective.Description.Value);
         var currentProgress = Math.Min(targetLevel, player.Level.Value);
         
@@ -417,6 +421,7 @@ public class QuestDomainIntegration
     
     private QuestObjective CheckCollectionObjective(QuestObjective objective, InfiniteSlotInventory inventory)
     {
+        // アイテム収集目標確認ロジック 【未実装】
         var (targetItem, requiredQuantity) = ExtractCollectionTarget(objective.Description.Value);
         var currentQuantity = inventory.GetItemQuantity(targetItem);
         var progress = Math.Min(requiredQuantity, currentQuantity);
@@ -426,6 +431,7 @@ public class QuestDomainIntegration
     
     private QuestObjective CheckLocationObjective(QuestObjective objective, FieldID currentField)
     {
+        // 位置目標確認ロジック 【未実装】
         var targetField = ExtractTargetField(objective.Description.Value);
         var progress = currentField == targetField ? 1 : 0;
         
@@ -434,6 +440,7 @@ public class QuestDomainIntegration
     
     private QuestObjective CheckSkillObjective(QuestObjective objective, PlayerCommonEntity player)
     {
+        // スキル目標確認ロジック 【未実装】
         var (targetSkill, requiredProficiency) = ExtractSkillTarget(objective.Description.Value);
         var playerSkill = player.Skills.FirstOrDefault(s => s.Skill.Name.Value == targetSkill);
         
@@ -446,58 +453,58 @@ public class QuestDomainIntegration
 }
 ```
 
-## 循環依存の回避戦略
+## 循環依存の回避戦略 【未実装】
 
-### 1. インターフェース分離原則（ISP）
+### 1. インターフェース分離原則（ISP） 【未実装】
 
 ```csharp
-// Character ドメインが Item ドメインに依存せず、抽象に依存
+// Character ドメインが Item ドメインに依存せず、抽象に依存 【未実装】
 public interface IEquipmentEffectCalculator
 {
     BattleParameter CalculateEquipmentBonus(EquipmentInventory equipment);
 }
 
-// 具象実装は上位層で注入
+// 具象実装は上位層で注入 【未実装】
 public class ItemBasedEquipmentEffectCalculator : IEquipmentEffectCalculator
 {
     public BattleParameter CalculateEquipmentBonus(EquipmentInventory equipment)
     {
-        // Item ドメインのロジックを使用
+        // Item ドメインのロジックを使用 【未実装】
         return CalculateFromEnhancements(equipment);
     }
 }
 ```
 
-### 2. イベント駆動による疎結合
+### 2. イベント駆動による疎結合 【未実装】
 
 ```csharp
-// ドメインイベントによる通知
+// ドメインイベントによる通知 【未実装】
 public record PlayerLevelUpEvent(PlayerID PlayerId, int NewLevel, int OldLevel);
 public record ItemEquippedEvent(PlayerID PlayerId, EquippableItem Item);
 public record SkillImprovedEvent(PlayerID PlayerId, SkillName SkillName, int NewProficiency);
 
-// イベントハンドラーでドメイン間連携
+// イベントハンドラーでドメイン間連携 【未実装】
 public class CrossDomainEventHandler
 {
     public void Handle(PlayerLevelUpEvent evt)
     {
-        // Quest ドメイン: レベル目標確認
-        // PassiveEffect ドメイン: レベルアップバフ適用
-        // Skill ドメイン: 新規習得可能スキル確認
+        // Quest ドメイン: レベル目標確認 【未実装】
+        // PassiveEffect ドメイン: レベルアップバフ適用 【未実装】
+        // Skill ドメイン: 新規習得可能スキル確認 【未実装】
     }
     
     public void Handle(ItemEquippedEvent evt)
     {
-        // Character ドメイン: 戦闘パラメータ再計算
-        // PassiveEffect ドメイン: 装備効果適用
+        // Character ドメイン: 戦闘パラメータ再計算 【未実装】
+        // PassiveEffect ドメイン: 装備効果適用 【未実装】
     }
 }
 ```
 
-### 3. コマンドパターンによるデータ転送
+### 3. コマンドパターンによるデータ転送 【未実装】
 
 ```csharp
-// ドメイン間でのデータ受け渡しはコマンドオブジェクト経由
+// ドメイン間でのデータ受け渡しはコマンドオブジェクト経由 【未実装】
 public record CrossDomainCommand
 {
     public PlayerID PlayerId { get; }
@@ -505,24 +512,25 @@ public record CrossDomainCommand
     public IReadOnlyDictionary<string, object> Parameters { get; }
 }
 
-// 各ドメインは自身のコマンドのみ処理
+// 各ドメインは自身のコマンドのみ処理 【未実装】
 public class CharacterCommandHandler
 {
     public void Handle(CrossDomainCommand command)
     {
         if (command.Type == CommandType.UpdateBattleParameters)
         {
-            // Character ドメイン内部の処理のみ実行
+            // Character ドメイン内部の処理のみ実行 【未実装】
         }
     }
 }
 ```
 
-## データ整合性保証
+## データ整合性保証 【未実装】
 
-### 1. トランザクション境界
+### 1. トランザクション境界 【未実装】
 
 ```csharp
+// ドメイン横断トランザクション管理 【未実装】
 public class DomainTransactionService
 {
     public async Task<DomainTransactionResult> ExecuteTransactionAsync(
@@ -553,24 +561,24 @@ public class DomainTransactionService
     }
 }
 
-// 使用例: 装備変更時の複数ドメイン更新
+// 使用例: 装備変更時の複数ドメイン更新 【未実装】
 public async Task<EquipmentChangeResult> ChangeEquipmentSafelyAsync(
     PlayerCommonEntity player,
     EquippableItem newEquipment)
 {
     return await transactionService.ExecuteTransactionAsync(async context =>
     {
-        // 1. Character ドメイン: 装備条件確認
+        // 1. Character ドメイン: 装備条件確認 【未実装】
         if (!CanEquip(player, newEquipment))
             return DomainTransactionResult.Failed("Cannot equip item");
         
-        // 2. Inventory ドメイン: インベントリ更新
+        // 2. Inventory ドメイン: インベントリ更新 【未実装】
         context.UpdateInventory(/* ... */);
         
-        // 3. Character ドメイン: 戦闘パラメータ更新
+        // 3. Character ドメイン: 戦闘パラメータ更新 【未実装】
         context.UpdateCharacter(/* ... */);
         
-        // 4. PassiveEffect ドメイン: 装備効果適用
+        // 4. PassiveEffect ドメイン: 装備効果適用 【未実装】
         context.UpdateEffects(/* ... */);
         
         return DomainTransactionResult.Success();
@@ -578,16 +586,16 @@ public async Task<EquipmentChangeResult> ChangeEquipmentSafelyAsync(
 }
 ```
 
-### 2. 不変性による整合性保証
+### 2. 不変性による整合性保証 【部分実装】
 
 ```csharp
-// すべてのドメインオブジェクトはイミュータブル
+// すべてのドメインオブジェクトはイミュータブル 【部分実装】
 public record PlayerCommonEntity
 {
-    // with 式による部分更新で整合性保証
+    // with 式による部分更新で整合性保証 【部分実装】
     public PlayerCommonEntity EquipItem(EquippableItem item)
     {
-        // 装備変更時は関連パラメータも同時更新
+        // 装備変更時は関連パラメータも同時更新 【未実装】
         var newBattleParams = RecalculateBattleParameters(this, item);
         
         return this with 
@@ -599,9 +607,10 @@ public record PlayerCommonEntity
 }
 ```
 
-### 3. バリデーション chain
+### 3. バリデーション chain 【未実装】
 
 ```csharp
+// ドメイン横断バリデーション機構 【未実装】
 public class DomainValidationChain
 {
     private readonly List<IDomainValidator> validators;
@@ -623,12 +632,12 @@ public class DomainValidationChain
     }
 }
 
-// ドメイン固有バリデーター
+// ドメイン固有バリデーター 【未実装】
 public class CharacterDomainValidator : IDomainValidator
 {
     public ValidationResult Validate(DomainOperationContext context)
     {
-        // Character ドメインのビジネスルール検証
+        // Character ドメインのビジネスルール検証 【未実装】
         return ValidationResult.Valid();
     }
 }

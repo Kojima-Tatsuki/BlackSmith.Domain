@@ -11,6 +11,7 @@ Quest ドメインは、ゲーム内のクエスト・依頼システムを管�
 
 #### QuestID
 ```csharp
+// 【未実装】クエストIDシステム
 public record QuestID : BasicID
 {
     protected override string Prefix => "QST_";
@@ -21,6 +22,7 @@ public record QuestID : BasicID
 
 #### QuestModel
 ```csharp
+// 【部分実装】基本的なQuestModelクラスは存在するが、このrecord型の詳細モデルは未実装
 public record QuestModel
 {
     public QuestID Id { get; }
@@ -139,6 +141,7 @@ public record QuestModel
 
 #### QuestTitle & QuestDescription
 ```csharp
+// 【未実装】クエストタイトルと説明の値オブジェクト
 public record QuestTitle
 {
     public string Value { get; }
@@ -207,6 +210,7 @@ public enum QuestDifficulty
 
 #### QuestObjective
 ```csharp
+// 【未実装】クエスト目標管理システム
 public record QuestObjective
 {
     public ObjectiveID Id { get; }
@@ -287,6 +291,7 @@ public enum ObjectiveType
 
 #### QuestReward
 ```csharp
+// 【未実装】クエスト報酬システム
 public record QuestReward
 {
     public RewardType Type { get; }
@@ -334,6 +339,7 @@ public enum RewardType
 
 #### 状態遷移制御
 ```csharp
+// 【未実装】クエスト状態遷移管理システム
 public static class QuestStatusTransition
 {
     public static bool CanTransitionTo(QuestStatus from, QuestStatus to)
@@ -365,6 +371,7 @@ public static class QuestStatusTransition
 
 #### 進行条件チェック
 ```csharp
+// 【未実装】クエスト目標進行状況検証システム
 public static class ObjectiveProgressValidator
 {
     public static bool CanUpdateObjective(QuestModel quest, ObjectiveID objectiveId)
@@ -400,6 +407,7 @@ public static class ObjectiveProgressValidator
 
 #### 報酬受取制限
 ```csharp
+// 【未実装】クエスト報酬受取検証システム
 public static class QuestRewardValidator
 {
     public static bool CanReceiveRewards(QuestModel quest)
@@ -427,6 +435,7 @@ public static class QuestRewardValidator
 ### クエスト作成
 
 ```csharp
+// 【未実装】クエスト作成ファクトリー
 public static class QuestFactory
 {
     public static QuestModel CreateBasicQuest(
@@ -491,6 +500,7 @@ public static class QuestFactory
 ### クエスト管理
 
 ```csharp
+// 【未実装】クエスト管理サービス
 public static class QuestManager
 {
     public static IEnumerable<QuestModel> GetAvailableQuests(
@@ -549,6 +559,7 @@ public static class QuestManager
 ### 進行追跡
 
 ```csharp
+// 【未実装】クエスト進行状況追跡システム
 public static class QuestProgressTracker
 {
     public static QuestModel TrackKillProgress(
@@ -612,6 +623,7 @@ public static class QuestProgressTracker
 ### 報酬処理
 
 ```csharp
+// 【未実装】クエスト報酬処理システム
 public static class QuestRewardProcessor
 {
     public static (PlayerCommonEntity updatedPlayer, InfiniteSlotInventory updatedInventory, Wallet updatedWallet) 
@@ -691,7 +703,7 @@ public static class QuestRewardProcessor
 
 ### クエストチェーンシステム
 ```csharp
-// 連続クエストシステム
+// 【未実装】連続クエストシステム
 public record QuestChain
 {
     public QuestChainID Id { get; }
@@ -708,7 +720,7 @@ public record QuestChain
 
 ### 動的クエスト生成
 ```csharp
-// 手続き生成クエスト
+// 【未実装】手続き生成クエストシステム
 public interface IQuestGenerator
 {
     QuestModel GenerateQuest(PlayerCommonEntity player, QuestType type);
@@ -726,7 +738,7 @@ public class RandomKillQuestGenerator : IQuestGenerator
 
 ### 共有クエストシステム
 ```csharp
-// プレイヤー間共有クエスト
+// 【未実装】プレイヤー間共有クエストシステム
 public record SharedQuest : QuestModel
 {
     public ImmutableArray<PlayerID> Participants { get; }
@@ -741,7 +753,7 @@ public record SharedQuest : QuestModel
 
 ### 期間限定クエストシステム
 ```csharp
-// イベント・期間限定クエスト
+// 【未実装】イベント・期間限定クエストシステム
 public record TimeLimitedQuest : QuestModel
 {
     public DateTime StartTime { get; }

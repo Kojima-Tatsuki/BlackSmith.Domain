@@ -1,8 +1,10 @@
-# 装備システム (Equipment System)
+# 装備システム (Equipment System)【部分実装】
 
 ## 概要
 
-装備システムは、Character、Item、Inventory の3つのドメインを統合し、プレイヤーの装備管理を行うシステムです。\
+装備システムは、Character、Item、Inventory の3つのドメインを統合し、プレイヤーの装備管理を行うシステムです。
+
+※ **基本的な装備機能は実装済みですが、高度な統合機能や最適化機能は未実装です。**\
 装備の着脱、効果適用、制限チェック、インベントリ間の移動を統合的に処理します。
 
 ## システム構成
@@ -27,10 +29,11 @@ graph TD
 
 ## 装備統合サービス
 
-### EquipmentIntegrationService
+### EquipmentIntegrationService【未実装】
 複数ドメインを統合した装備管理の中核サービス。
 
 ```csharp
+// 【未実装】装備統合サービス - 基本機能は個別クラスに存在
 public class EquipmentIntegrationService
 {
     public EquipmentChangeResult ChangeEquipment(
@@ -199,12 +202,13 @@ public class EquipmentIntegrationService
 }
 ```
 
-## 装備比較システム
+## 装備比較システム【未実装】
 
-### EquipmentComparisonService
+### EquipmentComparisonService【未実装】
 装備品の性能比較を行うサービス。
 
 ```csharp
+// 【未実装】装備比較サービス
 public class EquipmentComparisonService
 {
     public EquipmentComparison CompareEquipment(
@@ -341,11 +345,12 @@ public class EquipmentComparisonService
 }
 ```
 
-## 装備セット効果システム（将来拡張）
+## 装備セット効果システム【未実装】（将来拡張）
 
-### EquipmentSetService
+### EquipmentSetService【未実装】
 
 ```csharp
+// 【未実装】装備セット効果システム
 public class EquipmentSetService
 {
     public SetEffectResult CalculateSetEffects(EquipmentInventory equipment)
@@ -414,11 +419,12 @@ public record SetEffectResult
 }
 ```
 
-## 装備条件システム（将来拡張）
+## 装備条件システム【未実装】（将来拡張）
 
-### EquipmentRequirementChecker
+### EquipmentRequirementChecker【未実装】
 
 ```csharp
+// 【未実装】装備条件チェッカー
 public class EquipmentRequirementChecker
 {
     public RequirementCheckResult CheckRequirements(
@@ -492,9 +498,9 @@ public record EquipmentRequirements
 }
 ```
 
-## 結果処理
+## 結果処理【部分実装】
 
-### EquipmentChangeResult
+### EquipmentChangeResult【部分実装】
 
 ```csharp
 public record EquipmentChangeResult
@@ -580,11 +586,12 @@ public record EquipmentUpgrade
 }
 ```
 
-## 装備管理UI支援
+## 装備管理UI支援【未実装】
 
-### EquipmentDisplayService（UI層支援）
+### EquipmentDisplayService【未実装】（UI層支援）
 
 ```csharp
+// 【未実装】装備表示UI支援サービス
 public class EquipmentDisplayService
 {
     public EquipmentSummary GetEquipmentSummary(
@@ -670,9 +677,9 @@ public record EquipmentSummary
 }
 ```
 
-## 拡張ポイント
+## 拡張ポイント【未実装】
 
-### 装備プリセットシステム
+### 装備プリセットシステム【未実装】
 ```csharp
 public record EquipmentPreset
 {
@@ -682,7 +689,7 @@ public record EquipmentPreset
 }
 ```
 
-### 装備強化予約システム
+### 装備強化予約システム【未実装】
 ```csharp
 public class EquipmentEnhancementQueue
 {

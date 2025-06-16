@@ -14,14 +14,14 @@ Character ドメインは、プレイヤーの基本情報、レベル・経験�
 ```csharp
 public record PlayerCommonEntity
 {
-    public PlayerID Id { get; }
+    public PlayerID Id { get; }  // 【未実装】実装では CharacterID を使用
     public PlayerName Name { get; }
     public PlayerLevel Level { get; }
     public Experience Experience { get; }
-    public Strength Strength { get; }
-    public Agility Agility { get; }
-    public StatusPoint StatusPoint { get; }
-    public ImmutableArray<SkillAndProficiency> Skills { get; }
+    public Strength Strength { get; }  // 【未実装】
+    public Agility Agility { get; }  // 【未実装】
+    public StatusPoint StatusPoint { get; }  // 【未実装】
+    public ImmutableArray<SkillAndProficiency> Skills { get; }  // 【未実装】
 }
 ```
 
@@ -29,12 +29,12 @@ public record PlayerCommonEntity
 戦闘時の状態を管理する戦闘特化エンティティ。
 
 ```csharp
-public record PlayerBattleEntity
+public record PlayerBattleEntity  // 【未実装】
 {
-    public PlayerID Id { get; }
-    public PlayerName Name { get; }
-    public CurrentHealth CurrentHealth { get; }
-    public CharacterBattleModule BattleModule { get; }
+    public PlayerID Id { get; }  // 【未実装】
+    public PlayerName Name { get; }  // 【未実装】
+    public CurrentHealth CurrentHealth { get; }  // 【未実装】
+    public CharacterBattleModule BattleModule { get; }  // 【未実装】
 }
 ```
 
@@ -42,18 +42,18 @@ public record PlayerBattleEntity
 
 #### 基本パラメータ
 ```csharp
-public record PlayerID : BasicID
+public record PlayerID : BasicID  // 【未実装】実装では CharacterID
 {
     protected override string Prefix => "PLY_";
 }
 
-public record PlayerName
+public record PlayerName  // 【部分実装】バリデーションロジック未実装
 {
     public string Value { get; }
     // バリデーション: 3-20文字
 }
 
-public record PlayerLevel
+public record PlayerLevel  // 【部分実装】バリデーションロジック未実装
 {
     public int Value { get; }
     // バリデーション: 1以上
@@ -62,19 +62,19 @@ public record PlayerLevel
 
 #### 能力値システム
 ```csharp
-public record Strength
+public record Strength  // 【未実装】
 {
     public int Value { get; }
     // 筋力: 物理攻撃・防御に影響
 }
 
-public record Agility
+public record Agility  // 【未実装】
 {
     public int Value { get; }
     // 俊敏性: 物理攻撃・防御に影響
 }
 
-public record StatusPoint
+public record StatusPoint  // 【未実装】
 {
     public int Value { get; }
     // レベルアップ時に3ポイント獲得
@@ -95,14 +95,14 @@ public record Experience
 
 #### 戦闘パラメータ
 ```csharp
-public record BattleParameter
+public record BattleParameter  // 【未実装】
 {
     public int MaxHealth { get; }      // レベル × 10
     public int AttackValue { get; }    // (STR + AGI) × 2 + 装備補正
     public int DefenseValue { get; }   // (STR + AGI) × 2 + 装備補正
 }
 
-public record CurrentHealth
+public record CurrentHealth  // 【未実装】
 {
     public int Value { get; }
     
@@ -115,7 +115,7 @@ public record CurrentHealth
 
 #### PlayerFactory
 ```csharp
-public static class PlayerFactory
+public static class PlayerFactory  // 【未実装】
 {
     public static PlayerCommonEntity CreateNew(PlayerCommonCreateCommand command);
     public static PlayerCommonEntity Reconstruct(PlayerCommonReconstructCommand command);
@@ -125,24 +125,24 @@ public static class PlayerFactory
 
 #### コマンドオブジェクト
 ```csharp
-public record PlayerCommonCreateCommand
+public record PlayerCommonCreateCommand  // 【未実装】
 {
     public PlayerName Name { get; }
     public PlayerLevel Level { get; }
-    public Strength Strength { get; }
-    public Agility Agility { get; }
+    public Strength Strength { get; }  // 【未実装】
+    public Agility Agility { get; }  // 【未実装】
 }
 
-public record PlayerCommonReconstructCommand
+public record PlayerCommonReconstructCommand  // 【未実装】
 {
-    public PlayerID Id { get; }
+    public PlayerID Id { get; }  // 【未実装】
     public PlayerName Name { get; }
     public PlayerLevel Level { get; }
     public Experience Experience { get; }
-    public Strength Strength { get; }
-    public Agility Agility { get; }
-    public StatusPoint StatusPoint { get; }
-    public ImmutableArray<SkillAndProficiency> Skills { get; }
+    public Strength Strength { get; }  // 【未実装】
+    public Agility Agility { get; }  // 【未実装】
+    public StatusPoint StatusPoint { get; }  // 【未実装】
+    public ImmutableArray<SkillAndProficiency> Skills { get; }  // 【未実装】
 }
 ```
 

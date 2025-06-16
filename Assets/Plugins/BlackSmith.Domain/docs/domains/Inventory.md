@@ -11,6 +11,7 @@ Inventory ドメインは、プレイヤーのアイテム所有・管理シス�
 
 #### BaseInventory
 ```csharp
+// 【未実装】統一されたインベントリ基底クラス
 public abstract record BaseInventory
 {
     protected readonly ImmutableArray<ItemSlot> slots;
@@ -26,6 +27,7 @@ public abstract record BaseInventory
 
 #### ItemSlot
 ```csharp
+// 【部分実装】基本的なスロット機能は実装済みだが、record型ではない
 public record ItemSlot
 {
     public IItem Item { get; }
@@ -65,6 +67,7 @@ public record ItemSlot
 
 #### EquipmentInventory
 ```csharp
+// 【部分実装】基本的な装備管理は実装済みだが、record型ではなくclass型で実装
 public record EquipmentInventory : BaseInventory
 {
     public EquippableItem? WeaponSlot { get; }
@@ -131,6 +134,7 @@ public record EquipmentInventory : BaseInventory
 
 #### InfiniteSlotInventory
 ```csharp
+// 【部分実装】基本的な無制限インベントリは実装済み
 public record InfiniteSlotInventory : BaseInventory
 {
     public InfiniteSlotInventory() : this(ImmutableArray<ItemSlot>.Empty) { }
@@ -210,6 +214,7 @@ public record InfiniteSlotInventory : BaseInventory
 
 #### Currency
 ```csharp
+// 【部分実装】基本通貨機能は実装済みだが、両替機能は未実装
 public record Currency
 {
     public CurrencyType Type { get; }
@@ -243,7 +248,7 @@ public record Currency
         return this with { Value = Value - amount };
     }
     
-    // 両替機能
+    // 【未実装】両替機能
     public Currency Exchange(CurrencyType targetType)
     {
         if (Type == targetType) return this;
@@ -274,6 +279,7 @@ public enum CurrencyType
 
 #### Wallet
 ```csharp
+// 【部分実装】基本的なウォレット機能は実装済み
 public record Wallet
 {
     private readonly ImmutableDictionary<CurrencyType, Currency> currencies;
@@ -334,6 +340,7 @@ public record Wallet
 
 #### 移動可能条件
 ```csharp
+// 【未実装】インベントリ間のアイテム移動システム
 public static bool CanMoveItem(IItem item, BaseInventory from, BaseInventory to, int quantity)
 {
     // 移動元チェック
@@ -363,7 +370,7 @@ public static bool CanMoveItem(IItem item, BaseInventory from, BaseInventory to,
 ### インベントリ操作
 
 ```csharp
-// アイテム追加
+// 【未実装】統一されたアイテム追加システム
 public static InfiniteSlotInventory AddItemSafely(
     InfiniteSlotInventory inventory, 
     IItem item, 
@@ -375,7 +382,7 @@ public static InfiniteSlotInventory AddItemSafely(
     return inventory.AddItem(item, quantity);
 }
 
-// アイテム移動
+// 【未実装】インベントリ間のアイテム移動システム
 public static (BaseInventory updatedFrom, BaseInventory updatedTo) MoveItem(
     BaseInventory from, 
     BaseInventory to, 
@@ -395,7 +402,7 @@ public static (BaseInventory updatedFrom, BaseInventory updatedTo) MoveItem(
 ### 装備管理
 
 ```csharp
-// 装備変更（自動的に前の装備を外す）
+// 【未実装】統合された装備変更システム
 public static (EquipmentInventory equipment, InfiniteSlotInventory general) 
     ChangeEquipment(
         EquipmentInventory equipmentInventory,
@@ -432,7 +439,7 @@ public static (EquipmentInventory equipment, InfiniteSlotInventory general)
 ### 通貨管理
 
 ```csharp
-// 購入処理
+// 【未実装】購入処理システム
 public static Wallet ProcessPurchase(Wallet wallet, CurrencyType currencyType, int price)
 {
     if (!wallet.CanAfford(currencyType, price))
@@ -441,14 +448,14 @@ public static Wallet ProcessPurchase(Wallet wallet, CurrencyType currencyType, i
     return wallet.SubtractCurrency(currencyType, price);
 }
 
-// 売却処理
+// 【未実装】売却処理システム
 public static Wallet ProcessSale(Wallet wallet, CurrencyType currencyType, int revenue)
 {
     var currency = new Currency(currencyType, revenue);
     return wallet.AddCurrency(currency);
 }
 
-// 通貨両替
+// 【未実装】通貨両替システム
 public static Wallet ExchangeCurrency(Wallet wallet, CurrencyType from, CurrencyType to, int amount)
 {
     if (!wallet.CanAfford(from, amount))
@@ -484,7 +491,7 @@ public static Wallet ExchangeCurrency(Wallet wallet, CurrencyType from, Currency
 
 ### インベントリ容量制限
 ```csharp
-// 将来的な拡張例：容量制限システム
+// 【未実装】容量制限システム
 public record LimitedInventory : BaseInventory
 {
     public int MaxSlots { get; }
@@ -502,7 +509,7 @@ public record LimitedInventory : BaseInventory
 
 ### アイテム重量システム
 ```csharp
-// 重量制限システム
+// 【未実装】重量制限システム
 public record Weight
 {
     public float Value { get; }
@@ -523,7 +530,7 @@ public record WeightLimitedInventory : BaseInventory
 
 ### 取引履歴システム
 ```csharp
-// 取引履歴の記録
+// 【未実装】取引履歴の記録システム
 public record TradeHistory
 {
     public DateTime Timestamp { get; }

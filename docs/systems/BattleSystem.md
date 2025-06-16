@@ -15,10 +15,11 @@
 
 ### 統合モジュール
 
-#### CharacterBattleModule
+#### CharacterBattleModule【部分実装】
 複数ドメインの戦闘関連機能を統合する中核モジュール。
 
 ```csharp
+// 【未実装】統合クラス - 現在は個別のモジュールが存在するのみ
 public class CharacterBattleModule
 {
     private readonly BattleEquipmentModule equipmentModule;
@@ -32,6 +33,7 @@ public class CharacterBattleModule
         this.statusEffectModule = statusEffectModule;
     }
     
+    // 【未実装】統合パラメータ計算
     public BattleParameter GetBattleParameter(PlayerCommonEntity player)
     {
         // 基本パラメータ（Character ドメイン）
@@ -69,11 +71,12 @@ public class CharacterBattleModule
 }
 ```
 
-## 戦闘パラメータ計算
+## 戦闘パラメータ計算【未実装】
 
-### 総合戦闘力算出
+### 総合戦闘力算出【未実装】
 
 ```csharp
+// 【未実装】戦闘パラメータ計算サービス
 public static class BattleParameterCalculator
 {
     public static BattleParameter CalculateFinalParameters(
@@ -141,9 +144,10 @@ public static class BattleParameterCalculator
 }
 ```
 
-### 特殊補正システム
+### 特殊補正システム【未実装】
 
 ```csharp
+// 【未実装】戦闘補正システム
 public static class BattleModifierSystem
 {
     // 攻撃速度計算（PassiveEffect による補正）
@@ -189,11 +193,12 @@ public static class BattleModifierSystem
 }
 ```
 
-## ダメージ計算システム
+## ダメージ計算システム【未実装】
 
-### 基本ダメージ計算
+### 基本ダメージ計算【未実装】
 
 ```csharp
+// 【未実装】ダメージ計算システム
 public static class DamageCalculator
 {
     public static DamageResult CalculateDamage(
@@ -257,9 +262,10 @@ public record DamageResult
 }
 ```
 
-### 状態異常・効果適用
+### 状態異常・効果適用【未実装】
 
 ```csharp
+// 【未実装】戦闘効果処理システム
 public static class BattleEffectProcessor
 {
     public static EffectCollection ProcessBattleStart(EffectCollection effects)
@@ -303,11 +309,12 @@ public static class BattleEffectProcessor
 }
 ```
 
-## 戦闘フロー管理
+## 戦闘フロー管理【未実装】
 
-### 戦闘シーケンス
+### 戦闘シーケンス【未実装】
 
 ```csharp
+// 【未実装】戦闘シーケンス管理クラス
 public class BattleSequence
 {
     public PlayerBattleEntity Player { get; private set; }
@@ -388,9 +395,9 @@ public class BattleSequence
 }
 ```
 
-## 戦闘AI・戦略
+## 戦闘AI・戦略【未実装】
 
-### 戦闘戦略システム（将来拡張）
+### 戦闘戦略システム【未実装】（将来拡張）
 
 ```csharp
 public interface IBattleStrategy
@@ -427,11 +434,12 @@ public record BattleContext
 }
 ```
 
-## パフォーマンス最適化
+## パフォーマンス最適化【未実装】
 
-### 計算キャッシュシステム
+### 計算キャッシュシステム【未実装】
 
 ```csharp
+// 【未実装】戦闘パラメータキャッシュシステム
 public class BattleParameterCache
 {
     private readonly Dictionary<string, (BattleParameter parameters, DateTime calculated)> cache;
@@ -468,9 +476,9 @@ public class BattleParameterCache
 }
 ```
 
-## 拡張ポイント
+## 拡張ポイント【未実装】
 
-### エレメント属性システム
+### エレメント属性システム【未実装】
 ```csharp
 public enum ElementType
 {
@@ -485,7 +493,7 @@ public record ElementalDamage
 }
 ```
 
-### コンボシステム
+### コンボシステム【未実装】
 ```csharp
 public record ComboAttack
 {

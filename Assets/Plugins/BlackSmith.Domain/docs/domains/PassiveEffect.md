@@ -11,6 +11,7 @@ PassiveEffect ドメインは、プレイヤーに影響を与える一時的・
 
 #### EffectID
 ```csharp
+// 【部分実装】基本的なEffectIDは実装済みだが、BasicID継承ではない
 public record EffectID : BasicID
 {
     protected override string Prefix => "EFF_";
@@ -21,6 +22,7 @@ public record EffectID : BasicID
 
 #### BattleStatusEffect
 ```csharp
+// 【部分実装】基本的なBattleStatusEffectは実装済みだが、持続時間等の機能は未実装
 public record BattleStatusEffect
 {
     public EffectID Id { get; }
@@ -59,6 +61,7 @@ public record BattleStatusEffect
 
 #### BattleStatusEffectModel
 ```csharp
+// 【部分実装】基本的なパラメータは実装済みだが、乗算系パラメータは未実装
 public record BattleStatusEffectModel
 {
     public int MaxHealth { get; }
@@ -84,7 +87,7 @@ public record BattleStatusEffectModel
         ExperienceMultiplier = Math.Max(0.0f, experienceMultiplier);
     }
     
-    // 複数効果の統合
+    // 【未実装】複数効果の統合
     public static BattleStatusEffectModel Combine(IEnumerable<BattleStatusEffectModel> effects)
     {
         if (!effects.Any())
@@ -103,7 +106,7 @@ public record BattleStatusEffectModel
         );
     }
     
-    // 効果の逆転（デバフ除去用）
+    // 【未実装】効果の逆転（デバフ除去用）
     public BattleStatusEffectModel Negate()
     {
         return new BattleStatusEffectModel(
@@ -133,6 +136,7 @@ public enum EffectType
 
 #### EffectName
 ```csharp
+// 【未実装】効果名の値オブジェクト
 public record EffectName
 {
     public string Value { get; }
@@ -154,6 +158,7 @@ public record EffectName
 
 #### EffectCollection
 ```csharp
+// 【未実装】効果のコレクション管理システム
 public record EffectCollection
 {
     private readonly ImmutableArray<BattleStatusEffect> effects;
@@ -233,6 +238,7 @@ public record EffectCollection
 
 #### EffectFactory
 ```csharp
+// 【未実装】効果作成ファクトリー
 public static class EffectFactory
 {
     // 基本バフ効果
@@ -327,6 +333,7 @@ public static class EffectFactory
 
 #### スタッキングルール
 ```csharp
+// 【未実装】効果重複管理システム
 public static class EffectStackingRules
 {
     public static bool CanStack(BattleStatusEffect existingEffect, BattleStatusEffect newEffect)
@@ -368,6 +375,7 @@ public static class EffectStackingRules
 
 #### 最大効果数制限
 ```csharp
+// 【未実装】効果数制限システム
 public static class EffectLimits
 {
     public const int MaxEffectsPerCharacter = 20;
@@ -412,6 +420,7 @@ public static class EffectLimits
 ### 効果適用システム
 
 ```csharp
+// 【未実装】効果適用システム
 public static class EffectApplicationService
 {
     public static EffectCollection ApplyEffect(
@@ -470,6 +479,7 @@ public static class EffectApplicationService
 ### 戦闘効果統合
 
 ```csharp
+// 【未実装】戦闘パラメータへの効果統合システム
 public static class CombatEffectIntegration
 {
     public static BattleParameter ApplyEffectsToParameters(
@@ -504,6 +514,7 @@ public static class CombatEffectIntegration
 ### 効果管理
 
 ```csharp
+// 【未実装】効果のライフサイクル管理サービス
 public static class EffectManagementService
 {
     public static EffectCollection StartCombat(EffectCollection effects)
@@ -569,7 +580,7 @@ public static class EffectManagementService
 
 ### 条件付き効果システム
 ```csharp
-// 特定条件下でのみ発動する効果
+// 【未実装】特定条件下でのみ発動する効果システム
 public record ConditionalEffect : BattleStatusEffect
 {
     public IEffectCondition Condition { get; }
@@ -584,7 +595,7 @@ public interface IEffectCondition
 
 ### 効果連鎖システム
 ```csharp
-// 効果の終了時に別の効果を発動
+// 【未実装】効果の終了時に別の効果を発動するシステム
 public record ChainedEffect : BattleStatusEffect
 {
     public BattleStatusEffect? NextEffect { get; }
@@ -598,7 +609,7 @@ public record ChainedEffect : BattleStatusEffect
 
 ### 効果レベルシステム
 ```csharp
-// 効果の強度レベル
+// 【未実装】効果の強度レベルシステム
 public record LeveledEffect : BattleStatusEffect
 {
     public int Level { get; }
@@ -620,7 +631,7 @@ public record LeveledEffect : BattleStatusEffect
 
 ### 効果相互作用システム
 ```csharp
-// 複数効果間の相互作用
+// 【未実装】複数効果間の相互作用システム
 public static class EffectSynergy
 {
     public static BattleStatusEffect? CheckSynergy(

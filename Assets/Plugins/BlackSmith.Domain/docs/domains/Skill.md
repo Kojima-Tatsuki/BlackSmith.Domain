@@ -11,6 +11,7 @@ Skill ドメインは、プレイヤーのスキルシステムを管理しま�
 
 #### Skill（抽象基底クラス）
 ```csharp
+// 【部分実装】基本的なSkillクラスは実装済みだが、record型ではなくclass型
 public abstract record Skill
 {
     public SkillName Name { get; }
@@ -29,6 +30,7 @@ public abstract record Skill
 
 #### BattleSkill（戦闘スキル）
 ```csharp
+// 【部分実装】基本的なBattleSkillクラスは実装済みだが、このrecord型モデルは未実装
 public record BattleSkill : Skill
 {
     public override SkillType Type => SkillType.Battle;
@@ -44,6 +46,7 @@ public record BattleSkill : Skill
     }
 }
 
+// 【未実装】戦闘スキル効果システム
 public record BattleSkillEffect
 {
     public int AttackBonus { get; }
@@ -63,6 +66,7 @@ public record BattleSkillEffect
 
 #### ProductionSkill（生産スキル）
 ```csharp
+// 【部分実装】基本的なProductionSkillクラスは実装済みだが、このrecord型モデルは未実装
 public record ProductionSkill : Skill
 {
     public override SkillType Type => SkillType.Production;
@@ -96,6 +100,7 @@ public enum SkillType
 
 #### SkillName
 ```csharp
+// 【実装済み】スキル名の値オブジェクト
 public record SkillName
 {
     public string Value { get; }
@@ -115,6 +120,7 @@ public record SkillName
 
 #### SkillProficiency（熟練度）
 ```csharp
+// 【実装済み】スキル熟練度の管理クラス
 public record SkillProficiency
 {
     public int Value { get; }
@@ -150,6 +156,7 @@ public enum SkillRank
 
 #### SkillExperience（スキル経験値）
 ```csharp
+// 【実装済み】スキル経験値の管理クラス
 public record SkillExperience
 {
     public int Value { get; }
@@ -181,6 +188,7 @@ public record SkillExperience
 
 #### SkillAndProficiency（スキル・熟練度セット）
 ```csharp
+// 【実装済み】スキルと熟練度の組み合わせ
 public record SkillAndProficiency
 {
     public Skill Skill { get; }
@@ -204,6 +212,7 @@ public record SkillAndProficiency
 
 #### SkillAcquisitionConditions
 ```csharp
+// 【部分実装】基本的な取得条件は実装済みだが、詳細な条件チェックは不完全
 public record SkillAcquisitionConditions
 {
     public PlayerLevel Level { get; }
@@ -240,6 +249,7 @@ public record SkillAcquisitionConditions
 
 #### 条件チェック
 ```csharp
+// 【未実装】詳細なスキル取得条件チェックシステム
 public static class SkillAcquisitionChecker
 {
     public static bool CanAcquireSkill(Skill skill, PlayerCommonEntity player)
@@ -302,6 +312,7 @@ public static class SkillAcquisitionChecker
 
 #### 経験値獲得・熟練度上昇
 ```csharp
+// 【部分実装】基本的な経験値計算は実装済みだが、この統合システムは未実装
 public static class SkillExperienceCalculator
 {
     public static int CalculateExperienceGain(SkillType skillType, int actionDifficulty, int playerLevel)
@@ -342,6 +353,7 @@ public static class SkillExperienceCalculator
 
 #### 戦闘スキル効果計算
 ```csharp
+// 【未実装】戦闘スキル効果計算システム
 public static class BattleSkillEffectCalculator
 {
     public static BattleSkillEffect CalculateEffect(BattleSkill skill, SkillProficiency proficiency)
@@ -377,6 +389,7 @@ public static class BattleSkillEffectCalculator
 ### スキル習得プロセス
 
 ```csharp
+// 【未実装】スキル習得管理サービス
 public static class SkillLearningService
 {
     public static PlayerCommonEntity LearnSkill(
@@ -429,6 +442,7 @@ public static class SkillLearningService
 ### 生産スキル活用
 
 ```csharp
+// 【未実装】生産スキル活用サービス
 public static class ProductionSkillService
 {
     public static bool CanCraftItem(
@@ -473,6 +487,7 @@ public static class ProductionSkillService
 ### スキル管理
 
 ```csharp
+// 【未実装】統合スキル管理システム
 public static class SkillManager
 {
     public static IEnumerable<Skill> GetLearnableSkills(PlayerCommonEntity player, IEnumerable<Skill> allSkills)
@@ -530,7 +545,7 @@ public static class SkillManager
 
 ### スキルツリーシステム
 ```csharp
-// スキル間の依存関係をツリー構造で管理
+// 【未実装】スキル間の依存関係をツリー構造で管理
 public record SkillTree
 {
     public SkillTreeNode Root { get; }
@@ -547,7 +562,7 @@ public record SkillTreeNode
 
 ### スキルコンボシステム
 ```csharp
-// 複数スキルの組み合わせ効果
+// 【未実装】複数スキルの組み合わせ効果
 public record SkillCombo
 {
     public string Name { get; }
@@ -558,7 +573,7 @@ public record SkillCombo
 
 ### スキル特化システム
 ```csharp
-// スキルの特化方向
+// 【未実装】スキルの特化方向システム
 public enum SkillSpecialization
 {
     Damage,      // ダメージ特化
@@ -576,7 +591,7 @@ public record SpecializedSkill : Skill
 
 ### パッシブスキルシステム
 ```csharp
-// 常時発動するパッシブスキル
+// 【未実装】常時発動するパッシブスキル
 public record PassiveSkill : Skill
 {
     public PassiveSkillEffect PassiveEffect { get; }

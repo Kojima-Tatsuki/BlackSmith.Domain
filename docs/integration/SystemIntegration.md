@@ -5,13 +5,16 @@
 BlackSmith.Domain における複数ドメインを横断するシステム統合パターンを説明します。\
 複合システム間の連携、データフロー管理、エラーハンドリング、パフォーマンス最適化の戦略を詳述します。
 
-## 統合アーキテクチャパターン
+**実装状況**: 【未実装】システム統合パターンのすべての高度な機能は未実装。
 
-### 1. ファサードパターン（Facade Pattern）
+## 統合アーキテクチャパターン 【未実装】
+
+### 1. ファサードパターン（Facade Pattern） 【未実装】
 
 複数ドメインの複雑な相互作用を単一のインターフェースで隠蔽します。
 
 ```csharp
+// ゲームプレイ統合ファサード 【未実装】
 public class GameplayFacade
 {
     private readonly BattleSystem battleSystem;
@@ -31,7 +34,7 @@ public class GameplayFacade
         this.levelingSystem = levelingSystem;
     }
     
-    // 戦闘からレベリングまでの一連の流れ
+    // 戦闘からレベリングまでの一連の流れ 【未実装】
     public async Task<CombatSessionResult> ExecuteCombatSessionAsync(
         PlayerCommonEntity player,
         EquipmentInventory equipment,
@@ -39,13 +42,13 @@ public class GameplayFacade
         EffectCollection effects,
         EnemyParameters enemy)
     {
-        // 1. 戦闘システム初期化
+        // 1. 戦闘システム初期化 【未実装】
         var battleSequence = battleSystem.StartBattle(player, equipment, effects);
         
-        // 2. 戦闘実行
+        // 2. 戦闘実行 【未実装】
         var combatResult = await battleSystem.ExecuteCombatAsync(battleSequence, enemy);
         
-        // 3. 経験値・レベリング処理
+        // 3. 経験値・レベリング処理 【未実装】
         var levelingResult = await levelingSystem.ProcessCombatExperienceAsync(
             combatResult.UpdatedPlayer,
             combatResult.UpdatedEffects,
@@ -53,7 +56,7 @@ public class GameplayFacade
             ExperienceSource.Combat
         );
         
-        // 4. 装備耐久度処理（将来実装）
+        // 4. 装備耐久度処理 【未実装】
         var equipmentResult = await equipmentSystem.ProcessCombatWearAsync(
             levelingResult.UpdatedPlayer,
             equipment
@@ -70,21 +73,21 @@ public class GameplayFacade
         );
     }
     
-    // クラフトから装備まで統合フロー
+    // クラフトから装備まで統合フロー 【未実装】
     public async Task<CraftingSessionResult> ExecuteCraftingSessionAsync(
         PlayerCommonEntity player,
         InfiniteSlotInventory inventory,
         ICraftableItem targetItem,
         bool autoEquipIfBetter = false)
     {
-        // 1. クラフト実行
+        // 1. クラフト実行 【未実装】
         var craftingResult = await craftingSystem.ExecuteCraftingAsync(
             player, inventory, targetItem);
         
         if (!craftingResult.IsSuccess)
             return CraftingSessionResult.Failed(craftingResult.Message);
         
-        // 2. 自動装備チェック
+        // 2. 自動装備チェック 【未実装】
         if (autoEquipIfBetter && 
             craftingResult.CreatedItems.Any(item => item.Item is EquippableItem))
         {
@@ -117,17 +120,19 @@ public class GameplayFacade
 }
 ```
 
-### 2. メディエーターパターン（Mediator Pattern）
+### 2. メディエーターパターン（Mediator Pattern） 【未実装】
 
 ドメイン間の通信を中央集権的に管理します。
 
 ```csharp
+// ドメインメディエーター 【未実装】
 public interface IDomainMediator
 {
     Task<TResponse> SendAsync<TResponse>(IDomainRequest<TResponse> request);
     Task PublishAsync(IDomainEvent domainEvent);
 }
 
+// ドメインメディエーター実装 【未実装】
 public class DomainMediator : IDomainMediator
 {
     private readonly IServiceProvider serviceProvider;
@@ -168,11 +173,12 @@ public class DomainMediator : IDomainMediator
     }
 }
 
-// リクエスト例: 装備変更要求
+// リクエスト例: 装備変更要求 【未実装】
 public record ChangeEquipmentRequest(
     PlayerID PlayerId,
     EquippableItem NewEquipment) : IDomainRequest<EquipmentChangeResult>;
 
+// 装備変更ハンドラー 【未実装】
 public class ChangeEquipmentHandler : IDomainRequestHandler<ChangeEquipmentRequest, EquipmentChangeResult>
 {
     private readonly EquipmentIntegrationService equipmentService;
@@ -180,13 +186,13 @@ public class ChangeEquipmentHandler : IDomainRequestHandler<ChangeEquipmentReque
     
     public async Task<EquipmentChangeResult> HandleAsync(ChangeEquipmentRequest request)
     {
-        // 装備変更実行
+        // 装備変更実行 【未実装】
         var result = await equipmentService.ChangeEquipmentAsync(
             request.PlayerId, request.NewEquipment);
         
         if (result.IsSuccess)
         {
-            // イベント発行
+            // イベント発行 【未実装】
             await mediator.PublishAsync(new EquipmentChangedEvent(
                 request.PlayerId, request.NewEquipment));
         }
@@ -195,11 +201,12 @@ public class ChangeEquipmentHandler : IDomainRequestHandler<ChangeEquipmentReque
     }
 }
 
-// イベント例: 装備変更イベント
+// イベント例: 装備変更イベント 【未実装】
 public record EquipmentChangedEvent(
     PlayerID PlayerId,
     EquippableItem NewEquipment) : IDomainEvent;
 
+// 装備変更イベントハンドラー 【未実装】
 public class EquipmentChangedEventHandler : IDomainEventHandler<EquipmentChangedEvent>
 {
     private readonly BattleSystem battleSystem;
@@ -207,21 +214,22 @@ public class EquipmentChangedEventHandler : IDomainEventHandler<EquipmentChanged
     
     public async Task HandleAsync(EquipmentChangedEvent domainEvent)
     {
-        // 戦闘パラメータ再計算
+        // 戦闘パラメータ再計算 【未実装】
         await battleSystem.RecalculateParametersAsync(domainEvent.PlayerId);
         
-        // クエスト進行チェック（装備関連目標）
+        // クエスト進行チェック（装備関連目標） 【未実装】
         await questService.CheckEquipmentObjectivesAsync(
             domainEvent.PlayerId, domainEvent.NewEquipment);
     }
 }
 ```
 
-### 3. Sagaパターン（分散トランザクション）
+### 3. Sagaパターン（分散トランザクション） 【未実装】
 
 複数ドメインにまたがる複雑な業務プロセスを管理します。
 
 ```csharp
+// ドメインSagaパターン 【未実装】
 public abstract class DomainSaga
 {
     protected readonly List<SagaStep> steps = new();
@@ -269,7 +277,7 @@ public abstract class DomainSaga
     }
 }
 
-// 例: アイテム購入Saga
+// 例: アイテム購入Saga 【未実装】
 public class ItemPurchaseSaga : DomainSaga
 {
     private readonly PlayerCommonEntity player;
@@ -287,20 +295,21 @@ public class ItemPurchaseSaga : DomainSaga
     
     private void SetupSteps()
     {
-        // Step 1: 通貨減算
+        // Step 1: 通貨減算 【未実装】
         steps.Add(new DeductCurrencyStep(player.Id, price));
         
-        // Step 2: アイテム追加
+        // Step 2: アイテム追加 【未実装】
         steps.Add(new AddItemToInventoryStep(player.Id, purchaseItem, 1));
         
-        // Step 3: 購入履歴記録
+        // Step 3: 購入履歴記録 【未実装】
         steps.Add(new RecordPurchaseHistoryStep(player.Id, purchaseItem, price));
         
-        // Step 4: クエスト進行チェック
+        // Step 4: クエスト進行チェック 【未実装】
         steps.Add(new CheckQuestProgressStep(player.Id, purchaseItem));
     }
 }
 
+// 通貨減算ステップ 【未実装】
 public class DeductCurrencyStep : SagaStep
 {
     private readonly PlayerID playerId;
@@ -308,23 +317,24 @@ public class DeductCurrencyStep : SagaStep
     
     public override async Task ExecuteAsync()
     {
-        // Inventory ドメイン: 通貨減算
+        // Inventory ドメイン: 通貨減算 【未実装】
         await walletService.DeductCurrencyAsync(playerId, amount);
     }
     
     public override async Task CompensateAsync()
     {
-        // 補償: 通貨返却
+        // 補償: 通貨返却 【未実装】
         await walletService.AddCurrencyAsync(playerId, amount);
     }
 }
 ```
 
-## イベント駆動アーキテクチャ
+## イベント駆動アーキテクチャ 【未実装】
 
-### 1. ドメインイベント設計
+### 1. ドメインイベント設計 【未実装】
 
 ```csharp
+// ドメインイベント基底インターフェース 【未実装】
 public interface IDomainEvent
 {
     Guid EventId { get; }
@@ -332,6 +342,7 @@ public interface IDomainEvent
     string EventType { get; }
 }
 
+// ドメインイベント基底クラス 【未実装】
 public abstract record DomainEvent : IDomainEvent
 {
     public Guid EventId { get; } = Guid.NewGuid();
@@ -339,7 +350,7 @@ public abstract record DomainEvent : IDomainEvent
     public virtual string EventType => GetType().Name;
 }
 
-// 具体的なイベント定義
+// 具体的なイベント定義 【未実装】
 public record PlayerLevelUpEvent(
     PlayerID PlayerId, 
     int OldLevel, 
@@ -358,48 +369,51 @@ public record QuestCompletedEvent(
     ImmutableArray<QuestReward> Rewards) : DomainEvent;
 ```
 
-### 2. イベントハンドラー
+### 2. イベントハンドラー 【未実装】
 
 ```csharp
-// レベルアップイベントの複数ハンドラー
+// レベルアップイベントの複数ハンドラー 【未実装】
 public class LevelUpQuestProgressHandler : IDomainEventHandler<PlayerLevelUpEvent>
 {
     private readonly QuestProgressService questService;
     
     public async Task HandleAsync(PlayerLevelUpEvent evt)
     {
-        // レベル到達目標のあるクエストの進行更新
+        // レベル到達目標のあるクエストの進行更新 【未実装】
         await questService.UpdateLevelObjectivesAsync(evt.PlayerId, evt.NewLevel);
     }
 }
 
+// レベルアップスキルアンロックハンドラー 【未実装】
 public class LevelUpSkillUnlockHandler : IDomainEventHandler<PlayerLevelUpEvent>
 {
     private readonly SkillUnlockService skillService;
     
     public async Task HandleAsync(PlayerLevelUpEvent evt)
     {
-        // 新レベルで習得可能になったスキルの通知
+        // 新レベルで習得可能になったスキルの通知 【未実装】
         await skillService.CheckNewSkillUnlocksAsync(evt.PlayerId, evt.NewLevel);
     }
 }
 
+// レベルアップ効果適用ハンドラー 【未実装】
 public class LevelUpEffectApplicationHandler : IDomainEventHandler<PlayerLevelUpEvent>
 {
     private readonly PassiveEffectService effectService;
     
     public async Task HandleAsync(PlayerLevelUpEvent evt)
     {
-        // レベルアップボーナス効果の適用
+        // レベルアップボーナス効果の適用 【未実装】
         var levelUpBuff = EffectFactory.CreateExperienceBoost(1.2f, 10);
         await effectService.ApplyEffectAsync(evt.PlayerId, levelUpBuff);
     }
 }
 ```
 
-### 3. イベントストア（将来拡張）
+### 3. イベントストア（将来拡張） 【未実装】
 
 ```csharp
+// イベントストアインターフェース 【未実装】
 public interface IEventStore
 {
     Task SaveEventAsync(IDomainEvent domainEvent);
@@ -407,6 +421,7 @@ public interface IEventStore
     Task<IEnumerable<IDomainEvent>> GetEventsByTypeAsync(string eventType);
 }
 
+// インメモリイベントストア実装 【未実装】
 public class InMemoryEventStore : IEventStore
 {
     private readonly ConcurrentDictionary<Guid, List<IDomainEvent>> eventsByAggregate = new();
@@ -414,7 +429,7 @@ public class InMemoryEventStore : IEventStore
     
     public async Task SaveEventAsync(IDomainEvent domainEvent)
     {
-        // 集約別保存
+        // 集約別保存 【未実装】
         var aggregateId = ExtractAggregateId(domainEvent);
         eventsByAggregate.AddOrUpdate(
             aggregateId,
@@ -422,7 +437,7 @@ public class InMemoryEventStore : IEventStore
             (key, existing) => existing.Concat([domainEvent]).ToList()
         );
         
-        // 型別保存
+        // 型別保存 【未実装】
         eventsByType.AddOrUpdate(
             domainEvent.EventType,
             [domainEvent],
@@ -434,7 +449,7 @@ public class InMemoryEventStore : IEventStore
     
     private Guid ExtractAggregateId(IDomainEvent domainEvent)
     {
-        // リフレクションまたはパターンマッチングで集約IDを抽出
+        // リフレクションまたはパターンマッチングで集約IDを抽出 【未実装】
         return domainEvent switch
         {
             PlayerLevelUpEvent evt => Guid.Parse(evt.PlayerId.Value.Split('_')[1]),
@@ -445,11 +460,12 @@ public class InMemoryEventStore : IEventStore
 }
 ```
 
-## エラーハンドリング統合
+## エラーハンドリング統合 【未実装】
 
-### 1. 階層化エラーハンドリング
+### 1. 階層化エラーハンドリング 【未実装】
 
 ```csharp
+// ドメイン例外基底クラス 【未実装】
 public abstract class DomainException : Exception
 {
     public string DomainName { get; }
@@ -463,7 +479,7 @@ public abstract class DomainException : Exception
     }
 }
 
-// ドメイン固有例外
+// ドメイン固有例外 【未実装】
 public class CharacterDomainException : DomainException
 {
     public CharacterDomainException(string errorCode, string message)
@@ -476,6 +492,7 @@ public class CharacterDomainException : DomainException
         new("INSUFFICIENT_STATUS_POINTS", $"Required {required} points, available {available}");
 }
 
+// アイテムドメイン例外 【未実装】
 public class ItemDomainException : DomainException
 {
     public ItemDomainException(string errorCode, string message)
@@ -485,7 +502,7 @@ public class ItemDomainException : DomainException
         new("INVALID_ENHANCEMENT", $"Enhancement failed: {reason}");
 }
 
-// 統合エラーハンドラー
+// 統合エラーハンドラー 【未実装】
 public class DomainErrorHandler
 {
     public DomainOperationResult HandleError(Exception exception)
@@ -531,9 +548,10 @@ public class DomainErrorHandler
 }
 ```
 
-### 2. Circuit Breaker パターン
+### 2. Circuit Breaker パターン 【未実装】
 
 ```csharp
+// ドメインサーキットブレーカー 【未実装】
 public class DomainCircuitBreaker
 {
     private readonly string serviceName;
@@ -584,6 +602,7 @@ public class DomainCircuitBreaker
     }
 }
 
+// サーキットブレーカー状態 【未実装】
 public enum CircuitBreakerState
 {
     Closed,   // 正常動作
@@ -592,11 +611,12 @@ public enum CircuitBreakerState
 }
 ```
 
-## パフォーマンス最適化
+## パフォーマンス最適化 【未実装】
 
-### 1. キャッシュ統合戦略
+### 1. キャッシュ統合戦略 【未実装】
 
 ```csharp
+// ドメインキャッシュマネージャー 【未実装】
 public class DomainCacheManager
 {
     private readonly IMemoryCache memoryCache;
@@ -610,13 +630,13 @@ public class DomainCacheManager
     {
         var cacheKey = $"domain:{typeof(T).Name}:{key}";
         
-        // メモリキャッシュ確認
+        // メモリキャッシュ確認 【未実装】
         if (memoryCache.TryGetValue(cacheKey, out T cachedValue))
         {
             return cachedValue;
         }
         
-        // 分散キャッシュ確認（指定時のみ）
+        // 分散キャッシュ確認（指定時のみ） 【未実装】
         if (level == CacheLevel.Distributed)
         {
             var distributedValue = await GetFromDistributedCacheAsync<T>(cacheKey);
@@ -627,10 +647,10 @@ public class DomainCacheManager
             }
         }
         
-        // ファクトリーから取得
+        // ファクトリーから取得 【未実装】
         var value = await factory();
         
-        // キャッシュ保存
+        // キャッシュ保存 【未実装】
         var expirationTime = expiration ?? TimeSpan.FromMinutes(30);
         memoryCache.Set(cacheKey, value, expirationTime);
         
@@ -644,19 +664,20 @@ public class DomainCacheManager
     
     public async Task InvalidateAsync(string pattern)
     {
-        // パターンマッチによるキャッシュ無効化
+        // パターンマッチによるキャッシュ無効化 【未実装】
         await InvalidateMemoryCacheAsync(pattern);
         await InvalidateDistributedCacheAsync(pattern);
     }
 }
 
+// キャッシュレベル定義 【未実装】
 public enum CacheLevel
 {
     Memory,      // メモリキャッシュのみ
     Distributed  // 分散キャッシュまで使用
 }
 
-// キャッシュ適用例
+// キャッシュ適用例 【未実装】
 public class CachedPlayerService
 {
     private readonly DomainCacheManager cacheManager;
@@ -676,15 +697,16 @@ public class CachedPlayerService
     {
         await playerRepository.SaveAsync(player);
         
-        // キャッシュ無効化
+        // キャッシュ無効化 【未実装】
         await cacheManager.InvalidateAsync($"*{player.Id.Value}*");
     }
 }
 ```
 
-### 2. バッチ処理最適化
+### 2. バッチ処理最適化 【未実装】
 
 ```csharp
+// ドメインバッチプロセッサー 【未実装】
 public class DomainBatchProcessor
 {
     private readonly ConcurrentQueue<IDomainOperation> operationQueue = new();
@@ -703,6 +725,7 @@ public class DomainBatchProcessor
     {
         operationQueue.Enqueue(operation);
         
+        // バッチサイズに達したら即座処理 【未実装】
         if (operationQueue.Count >= maxBatchSize)
         {
             _ = Task.Run(() => ProcessBatch(null));
@@ -715,7 +738,7 @@ public class DomainBatchProcessor
     {
         var batch = new List<IDomainOperation>();
         
-        // キューから操作を取得
+        // キューから操作を取得 【未実装】
         while (batch.Count < maxBatchSize && operationQueue.TryDequeue(out var operation))
         {
             batch.Add(operation);
@@ -723,7 +746,7 @@ public class DomainBatchProcessor
         
         if (!batch.Any()) return;
         
-        // 種別ごとにグループ化して効率的に処理
+        // 種別ごとにグループ化して効率的に処理 【未実装】
         var groupedOperations = batch.GroupBy(op => op.GetType());
         
         var tasks = groupedOperations.Select(async group =>
@@ -734,7 +757,7 @@ public class DomainBatchProcessor
             }
             catch (Exception ex)
             {
-                // バッチ内エラーはログのみ
+                // バッチ内エラーはログのみ 【未実装】
                 Console.WriteLine($"Batch processing error: {ex.Message}");
             }
         });
@@ -746,7 +769,7 @@ public class DomainBatchProcessor
     {
         var operationType = operations.First().GetType();
         
-        // 操作種別に応じた最適化処理
+        // 操作種別に応じた最適化処理 【未実装】
         switch (operationType.Name)
         {
             case nameof(SkillExperienceUpdateOperation):
@@ -758,7 +781,7 @@ public class DomainBatchProcessor
                 break;
                 
             default:
-                // 通常の個別処理
+                // 通常の個別処理 【未実装】
                 var tasks = operations.Select(op => op.ExecuteAsync());
                 await Task.WhenAll(tasks);
                 break;
@@ -767,4 +790,6 @@ public class DomainBatchProcessor
 }
 ```
 
-このシステム統合パターンにより、BlackSmith.Domain は複雑なドメイン間連携を効率的かつ安全に管理できています。
+このシステム統合パターンにより、BlackSmith.Domain は複雑なドメイン間連携を効率的かつ安全に管理できる設計となっています。
+
+**注意**: 上記のシステム統合機能のほぼ全てが未実装であり、将来の拡張に向けた設計指針として文書化されています。

@@ -238,6 +238,7 @@ public record ChunkModel
     }
 }
 
+// 【未実装】位置管理システム
 public record Position
 {
     public int X { get; }
@@ -260,6 +261,7 @@ public record Position
     }
 }
 
+// 【未実装】チャンクサイズ管理
 public record ChunkSize
 {
     public int Width { get; }

@@ -64,6 +64,7 @@ public enum EquipmentType
 
 #### 強化パラメータ
 ```csharp
+// 【部分実装】基本構造は実装済みだが、攻撃力・防御力計算メソッドは未実装
 public record EnhancementParameter
 {
     public int Sharpness { get; }   // 鋭さ（攻撃力に寄与）
@@ -81,10 +82,10 @@ public record EnhancementParameter
         Durability = Math.Max(0, durability);
     }
     
-    // 攻撃力計算
+    // 【未実装】攻撃力計算
     public int GetAttackValue() => Sharpness + Speed + Accuracy;
     
-    // 防御力計算
+    // 【未実装】防御力計算
     public int GetDefenseValue() => Weight + Durability;
 }
 ```
@@ -93,14 +94,17 @@ public record EnhancementParameter
 
 #### ICraftableItem
 ```csharp
+// 【部分実装】基本インターフェースは実装済みだが、レシピシステムは未実装
 public interface ICraftableItem : IItem
 {
+    // 【未実装】CraftingRecipeプロパティ
     CraftingRecipe Recipe { get; }
 }
 ```
 
 #### ICraftMaterialItem
 ```csharp
+// 【実装済み】素材アイテムのマーカーインターフェース
 public interface ICraftMaterialItem : IItem
 {
     // 素材アイテムのマーカーインターフェース
@@ -110,9 +114,12 @@ public interface ICraftMaterialItem : IItem
 
 #### CraftingRecipe
 ```csharp
+// 【部分実装】基本構造は実装済みだが、数量管理システムは未実装
 public record CraftingRecipe
 {
+    // 【未実装】数量管理機能付きの必要素材
     public ImmutableArray<ItemAndQuantity> RequiredMaterials { get; }
+    // 【未実装】数量管理機能付きの生成物
     public ImmutableArray<ItemAndQuantity> Products { get; }
     
     public CraftingRecipe(
@@ -124,6 +131,7 @@ public record CraftingRecipe
     }
 }
 
+// 【未実装】アイテムと数量のペア
 public record ItemAndQuantity
 {
     public IItem Item { get; }
@@ -189,6 +197,7 @@ public record EnhancementParameter
 
 #### クラフト実行条件
 ```csharp
+// 【未実装】クラフト可能性チェック機能
 public bool CanCraft(CraftingRecipe recipe, IInventory inventory)
 {
     // 必要素材の完全一致チェック
@@ -205,6 +214,7 @@ public bool CanCraft(CraftingRecipe recipe, IInventory inventory)
 
 #### クラフト結果
 ```csharp
+// 【未実装】クラフト結果管理システム
 public record CraftResult
 {
     public bool IsSuccess { get; }
@@ -223,6 +233,7 @@ public record CraftResult
 
 #### スタック制限
 ```csharp
+// 【未実装】アイテム種別によるスタック制限システム
 public static int GetMaxStackSize(IItem item) => item switch
 {
     ICraftMaterialItem => 999,      // 素材: 999個まで
@@ -236,7 +247,7 @@ public static int GetMaxStackSize(IItem item) => item switch
 ### 装備品作成
 
 ```csharp
-// 基本装備の作成
+// 【未実装】基本装備の作成ファクトリー
 public static EquippableItem CreateBasicWeapon(string name)
 {
     return new EquippableItem(
@@ -246,7 +257,7 @@ public static EquippableItem CreateBasicWeapon(string name)
     );
 }
 
-// 強化装備の作成
+// 【部分実装】強化装備の作成（基本強化システムは実装済み）
 public static EquippableItem EnhanceEquipment(
     EquippableItem baseEquipment,
     int sharpnessBonus = 0,
@@ -271,6 +282,7 @@ public static EquippableItem EnhanceEquipment(
 ### クラフト実行
 
 ```csharp
+// 【未実装】クラフト実行システム
 public static CraftResult ExecuteCraft(CraftingRecipe recipe, IInventory inventory)
 {
     // 1. クラフト可能性チェック
@@ -290,6 +302,7 @@ public static CraftResult ExecuteCraft(CraftingRecipe recipe, IInventory invento
 ### 装備比較
 
 ```csharp
+// 【未実装】装備比較システム
 public static class EquipmentComparer
 {
     public static int CompareAttackPower(EquippableItem item1, EquippableItem item2)
@@ -332,25 +345,28 @@ public static class EquipmentComparer
 
 ### 装備条件システム
 ```csharp
-// 将来的な拡張例：装備条件の追加
+// 【部分実装】基本的な装備条件は実装済み（RequireParameter）
+// 将来的な拡張例：より詳細な装備条件
 public record EquipmentRequirements
 {
     public PlayerLevel RequiredLevel { get; }
     public Strength RequiredStrength { get; }
     public Agility RequiredAgility { get; }
+    // 【未実装】スキル要件システム
     public ImmutableArray<SkillAndProficiency> RequiredSkills { get; }
 }
 
 public record EquippableItem : Item
 {
     // 既存プロパティ...
+    // 【未実装】詳細な装備条件システム
     public EquipmentRequirements? Requirements { get; }
 }
 ```
 
 ### アイテム品質システム
 ```csharp
-// 品質システムの追加
+// 【未実装】品質システムの追加
 public enum ItemQuality
 {
     Common = 1,    // 一般
@@ -363,13 +379,14 @@ public enum ItemQuality
 public record Item : IItem
 {
     // 既存プロパティ...
+    // 【未実装】品質システム
     public ItemQuality Quality { get; }
 }
 ```
 
 ### 耐久度システム
 ```csharp
-// 装備の耐久度システム
+// 【未実装】装備の耐久度システム
 public record Durability
 {
     public int Current { get; }
@@ -382,13 +399,14 @@ public record Durability
 public record EquippableItem : Item
 {
     // 既存プロパティ...
+    // 【未実装】耐久度システム
     public Durability Durability { get; }
 }
 ```
 
 ### 特殊効果システム
 ```csharp
-// アイテム固有の特殊効果
+// 【未実装】アイテム固有の特殊効果
 public interface IItemEffect
 {
     string EffectName { get; }
@@ -398,6 +416,7 @@ public interface IItemEffect
 public record EquippableItem : Item
 {
     // 既存プロパティ...
+    // 【未実装】特殊効果システム
     public ImmutableArray<IItemEffect> SpecialEffects { get; }
 }
 ```
