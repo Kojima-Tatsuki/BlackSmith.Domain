@@ -1,8 +1,10 @@
-# クラフトシステム (Crafting System)
+# クラフトシステム (Crafting System)【未実装】
 
 ## 概要
 
-クラフトシステムは、Item、Inventory、Skill の3つのドメインを統合し、アイテムの作成・精錬・修理を管理するシステムです。\
+クラフトシステムは、Item、Inventory、Skill の3つのドメインを統合し、アイテムの作成・精錬・修理を管理するシステムです。
+
+※ **現在、クラフトシステム全体が未実装です。**以下のドキュメントは設計上の仕様であり、実際の実装は存在しません。\
 素材の管理、スキル要件のチェック、成功率の計算、結果物の生成を統合的に処理します。
 
 ## システム構成
@@ -29,10 +31,11 @@ graph TD
 
 ## クラフト統合サービス
 
-### CraftingIntegrationService
+### CraftingIntegrationService【未実装】
 複数ドメインを統合したクラフト処理の中核サービス。
 
 ```csharp
+// 【未実装】クラフト統合サービス - 設計上の仕様のみ
 public class CraftingIntegrationService
 {
     public CraftingResult ExecuteCrafting(
@@ -170,11 +173,12 @@ public class CraftingIntegrationService
 }
 ```
 
-## クラフト成功率システム
+## クラフト成功率システム【未実装】
 
-### 熟練度ベース成功率
+### 熟練度ベース成功率【未実装】
 
 ```csharp
+// 【未実装】クラフト成功率計算システム
 public static class CraftingSuccessCalculator
 {
     public static float CalculateBaseSuccessRate(SkillProficiency proficiency)
@@ -250,11 +254,12 @@ public static class CraftingSuccessCalculator
 }
 ```
 
-## 特殊クラフトシステム
+## 特殊クラフトシステム【未実装】
 
-### 強化クラフト
+### 強化クラフト【未実装】
 
 ```csharp
+// 【未実装】強化クラフトサービス
 public class EnhancementCraftingService
 {
     public EnhancementResult EnhanceEquipment(
@@ -382,11 +387,12 @@ public record EnhancementResult
 }
 ```
 
-## 修理システム
+## 修理システム【未実装】
 
-### 装備修理（将来拡張）
+### 装備修理【未実装】（将来拡張）
 
 ```csharp
+// 【未実装】修理システム
 public class RepairCraftingService
 {
     public RepairResult RepairEquipment(
@@ -402,11 +408,12 @@ public class RepairCraftingService
 }
 ```
 
-## 量産システム
+## 量産システム【未実装】
 
-### バッチクラフト
+### バッチクラフト【未実装】
 
 ```csharp
+// 【未実装】バッチクラフトサービス
 public class BatchCraftingService
 {
     public BatchCraftingResult ExecuteBatchCrafting(
@@ -507,9 +514,9 @@ public record BatchCraftingResult
 }
 ```
 
-## 結果処理
+## 結果処理【未実装】
 
-### CraftingResult
+### CraftingResult【未実装】
 
 ```csharp
 public record CraftingResult
@@ -539,9 +546,9 @@ public record CraftingResult
 }
 ```
 
-## レシピ管理
+## レシピ管理【未実装】
 
-### レシピ発見システム（将来拡張）
+### レシピ発見システム【未実装】（将来拡張）
 
 ```csharp
 public interface IRecipeDiscoveryService
@@ -571,9 +578,9 @@ public class SkillBasedRecipeDiscovery : IRecipeDiscoveryService
 }
 ```
 
-## 拡張ポイント
+## 拡張ポイント【未実装】
 
-### 自動クラフトシステム
+### 自動クラフトシステム【未実装】
 ```csharp
 public class AutoCraftingService
 {
@@ -588,7 +595,7 @@ public class AutoCraftingService
 }
 ```
 
-### クラフト品質システム
+### クラフト品質システム【未実装】
 ```csharp
 public enum CraftQuality
 {

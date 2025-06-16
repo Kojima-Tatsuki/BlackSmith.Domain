@@ -1,8 +1,10 @@
-# レベリングシステム (Leveling System)
+# レベリングシステム (Leveling System)【部分実装】
 
 ## 概要
 
-レベリングシステムは、Character、Skill、PassiveEffect の3つのドメインを統合し、プレイヤーの成長と進歩を管理するシステムです。\
+レベリングシステムは、Character、Skill、PassiveEffect の3つのドメインを統合し、プレイヤーの成長と進歩を管理するシステムです。
+
+※ **基本的なレベルシステムは実装済みですが、ステータスポイント配分や高度な統合機能は未実装です。**\
 経験値獲得、レベルアップ、ステータス振り分け、スキル経験値、効果による成長補正を統合的に処理します。
 
 ## システム構成
@@ -27,10 +29,11 @@ graph TD
 
 ## レベリング統合サービス
 
-### LevelingIntegrationService
+### LevelingIntegrationService【未実装】
 複数ドメインを統合した成長管理の中核サービス。
 
 ```csharp
+// 【未実装】レベリング統合サービス - 基本レベル機能は個別クラスに存在
 public class LevelingIntegrationService
 {
     public LevelingResult ProcessExperienceGain(
@@ -64,6 +67,7 @@ public class LevelingIntegrationService
         );
     }
     
+    // 【未実装】ステータスポイント配分機能
     public StatusAllocationResult AllocateStatusPoints(
         PlayerCommonEntity player,
         int strengthIncrease,
@@ -261,12 +265,13 @@ public class LevelingIntegrationService
 }
 ```
 
-## 経験値計算システム
+## 経験値計算システム【未実装】
 
-### ExperienceCalculationService
+### ExperienceCalculationService【未実装】
 様々な活動による経験値計算を統合管理。
 
 ```csharp
+// 【未実装】経験値計算サービス
 public class ExperienceCalculationService
 {
     public int CalculateCombatExperience(
@@ -411,12 +416,13 @@ public enum ExperienceSource
 }
 ```
 
-## 成長予測システム
+## 成長予測システム【未実装】
 
-### GrowthProjectionService
+### GrowthProjectionService【未実装】
 プレイヤーの成長予測と最適化提案。
 
 ```csharp
+// 【未実装】成長予測サービス
 public class GrowthProjectionService
 {
     public GrowthProjection ProjectNextLevel(PlayerCommonEntity player)
@@ -685,9 +691,9 @@ public class GrowthProjectionService
 }
 ```
 
-## 結果処理
+## 結果処理【未実装】
 
-### LevelingResult & 関連クラス
+### LevelingResult & 関連クラス【未実装】
 
 ```csharp
 public record LevelingResult
@@ -835,9 +841,9 @@ public record StatusAllocation
 }
 ```
 
-## 拡張ポイント
+## 拡張ポイント【未実装】
 
-### 才能システム
+### 才能システム【未実装】
 ```csharp
 public enum Talent
 {
@@ -854,7 +860,7 @@ public record TalentModifier
 }
 ```
 
-### 上限突破システム
+### 上限突破システム【未実装】
 ```csharp
 public record LevelCapBreakthrough
 {
