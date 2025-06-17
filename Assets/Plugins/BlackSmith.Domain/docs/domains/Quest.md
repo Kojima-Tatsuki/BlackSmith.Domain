@@ -2,767 +2,277 @@
 
 ## 概要
 
-Quest ドメインは、ゲーム内のクエスト・依頼システムを管理します。\
-プレイヤーが受注できる任務、進行状況の追跡、報酬管理、締切システムなどを統合的に扱います。
+Quest ドメインは、ゲーム内のクエスト・依頼システムを管理するドメインです。
+
+### 主要な責務
+- **クエスト基本情報管理**：クエスト名・説明・依頼人の管理
+- **依頼人情報管理**：CharacterID による依頼人追跡
+
+### 現在の実装状況
+- **QuestModel**：基本的なクエストデータモデルを実装（最小限）
+
+**注意**：Quest ドメインは現在プレースホルダー状態で、基本的なデータモデル以外の機能は未実装です。
+
+### 設計の特徴
+- **Character ドメイン連携**：CharacterID による依頼人管理
+- **ミニマル設計**：必要最小限の基本情報のみ実装
+
+このドメインは現在 Character ドメインとの基本的な連携のみ実装されており、将来的な拡張のための基盤として位置づけられています。
 
 ## ドメインモデル
 
-### 基底クラス・識別子
+### 識別子
 
-#### QuestID
+#### 未実装識別子
+
+**注意**：現在の実装では以下の識別子が未実装です：
+- `QuestID` - クエスト識別子（BasicID 継承）
+- `ObjectiveID` - 目標識別子
+
+### エンティティ・値オブジェクト
+
+#### 実装済みエンティティ
+
+##### QuestModel (QuestModel.cs)
 ```csharp
-// 【未実装】クエストIDシステム
-public record QuestID : BasicID
+// 実装済み：基本的なクエストモデル
+internal class QuestModel
 {
-    protected override string Prefix => "QST_";
+    public string QuestName { get; }
+    public string Discription { get; } // 注意：Descriptionのtypo
+    private CharacterID ClientId { get; } // 依頼人ID
+    
+    internal QuestModel(string questName, string discription, CharacterID clientId);
 }
 ```
 
-### クエストエンティティ
+**実装の特徴**：
+- **internal クラス**: 外部からの直接アクセスを制限
+- **プロパティベース**: 基本的な読み取り専用プロパティ
+- **CharacterID 連携**: Character ドメインとの依存関係
+- **typo**: "Discription" は "Description" のスペルミス
 
-#### QuestModel
+#### 未実装エンティティ
+
+**注意**：以下のエンティティはドキュメントに記載されていますが、現在未実装です：
+
+##### 値オブジェクト
+- `QuestTitle` - クエストタイトル値オブジェクト
+- `QuestDescription` - クエスト説明値オブジェクト
+- `ObjectiveDescription` - 目標説明値オブジェクト
+
+##### エンティティ
+- `QuestObjective` - クエスト目標管理
+- `QuestReward` - クエスト報酬システム
+
+##### 列挙型
+- `QuestStatus` - クエスト状態（Available/InProgress/Completed/Failed/Expired）
+- `QuestType` - クエスト種別（Main/Side/Daily/Weekly/Event/Guild）
+- `QuestDifficulty` - クエスト難易度（Easy/Normal/Hard/Expert/Master）
+- `ObjectiveType` - 目標種別（KillEnemies/CollectItems/CraftItems等）
+- `RewardType` - 報酬種別（Item/Currency/Experience）
+
+## ビジネスルール
+
+### 実装済みルール
+
+現在、ビジネスルール層の実装は存在しません。QuestModel は基本的なデータコンテナとしてのみ機能しています。
+
+#### 基本的なデータ制約
 ```csharp
-// 【部分実装】基本的なQuestModelクラスは存在するが、このrecord型の詳細モデルは未実装
-public record QuestModel
+// QuestModel.cs の実装済み制約（最小限）
+internal QuestModel(string questName, string discription, CharacterID clientId)
 {
-    public QuestID Id { get; }
-    public QuestTitle Title { get; }
-    public QuestDescription Description { get; }
-    public PlayerID? ClientId { get; }          // 依頼人（NPCまたはプレイヤー）
-    public QuestType Type { get; }
-    public QuestDifficulty Difficulty { get; }
-    public ImmutableArray<QuestReward> Rewards { get; }
-    public ImmutableArray<QuestObjective> Objectives { get; }
-    public DateTime? Deadline { get; }
+    QuestName = questName;
+    Discription = discription;
+    ClientId = clientId;
+    // 現在は引数の null チェック等も未実装
+}
+```
+
+### 未実装ルール
+
+**注意**：以下のビジネスルールは将来実装予定ですが、現在未実装です：
+
+#### クエスト状態管理
+- **状態遷移制御**：Available → InProgress → Completed/Failed
+- **期限切れ処理**：時間ベースの期限切れ判定
+- **放棄処理**：進行中クエストの放棄機能
+
+#### 目標管理システム
+- **進行状況追跡**：各目標の達成進度管理
+- **完了判定**：全目標完了による自動クエスト完了
+- **進行条件**：目標更新の可能性チェック
+
+#### 報酬システム
+- **報酬受取制限**：完了済みクエストのみ報酬受取可能
+- **インベントリ制限**：アイテム報酬のインベントリ容量チェック
+- **重複受取防止**：同一クエストの報酬重複受取防止
+
+## ゲームロジック
+
+### 実装済み機能
+
+#### 基本的なクエスト作成
+```csharp
+// QuestModel の基本使用例
+var clientId = new CharacterID(); // Character ドメインから
+var quest = new QuestModel(
+    "アイアンソードを作ろう",
+    "アイアンソードを1本作成してください",
+    clientId
+);
+
+// アクセス
+string name = quest.QuestName;
+string description = quest.Discription; // typo注意
+// ClientId は private のためアクセス不可
+```
+
+### 未実装機能
+
+**注意**：以下の機能は将来実装予定ですが、現在未実装です：
+
+#### クエスト管理システム
+- **クエスト受注**：プレイヤーによるクエスト受注処理
+- **クエスト放棄**：進行中クエストの放棄処理
+- **クエスト完了**：目標達成による自動完了判定
+- **クエスト失敗**：期限切れ・条件不達による失敗処理
+
+#### 目標追跡システム
+- **進行状況更新**：ゲームイベントによる目標進捗更新
+- **達成通知**：目標達成時の通知システム
+- **複数目標管理**：並行する複数目標の同時追跡
+
+#### 報酬処理システム
+- **報酬算出**：クエスト完了時の報酬計算
+- **報酬付与**：プレイヤーへの報酬アイテム・経験値付与
+- **インベントリ統合**：Inventory ドメインとの報酬アイテム連携
+
+#### クエスト生成システム
+- **ファクトリーパターン**：標準的なクエスト作成機能
+- **動的生成**：プレイヤーレベルに応じた自動クエスト生成
+- **テンプレート**：再利用可能なクエストテンプレート
+
+## 他ドメインとの連携
+
+### Character ドメインとの連携
+
+#### 実装済み連携
+- **依頼人ID管理**: CharacterID による依頼人追跡
+
+```csharp
+// 実装済みの連携機能
+internal class QuestModel
+{
+    private CharacterID ClientId { get; } // Character ドメイン連携
+}
+```
+
+#### 設計上の連携点
+- **依頼人識別**: Character ドメインのCharacterID を使用
+- **データ依存**: Character ドメインへの直接依存
+
+### 将来の連携可能性
+> **⚠️ 要更新**: 以下は将来の拡張案であり、現在は未実装です
+- **Item ドメイン**: アイテム収集目標、アイテム報酬システム
+- **Inventory ドメイン**: 報酬アイテムの格納、容量チェック
+- **Field ドメイン**: 位置到達目標、エリア限定クエスト
+- **Skill ドメイン**: スキル習得目標、制作クエスト
+- **Currency ドメイン**: 通貨報酬システム
+
+## 拡張ポイント
+
+### 実装可能な拡張
+
+#### 基本的なクエスト状態管理
+```csharp
+// 将来実装可能：クエスト状態追加
+public enum QuestStatus
+{
+    Available,  // 受注可能
+    InProgress, // 進行中
+    Completed,  // 完了
+    Failed,     // 失敗
+    Expired     // 期限切れ
+}
+
+internal class EnhancedQuestModel : QuestModel
+{
     public QuestStatus Status { get; }
     public DateTime CreatedAt { get; }
     public DateTime? AcceptedAt { get; }
     public DateTime? CompletedAt { get; }
     
-    public QuestModel(
-        QuestID id,
-        QuestTitle title,
-        QuestDescription description,
-        QuestType type,
-        QuestDifficulty difficulty,
-        ImmutableArray<QuestReward> rewards,
-        ImmutableArray<QuestObjective> objectives,
-        PlayerID? clientId = null,
-        DateTime? deadline = null)
-    {
-        Id = id ?? throw new ArgumentNullException(nameof(id));
-        Title = title ?? throw new ArgumentNullException(nameof(title));
-        Description = description ?? throw new ArgumentNullException(nameof(description));
-        Type = type;
-        Difficulty = difficulty;
-        Rewards = rewards;
-        Objectives = objectives;
-        ClientId = clientId;
-        Deadline = deadline;
-        Status = QuestStatus.Available;
-        CreatedAt = DateTime.UtcNow;
-        AcceptedAt = null;
-        CompletedAt = null;
-    }
-    
-    public QuestModel Accept(PlayerID playerId)
-    {
-        if (Status != QuestStatus.Available)
-            throw new InvalidOperationException("Quest is not available for acceptance");
-        
-        if (IsOverdue(DateTime.UtcNow))
-            throw new InvalidOperationException("Quest deadline has passed");
-        
-        return this with 
-        { 
-            Status = QuestStatus.InProgress,
-            AcceptedAt = DateTime.UtcNow
-        };
-    }
-    
-    public QuestModel Complete()
-    {
-        if (Status != QuestStatus.InProgress)
-            throw new InvalidOperationException("Quest is not in progress");
-        
-        if (!AllObjectivesCompleted())
-            throw new InvalidOperationException("Not all objectives are completed");
-        
-        return this with 
-        { 
-            Status = QuestStatus.Completed,
-            CompletedAt = DateTime.UtcNow
-        };
-    }
-    
-    public QuestModel Abandon()
-    {
-        if (Status != QuestStatus.InProgress)
-            throw new InvalidOperationException("Quest is not in progress");
-        
-        return this with { Status = QuestStatus.Available };
-    }
-    
-    public QuestModel Fail()
-    {
-        if (Status != QuestStatus.InProgress)
-            throw new InvalidOperationException("Quest is not in progress");
-        
-        return this with 
-        { 
-            Status = QuestStatus.Failed,
-            CompletedAt = DateTime.UtcNow
-        };
-    }
-    
-    public bool IsOverdue(DateTime currentTime)
-    {
-        return Deadline.HasValue && 
-               currentTime > Deadline.Value && 
-               Status == QuestStatus.InProgress;
-    }
-    
-    public bool AllObjectivesCompleted()
-    {
-        return Objectives.All(obj => obj.IsCompleted);
-    }
-    
-    public float GetCompletionRate()
-    {
-        if (!Objectives.Any()) return 1.0f;
-        
-        var completedCount = Objectives.Count(obj => obj.IsCompleted);
-        return (float)completedCount / Objectives.Length;
-    }
+    // 状態遷移メソッド
+    public EnhancedQuestModel Accept();
+    public EnhancedQuestModel Complete();
+    public EnhancedQuestModel Fail();
 }
 ```
 
-### 値オブジェクト
-
-#### QuestTitle & QuestDescription
+#### QuestID システム
 ```csharp
-// 【未実装】クエストタイトルと説明の値オブジェクト
-public record QuestTitle
+// 将来実装可能：クエスト識別子
+public record QuestID : BasicID
 {
-    public string Value { get; }
-    
-    public QuestTitle(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Quest title cannot be empty");
-        
-        if (value.Length > 100)
-            throw new ArgumentException("Quest title cannot exceed 100 characters");
-        
-        Value = value;
-    }
+    protected override string Prefix => "QST-";
 }
 
-public record QuestDescription
+internal class IdentifiableQuestModel
 {
-    public string Value { get; }
-    
-    public QuestDescription(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Quest description cannot be empty");
-        
-        if (value.Length > 1000)
-            throw new ArgumentException("Quest description cannot exceed 1000 characters");
-        
-        Value = value;
-    }
+    public QuestID Id { get; }
+    public string QuestName { get; }
+    public string Description { get; } // typo修正
+    public CharacterID ClientId { get; } // public化
 }
 ```
 
-#### クエスト分類
+#### 目標システム
 ```csharp
-public enum QuestStatus
-{
-    Available = 1,   // 受注可能
-    InProgress = 2,  // 進行中
-    Completed = 3,   // 完了
-    Failed = 4,      // 失敗
-    Expired = 5      // 期限切れ
-}
-
-public enum QuestType
-{
-    Main = 1,        // メインクエスト
-    Side = 2,        // サイドクエスト
-    Daily = 3,       // 日次クエスト
-    Weekly = 4,      // 週次クエスト
-    Event = 5,       // イベントクエスト
-    Guild = 6        // ギルドクエスト
-}
-
-public enum QuestDifficulty
-{
-    Easy = 1,        // 簡単
-    Normal = 2,      // 普通
-    Hard = 3,        // 困難
-    Expert = 4,      // 専門家
-    Master = 5       // 達人級
-}
-```
-
-### クエスト目標
-
-#### QuestObjective
-```csharp
-// 【未実装】クエスト目標管理システム
+// 将来実装可能：クエスト目標
 public record QuestObjective
 {
-    public ObjectiveID Id { get; }
-    public ObjectiveDescription Description { get; }
-    public ObjectiveType Type { get; }
+    public string Description { get; }
     public int CurrentProgress { get; }
     public int RequiredProgress { get; }
     public bool IsCompleted => CurrentProgress >= RequiredProgress;
     
-    public QuestObjective(
-        ObjectiveID id,
-        ObjectiveDescription description,
-        ObjectiveType type,
-        int requiredProgress,
-        int currentProgress = 0)
-    {
-        Id = id ?? throw new ArgumentNullException(nameof(id));
-        Description = description ?? throw new ArgumentNullException(nameof(description));
-        Type = type;
-        RequiredProgress = Math.Max(1, requiredProgress);
-        CurrentProgress = Math.Max(0, currentProgress);
-    }
-    
-    public QuestObjective UpdateProgress(int progress)
-    {
-        if (progress < 0)
-            throw new ArgumentException("Progress cannot be negative");
-        
-        return this with { CurrentProgress = Math.Min(RequiredProgress, progress) };
-    }
-    
-    public QuestObjective AddProgress(int additionalProgress)
-    {
-        if (additionalProgress < 0)
-            throw new ArgumentException("Additional progress cannot be negative");
-        
-        return UpdateProgress(CurrentProgress + additionalProgress);
-    }
-    
-    public float GetProgressPercentage()
-    {
-        return RequiredProgress > 0 ? (float)CurrentProgress / RequiredProgress : 1.0f;
-    }
+    public QuestObjective UpdateProgress(int progress);
 }
 
-public record ObjectiveID : BasicID
+internal class ObjectiveQuestModel
 {
-    protected override string Prefix => "OBJ_";
-}
-
-public record ObjectiveDescription
-{
-    public string Value { get; }
-    
-    public ObjectiveDescription(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Objective description cannot be empty");
-        
-        Value = value;
-    }
-}
-
-public enum ObjectiveType
-{
-    KillEnemies = 1,     // 敵討伐
-    CollectItems = 2,    // アイテム収集
-    CraftItems = 3,      // アイテム作成
-    ReachLocation = 4,   // 場所到達
-    TalkToNPC = 5,       // NPC会話
-    DeliverItems = 6,    // アイテム配達
-    AchieveLevel = 7,    // レベル達成
-    LearnSkill = 8       // スキル習得
+    public IReadOnlyCollection<QuestObjective> Objectives { get; }
+    public bool AllObjectivesCompleted => Objectives.All(o => o.IsCompleted);
 }
 ```
 
-### 報酬システム
-
-#### QuestReward
+#### 報酬システム
 ```csharp
-// 【未実装】クエスト報酬システム
+// 将来実装可能：クエスト報酬
 public record QuestReward
 {
     public RewardType Type { get; }
-    public IItem? Item { get; }
-    public Currency? Currency { get; }
-    public Experience? Experience { get; }
+    public object RewardData { get; } // Item, Currency, Experience
     public int Quantity { get; }
-    
-    private QuestReward(RewardType type, int quantity, IItem? item = null, Currency? currency = null, Experience? experience = null)
-    {
-        Type = type;
-        Quantity = Math.Max(1, quantity);
-        Item = item;
-        Currency = currency;
-        Experience = experience;
-    }
-    
-    public static QuestReward CreateItemReward(IItem item, int quantity)
-    {
-        return new QuestReward(RewardType.Item, quantity, item: item);
-    }
-    
-    public static QuestReward CreateCurrencyReward(Currency currency)
-    {
-        return new QuestReward(RewardType.Currency, currency.Value, currency: currency);
-    }
-    
-    public static QuestReward CreateExperienceReward(Experience experience)
-    {
-        return new QuestReward(RewardType.Experience, experience.Value, experience: experience);
-    }
 }
 
 public enum RewardType
 {
-    Item = 1,        // アイテム報酬
-    Currency = 2,    // 通貨報酬
-    Experience = 3   // 経験値報酬
+    Item,       // アイテム報酬
+    Currency,   // 通貨報酬
+    Experience  // 経験値報酬
 }
 ```
 
-## ビジネスルール
+### 設計基盤の特徴
 
-### クエスト状態遷移
+現在の実装は最小限ですが、将来の拡張に対応できる基盤を提供：
 
-#### 状態遷移制御
-```csharp
-// 【未実装】クエスト状態遷移管理システム
-public static class QuestStatusTransition
-{
-    public static bool CanTransitionTo(QuestStatus from, QuestStatus to)
-    {
-        return (from, to) switch
-        {
-            (QuestStatus.Available, QuestStatus.InProgress) => true,
-            (QuestStatus.InProgress, QuestStatus.Completed) => true,
-            (QuestStatus.InProgress, QuestStatus.Failed) => true,
-            (QuestStatus.InProgress, QuestStatus.Available) => true, // 放棄
-            (QuestStatus.InProgress, QuestStatus.Expired) => true,   // 期限切れ
-            _ => false
-        };
-    }
-    
-    public static QuestModel ProcessDeadlineCheck(QuestModel quest, DateTime currentTime)
-    {
-        if (quest.IsOverdue(currentTime) && quest.Status == QuestStatus.InProgress)
-        {
-            return quest with { Status = QuestStatus.Expired };
-        }
-        
-        return quest;
-    }
-}
-```
+- **Domain 分離**: 独立したQuest名前空間
+- **Character 連携**: 既存ドメインとの適切な依存関係
+- **内部実装**: 適切なカプセル化による外部API制御
+- **拡張準備**: 将来的な機能追加に対応可能な基本構造
 
-### 目標進行制限
-
-#### 進行条件チェック
-```csharp
-// 【未実装】クエスト目標進行状況検証システム
-public static class ObjectiveProgressValidator
-{
-    public static bool CanUpdateObjective(QuestModel quest, ObjectiveID objectiveId)
-    {
-        if (quest.Status != QuestStatus.InProgress)
-            return false;
-        
-        var objective = quest.Objectives.FirstOrDefault(o => o.Id == objectiveId);
-        return objective != null && !objective.IsCompleted;
-    }
-    
-    public static QuestModel UpdateObjectiveProgress(
-        QuestModel quest,
-        ObjectiveID objectiveId,
-        int progress)
-    {
-        if (!CanUpdateObjective(quest, objectiveId))
-            throw new InvalidOperationException("Cannot update objective progress");
-        
-        var objectiveIndex = quest.Objectives.ToList().FindIndex(o => o.Id == objectiveId);
-        if (objectiveIndex < 0)
-            throw new ArgumentException("Objective not found");
-        
-        var updatedObjective = quest.Objectives[objectiveIndex].UpdateProgress(progress);
-        var updatedObjectives = quest.Objectives.SetItem(objectiveIndex, updatedObjective);
-        
-        return quest with { Objectives = updatedObjectives };
-    }
-}
-```
-
-### 報酬制限
-
-#### 報酬受取制限
-```csharp
-// 【未実装】クエスト報酬受取検証システム
-public static class QuestRewardValidator
-{
-    public static bool CanReceiveRewards(QuestModel quest)
-    {
-        return quest.Status == QuestStatus.Completed;
-    }
-    
-    public static void ValidateRewardClaim(QuestModel quest, PlayerCommonEntity player)
-    {
-        if (!CanReceiveRewards(quest))
-            throw new InvalidOperationException("Quest must be completed to receive rewards");
-        
-        // インベントリ容量チェック（アイテム報酬）
-        var itemRewards = quest.Rewards.Where(r => r.Type == RewardType.Item);
-        foreach (var reward in itemRewards)
-        {
-            // 実装は Inventory ドメインと連携
-        }
-    }
-}
-```
-
-## ゲームロジック
-
-### クエスト作成
-
-```csharp
-// 【未実装】クエスト作成ファクトリー
-public static class QuestFactory
-{
-    public static QuestModel CreateBasicQuest(
-        string title,
-        string description,
-        QuestType type,
-        QuestDifficulty difficulty,
-        IEnumerable<QuestObjective> objectives,
-        IEnumerable<QuestReward> rewards,
-        TimeSpan? duration = null)
-    {
-        var questId = new QuestID();
-        var questTitle = new QuestTitle(title);
-        var questDescription = new QuestDescription(description);
-        
-        var deadline = duration.HasValue ? DateTime.UtcNow.Add(duration.Value) : null;
-        
-        return new QuestModel(
-            questId,
-            questTitle,
-            questDescription,
-            type,
-            difficulty,
-            rewards.ToImmutableArray(),
-            objectives.ToImmutableArray(),
-            deadline: deadline
-        );
-    }
-    
-    public static QuestObjective CreateKillObjective(string enemyName, int killCount)
-    {
-        return new QuestObjective(
-            new ObjectiveID(),
-            new ObjectiveDescription($"Defeat {killCount} {enemyName}"),
-            ObjectiveType.KillEnemies,
-            killCount
-        );
-    }
-    
-    public static QuestObjective CreateCollectionObjective(IItem item, int quantity)
-    {
-        return new QuestObjective(
-            new ObjectiveID(),
-            new ObjectiveDescription($"Collect {quantity} {item.ItemName}"),
-            ObjectiveType.CollectItems,
-            quantity
-        );
-    }
-    
-    public static QuestObjective CreateLocationObjective(FieldID targetField)
-    {
-        return new QuestObjective(
-            new ObjectiveID(),
-            new ObjectiveDescription($"Reach the specified location"),
-            ObjectiveType.ReachLocation,
-            1
-        );
-    }
-}
-```
-
-### クエスト管理
-
-```csharp
-// 【未実装】クエスト管理サービス
-public static class QuestManager
-{
-    public static IEnumerable<QuestModel> GetAvailableQuests(
-        IEnumerable<QuestModel> allQuests,
-        PlayerCommonEntity player)
-    {
-        return allQuests.Where(quest => 
-            quest.Status == QuestStatus.Available &&
-            MeetsRequirements(quest, player));
-    }
-    
-    public static IEnumerable<QuestModel> GetActiveQuests(
-        IEnumerable<QuestModel> allQuests,
-        PlayerID playerId)
-    {
-        return allQuests.Where(quest => 
-            quest.Status == QuestStatus.InProgress);
-    }
-    
-    public static IEnumerable<QuestModel> GetCompletableQuests(
-        IEnumerable<QuestModel> allQuests,
-        PlayerID playerId)
-    {
-        return allQuests.Where(quest => 
-            quest.Status == QuestStatus.InProgress &&
-            quest.AllObjectivesCompleted());
-    }
-    
-    private static bool MeetsRequirements(QuestModel quest, PlayerCommonEntity player)
-    {
-        // レベル要件チェック（将来実装）
-        var requiredLevel = GetRequiredLevel(quest.Difficulty);
-        if (player.Level.Value < requiredLevel)
-            return false;
-        
-        // 前提クエスト要件チェック（将来実装）
-        
-        return true;
-    }
-    
-    private static int GetRequiredLevel(QuestDifficulty difficulty)
-    {
-        return difficulty switch
-        {
-            QuestDifficulty.Easy => 1,
-            QuestDifficulty.Normal => 5,
-            QuestDifficulty.Hard => 15,
-            QuestDifficulty.Expert => 30,
-            QuestDifficulty.Master => 50,
-            _ => 1
-        };
-    }
-}
-```
-
-### 進行追跡
-
-```csharp
-// 【未実装】クエスト進行状況追跡システム
-public static class QuestProgressTracker
-{
-    public static QuestModel TrackKillProgress(
-        QuestModel quest,
-        string enemyName,
-        int killCount = 1)
-    {
-        var killObjectives = quest.Objectives.Where(obj => 
-            obj.Type == ObjectiveType.KillEnemies &&
-            obj.Description.Value.Contains(enemyName));
-        
-        var updatedQuest = quest;
-        foreach (var objective in killObjectives)
-        {
-            updatedQuest = ObjectiveProgressValidator.UpdateObjectiveProgress(
-                updatedQuest, objective.Id, objective.CurrentProgress + killCount);
-        }
-        
-        return updatedQuest;
-    }
-    
-    public static QuestModel TrackItemCollection(
-        QuestModel quest,
-        IItem item,
-        int quantity)
-    {
-        var collectionObjectives = quest.Objectives.Where(obj => 
-            obj.Type == ObjectiveType.CollectItems &&
-            obj.Description.Value.Contains(item.ItemName));
-        
-        var updatedQuest = quest;
-        foreach (var objective in collectionObjectives)
-        {
-            updatedQuest = ObjectiveProgressValidator.UpdateObjectiveProgress(
-                updatedQuest, objective.Id, objective.CurrentProgress + quantity);
-        }
-        
-        return updatedQuest;
-    }
-    
-    public static QuestModel TrackLocationReach(
-        QuestModel quest,
-        FieldID currentField)
-    {
-        var locationObjectives = quest.Objectives.Where(obj => 
-            obj.Type == ObjectiveType.ReachLocation);
-        
-        var updatedQuest = quest;
-        foreach (var objective in locationObjectives)
-        {
-            // 位置チェック（将来実装：目標位置との照合）
-            updatedQuest = ObjectiveProgressValidator.UpdateObjectiveProgress(
-                updatedQuest, objective.Id, 1);
-        }
-        
-        return updatedQuest;
-    }
-}
-```
-
-### 報酬処理
-
-```csharp
-// 【未実装】クエスト報酬処理システム
-public static class QuestRewardProcessor
-{
-    public static (PlayerCommonEntity updatedPlayer, InfiniteSlotInventory updatedInventory, Wallet updatedWallet) 
-        ProcessRewards(
-            QuestModel quest,
-            PlayerCommonEntity player,
-            InfiniteSlotInventory inventory,
-            Wallet wallet)
-    {
-        QuestRewardValidator.ValidateRewardClaim(quest, player);
-        
-        var updatedPlayer = player;
-        var updatedInventory = inventory;
-        var updatedWallet = wallet;
-        
-        foreach (var reward in quest.Rewards)
-        {
-            switch (reward.Type)
-            {
-                case RewardType.Experience:
-                    if (reward.Experience != null)
-                    {
-                        var newExp = new Experience(player.Experience.Value + reward.Experience.Value);
-                        updatedPlayer = updatedPlayer with { Experience = newExp };
-                    }
-                    break;
-                
-                case RewardType.Currency:
-                    if (reward.Currency != null)
-                    {
-                        updatedWallet = updatedWallet.AddCurrency(reward.Currency);
-                    }
-                    break;
-                
-                case RewardType.Item:
-                    if (reward.Item != null)
-                    {
-                        updatedInventory = updatedInventory.AddItem(reward.Item, reward.Quantity);
-                    }
-                    break;
-            }
-        }
-        
-        return (updatedPlayer, updatedInventory, updatedWallet);
-    }
-}
-```
-
-## 他ドメインとの連携
-
-### Character ドメインとの連携
-- **進行条件**: レベル・ステータス要件
-- **経験値報酬**: クエスト完了による経験値獲得
-- 詳細: [Character.md](./Character.md)
-
-### Item ドメインとの連携
-- **収集目標**: 特定アイテムの収集クエスト
-- **アイテム報酬**: クエスト報酬としてのアイテム付与
-- 詳細: [Item.md](./Item.md)
-
-### Inventory ドメインとの連携
-- **報酬受取**: インベントリ容量チェック
-- **アイテム管理**: 報酬アイテムの格納
-- 詳細: [Inventory.md](./Inventory.md)
-
-### Field ドメインとの連携
-- **位置目標**: 特定エリアへの到達クエスト
-- **エリア限定**: 特定エリアでのみ進行可能なクエスト
-- 詳細: [Field.md](./Field.md)
-
-### Skill ドメインとの連携
-- **スキル目標**: 特定スキル習得クエスト
-- **制作目標**: 生産スキルによるアイテム作成クエスト
-- 詳細: [Skill.md](./Skill.md)
-
-## 拡張ポイント
-
-### クエストチェーンシステム
-```csharp
-// 【未実装】連続クエストシステム
-public record QuestChain
-{
-    public QuestChainID Id { get; }
-    public string Name { get; }
-    public ImmutableArray<QuestID> QuestSequence { get; }
-    public int CurrentQuestIndex { get; }
-    
-    public QuestID? GetNextQuest() => 
-        CurrentQuestIndex < QuestSequence.Length - 1 
-            ? QuestSequence[CurrentQuestIndex + 1] 
-            : null;
-}
-```
-
-### 動的クエスト生成
-```csharp
-// 【未実装】手続き生成クエストシステム
-public interface IQuestGenerator
-{
-    QuestModel GenerateQuest(PlayerCommonEntity player, QuestType type);
-}
-
-public class RandomKillQuestGenerator : IQuestGenerator
-{
-    public QuestModel GenerateQuest(PlayerCommonEntity player, QuestType type)
-    {
-        // プレイヤーレベルに応じた敵討伐クエストを生成
-        return QuestFactory.CreateBasicQuest(/* ... */);
-    }
-}
-```
-
-### 共有クエストシステム
-```csharp
-// 【未実装】プレイヤー間共有クエストシステム
-public record SharedQuest : QuestModel
-{
-    public ImmutableArray<PlayerID> Participants { get; }
-    public int MaxParticipants { get; }
-    
-    public SharedQuest AddParticipant(PlayerID playerId) => 
-        Participants.Length < MaxParticipants 
-            ? this with { Participants = Participants.Add(playerId) }
-            : throw new InvalidOperationException("Quest is full");
-}
-```
-
-### 期間限定クエストシステム
-```csharp
-// 【未実装】イベント・期間限定クエストシステム
-public record TimeLimitedQuest : QuestModel
-{
-    public DateTime StartTime { get; }
-    public DateTime EndTime { get; }
-    
-    public bool IsActive(DateTime currentTime) => 
-        currentTime >= StartTime && currentTime <= EndTime;
-}
-```
-
-Quest ドメインは、プレイヤーの目標設定とゲーム進行の動機づけを提供する重要なシステムです。\
-他のドメインと密接に連携し、統合的なゲーム体験を実現します。
+Quest ドメインは現在プレースホルダー状態ですが、Character ドメインとの基本連携により、将来的な本格的なクエストシステム実装のための基盤を提供しています。

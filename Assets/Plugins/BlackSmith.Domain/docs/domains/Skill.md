@@ -2,8 +2,9 @@
 
 ## 概要
 
-Skill ドメインは、プレイヤーのスキルシステムを管理します。\
-戦闘スキルと生産スキルの2つの主要カテゴリーがあり、それぞれ習得条件、熟練度、経験値システムを持ちます。
+Skill ドメインは、プレイヤーのスキルシステムの基本構造を提供します。\
+現在の実装では、スキルの抽象クラス、インターフェース、経験値管理システム、取得条件管理が実装されています。\
+戦闘スキルと生産スキルのインターフェースは定義されていますが、具体的な実装や効果システムは将来的な拡張です。
 
 ## ドメインモデル
 
@@ -11,177 +12,147 @@ Skill ドメインは、プレイヤーのスキルシステムを管理しま�
 
 #### Skill（抽象基底クラス）
 ```csharp
-// 【部分実装】基本的なSkillクラスは実装済みだが、record型ではなくclass型
-public abstract record Skill
+// 【実装済み】スキル抽象基底クラス
+public abstract class Skill : ISkill
 {
-    public SkillName Name { get; }
-    public abstract SkillType Type { get; }
+    public SkillID ID { get; }
+    public SkillName SkillName { get; }
+    public SkillProficiency Proficiency { get; }
     public SkillAcquisitionConditions AcquisitionConditions { get; }
     
-    protected Skill(SkillName name, SkillAcquisitionConditions acquisitionConditions)
+    internal Skill(SkillID id, SkillName skillName, SkillExperience exp, SkillAcquisitionConditions acquisitionConditions)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
+        ID = id ?? throw new ArgumentNullException(nameof(id));
+        SkillName = skillName ?? throw new ArgumentNullException(nameof(skillName));
+        Proficiency = new SkillProficiency(exp) ?? throw new ArgumentNullException(nameof(exp));
         AcquisitionConditions = acquisitionConditions ?? throw new ArgumentNullException(nameof(acquisitionConditions));
     }
+    
+    internal bool CanSkillAcquisition(SkillAcquisitionConditions requireParaeters) => AcquisitionConditions.CanSkillAcquisition(requireParaeters);
+}
+
+// 【実装済み】スキルID（BasicIDベース）
+public record SkillID : BasicID
+{
+    protected override string Prefix => "Skill-";
 }
 ```
 
-### スキル種別
+### スキルインターフェース
 
-#### BattleSkill（戦闘スキル）
+#### ISkill（基本インターフェース）
 ```csharp
-// 【部分実装】基本的なBattleSkillクラスは実装済みだが、このrecord型モデルは未実装
-public record BattleSkill : Skill
+// 【実装済み】スキル基本インターフェース
+internal interface ISkill
 {
-    public override SkillType Type => SkillType.Battle;
-    public BattleSkillEffect Effect { get; }
-    
-    public BattleSkill(
-        SkillName name, 
-        SkillAcquisitionConditions acquisitionConditions,
-        BattleSkillEffect effect) 
-        : base(name, acquisitionConditions)
-    {
-        Effect = effect;
-    }
-}
-
-// 【未実装】戦闘スキル効果システム
-public record BattleSkillEffect
-{
-    public int AttackBonus { get; }
-    public int DefenseBonus { get; }
-    public int AccuracyBonus { get; }
-    public int CriticalRateBonus { get; }
-    
-    public BattleSkillEffect(int attackBonus = 0, int defenseBonus = 0, int accuracyBonus = 0, int criticalRateBonus = 0)
-    {
-        AttackBonus = Math.Max(0, attackBonus);
-        DefenseBonus = Math.Max(0, defenseBonus);
-        AccuracyBonus = Math.Max(0, accuracyBonus);
-        CriticalRateBonus = Math.Max(0, criticalRateBonus);
-    }
+    SkillName SkillName { get; }
+    SkillProficiency Proficiency { get; }
+    SkillAcquisitionConditions AcquisitionConditions { get; }
 }
 ```
 
-#### ProductionSkill（生産スキル）
+#### IProductionSkill（生産スキル）
 ```csharp
-// 【部分実装】基本的なProductionSkillクラスは実装済みだが、このrecord型モデルは未実装
-public record ProductionSkill : Skill
+// 【実装済み】生産スキルインターフェース
+internal interface IProductionSkill : ISkill
 {
-    public override SkillType Type => SkillType.Production;
-    public ProductionType ProductionType { get; }
-    
-    public ProductionSkill(
-        SkillName name, 
-        SkillAcquisitionConditions acquisitionConditions,
-        ProductionType productionType) 
-        : base(name, acquisitionConditions)
-    {
-        ProductionType = productionType;
-    }
-}
-
-public enum ProductionType
-{
-    Creation = 1,  // 作成（新規アイテム生産）
-    Refining = 2,  // 精錬（素材加工）
-    Repair = 3     // 修理（装備修復）
-}
-
-public enum SkillType
-{
-    Battle = 1,
-    Production = 2
+    CreateSkillAction CreateAction { get; }
+    RefineSkillAction RefineAction { get; }
+    RepairSkillAction RepairAction { get; }
 }
 ```
+
+#### IBattleSkill（戦闘スキル）
+```csharp
+// 【部分実装】戦闘スキルインターフェース（内容は要検討）
+internal interface IBattleSkill : ISkill
+{
+    // 戦闘スキルの詳細な実装は未定
+}
+```
+
+> **注意**: 戦闘スキルの具体的な実装については検討中です。
 
 ### 値オブジェクト
 
 #### SkillName
 ```csharp
 // 【実装済み】スキル名の値オブジェクト
-public record SkillName
+public class SkillName
 {
     public string Value { get; }
     
-    public SkillName(string value)
+    internal SkillName(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Skill name cannot be empty");
-        
-        if (value.Length > 50)
-            throw new ArgumentException("Skill name cannot exceed 50 characters");
+        if (!IsValid(value))
+            throw new AggregateException(nameof(value));
         
         Value = value;
+    }
+    
+    internal static bool IsValid(string value)
+    {
+        if (value is null)
+            return false;
+        
+        return true;
     }
 }
 ```
 
 #### SkillProficiency（熟練度）
 ```csharp
-// 【実装済み】スキル熟練度の管理クラス
-public record SkillProficiency
+// 【実装済み】スキル熟練度管理クラス（経験値ベース）
+public class SkillProficiency
 {
+    /// <summary>熟練度 1-1000</summary>
     public int Value { get; }
     
-    public SkillProficiency(int value)
+    /// <summary>累計獲得経験値</summary>
+    public SkillExperience CumulativeExp { get; }
+    
+    internal SkillProficiency(SkillExperience exp = null!)
     {
-        if (value < 1 || value > 1000)
-            throw new ArgumentOutOfRangeException("Proficiency must be between 1 and 1000");
+        var calclator = new SkillExpCalculator();
         
-        Value = value;
+        CumulativeExp = exp ?? new SkillExperience();
+        Value = calclator.CurrentProficiency(CumulativeExp);
     }
     
-    public SkillRank GetRank() => Value switch
+    /// <summary>経験値を加算する</summary>
+    internal SkillProficiency AddExp(SkillExperience exp)
     {
-        >= 1 and <= 100 => SkillRank.Novice,
-        >= 101 and <= 300 => SkillRank.Intermediate,
-        >= 301 and <= 600 => SkillRank.Advanced,
-        >= 601 and <= 900 => SkillRank.Expert,
-        >= 901 and <= 1000 => SkillRank.Master,
-        _ => throw new InvalidOperationException("Invalid proficiency value")
-    };
-}
-
-public enum SkillRank
-{
-    Novice = 1,       // 初心者 (1-100)
-    Intermediate = 2, // 中級者 (101-300)
-    Advanced = 3,     // 上級者 (301-600)
-    Expert = 4,       // 熟練者 (601-900)
-    Master = 5        // 達人 (901-1000)
+        return new SkillProficiency(CumulativeExp.Add(exp));
+    }
 }
 ```
 
 #### SkillExperience（スキル経験値）
 ```csharp
-// 【実装済み】スキル経験値の管理クラス
-public record SkillExperience
+// 【実装済み】スキル経験値管理クラス
+public class SkillExperience
 {
     public int Value { get; }
     
-    public SkillExperience(int value)
+    internal SkillExperience(int value = 0)
     {
-        if (value < 0)
-            throw new ArgumentException("Experience cannot be negative");
+        if (!IsValid(value))
+            throw new ArgumentOutOfRangeException(nameof(value));
         
         Value = value;
     }
     
-    public SkillProficiency CalculateProficiency()
+    internal static bool IsValid(int value)
     {
-        // 経験値100につき熟練度1上昇
-        var proficiency = Math.Min(1000, Math.Max(1, Value / 100));
-        return new SkillProficiency(proficiency);
+        if (value < 0)
+            return false;
+        
+        return true;
     }
     
-    public SkillExperience AddExperience(int amount)
+    internal SkillExperience Add(SkillExperience other)
     {
-        if (amount < 0)
-            throw new ArgumentException("Experience amount cannot be negative");
-        
-        return new SkillExperience(Value + amount);
+        return new SkillExperience(Value + other.Value);
     }
 }
 ```
@@ -194,16 +165,10 @@ public record SkillAndProficiency
     public Skill Skill { get; }
     public SkillProficiency Proficiency { get; }
     
-    public SkillAndProficiency(Skill skill, SkillProficiency proficiency)
+    internal SkillAndProficiency(Skill skill, SkillProficiency proficiency)
     {
-        Skill = skill ?? throw new ArgumentNullException(nameof(skill));
-        Proficiency = proficiency ?? throw new ArgumentNullException(nameof(proficiency));
-    }
-    
-    public SkillAndProficiency IncreaseProficiency(int amount)
-    {
-        var newValue = Math.Min(1000, Proficiency.Value + amount);
-        return this with { Proficiency = new SkillProficiency(newValue) };
+        Skill = skill;
+        Proficiency = proficiency;
     }
 }
 ```
@@ -212,33 +177,33 @@ public record SkillAndProficiency
 
 #### SkillAcquisitionConditions
 ```csharp
-// 【部分実装】基本的な取得条件は実装済みだが、詳細な条件チェックは不完全
-public record SkillAcquisitionConditions
+// 【実装済み】スキル取得条件クラス
+public class SkillAcquisitionConditions
 {
     public PlayerLevel Level { get; }
     public Strength Strength { get; }
     public Agility Agility { get; }
     public IReadOnlyCollection<SkillAndProficiency> RequiredSkills { get; }
     
-    public SkillAcquisitionConditions(
-        PlayerLevel level,
-        Strength strength,
-        Agility agility,
-        IReadOnlyCollection<SkillAndProficiency>? requiredSkills = null)
+    internal SkillAcquisitionConditions(PlayerLevel level, Strength strength, Agility agility, IReadOnlyCollection<SkillAndProficiency>? requireSkills = null)
     {
-        Level = level ?? throw new ArgumentNullException(nameof(level));
-        Strength = strength ?? throw new ArgumentNullException(nameof(strength));
-        Agility = agility ?? throw new ArgumentNullException(nameof(agility));
-        RequiredSkills = requiredSkills ?? Array.Empty<SkillAndProficiency>();
+        Level = level;
+        Strength = strength;
+        Agility = agility;
+        RequiredSkills = requireSkills ?? new List<SkillAndProficiency>();
     }
     
-    public static SkillAcquisitionConditions CreateBasic(int level, int strength = 1, int agility = 1)
+    internal static SkillAcquisitionConditions FromDependentParams(LevelDependentParameters parameters)
     {
-        return new SkillAcquisitionConditions(
-            new PlayerLevel(level),
-            new Strength(strength),
-            new Agility(agility)
-        );
+        return new SkillAcquisitionConditions(parameters.Level, parameters.STR, parameters.AGI);
+    }
+    
+    internal bool CanSkillAcquisition(SkillAcquisitionConditions condition)
+    {
+        if (condition.Level.Value < Level.Value)
+            return false;
+        
+        return true;
     }
 }
 ```
@@ -247,363 +212,194 @@ public record SkillAcquisitionConditions
 
 ### スキル習得条件
 
-#### 条件チェック
+#### 基本条件チェック
 ```csharp
-// 【未実装】詳細なスキル取得条件チェックシステム
-public static class SkillAcquisitionChecker
+// 【実装済み】Skillクラス内での基本的な条件チェック
+public abstract class Skill : ISkill
 {
-    public static bool CanAcquireSkill(Skill skill, PlayerCommonEntity player)
+    // ...
+    
+    /// <summary>スキルが取得できるか</summary>
+    internal bool CanSkillAcquisition(SkillAcquisitionConditions requireParaeters) => 
+        AcquisitionConditions.CanSkillAcquisition(requireParaeters);
+}
+
+// 【実装済み】SkillAcquisitionConditions内での基本チェック
+public class SkillAcquisitionConditions
+{
+    // ...
+    
+    internal bool CanSkillAcquisition(SkillAcquisitionConditions condition)
     {
-        var conditions = skill.AcquisitionConditions;
-        
-        // レベル条件
-        if (player.Level.Value < conditions.Level.Value)
+        if (condition.Level.Value < Level.Value)
             return false;
-        
-        // ステータス条件
-        if (player.Strength.Value < conditions.Strength.Value ||
-            player.Agility.Value < conditions.Agility.Value)
-            return false;
-        
-        // 前提スキル条件
-        foreach (var required in conditions.RequiredSkills)
-        {
-            var playerSkill = player.Skills.FirstOrDefault(s => 
-                s.Skill.Name.Value == required.Skill.Name.Value);
-            
-            if (playerSkill == null || playerSkill.Proficiency.Value < required.Proficiency.Value)
-                return false;
-        }
         
         return true;
     }
-    
-    public static string GetFailureReason(Skill skill, PlayerCommonEntity player)
-    {
-        var conditions = skill.AcquisitionConditions;
-        
-        if (player.Level.Value < conditions.Level.Value)
-            return $"Required level: {conditions.Level.Value} (Current: {player.Level.Value})";
-        
-        if (player.Strength.Value < conditions.Strength.Value)
-            return $"Required strength: {conditions.Strength.Value} (Current: {player.Strength.Value})";
-        
-        if (player.Agility.Value < conditions.Agility.Value)
-            return $"Required agility: {conditions.Agility.Value} (Current: {player.Agility.Value})";
-        
-        foreach (var required in conditions.RequiredSkills)
-        {
-            var playerSkill = player.Skills.FirstOrDefault(s => 
-                s.Skill.Name.Value == required.Skill.Name.Value);
-            
-            if (playerSkill == null)
-                return $"Required skill: {required.Skill.Name.Value}";
-            
-            if (playerSkill.Proficiency.Value < required.Proficiency.Value)
-                return $"Required {required.Skill.Name.Value} proficiency: {required.Proficiency.Value} (Current: {playerSkill.Proficiency.Value})";
-        }
-        
-        return "All conditions met";
-    }
 }
 ```
+
+> **注意**: 現在の実装ではレベル条件のみチェックしています。ステータスや前提スキルの詳細チェックは将来的な拡張です。
 
 ### 熟練度システム
 
-#### 経験値獲得・熟練度上昇
+#### 経験値計算システム
 ```csharp
-// 【部分実装】基本的な経験値計算は実装済みだが、この統合システムは未実装
-public static class SkillExperienceCalculator
+// 【実装済み】スキル経験値計算機
+internal class SkillExpCalculator
 {
-    public static int CalculateExperienceGain(SkillType skillType, int actionDifficulty, int playerLevel)
+    // 1Lv -> 2Lv になるために行う動作の回数
+    private readonly int InitRequireCount = 15;
+    
+    // 1Lv -> 2Lv になるために必要な経験値
+    private readonly int InitRequireExp = 100;
+    
+    // レベル差倍率
+    private readonly float LevelDifferenceMultiplier = 1.1f;
+    
+    /// <summary>次のレベルまでに必要な経験値</summary>
+    internal SkillExperience NeedToNextLevel(int level)
     {
-        var baseExperience = skillType switch
-        {
-            SkillType.Battle => 50,      // 戦闘スキル基本経験値
-            SkillType.Production => 30,  // 生産スキル基本経験値
-            _ => 25
-        };
-        
-        // 難易度補正
-        var difficultyMultiplier = actionDifficulty switch
-        {
-            <= 1 => 0.5f,  // 簡単
-            2 => 0.75f,    // 普通
-            3 => 1.0f,     // 標準
-            4 => 1.25f,    // 困難
-            >= 5 => 1.5f   // 極困難
-        };
-        
-        // レベル補正（高レベルほど経験値効率低下）
-        var levelPenalty = Math.Max(0.1f, 1.0f - (playerLevel - 1) * 0.01f);
-        
-        return (int)(baseExperience * difficultyMultiplier * levelPenalty);
+        return new SkillExperience((int)(InitRequireExp * Math.Pow(LevelDifferenceMultiplier, level - 1)));
     }
     
-    public static SkillExperience ProcessExperienceGain(
-        SkillExperience currentExperience, 
-        int gainedExperience)
+    /// <summary>1動作あたりの取得経験値量</summary>
+    internal SkillExperience ReceveExp(int level)
     {
-        return currentExperience.AddExperience(gainedExperience);
+        return new SkillExperience((int)Math.Round(InitRequireExp / InitRequireCount * Math.Pow(LevelDifferenceMultiplier, level - 1)));
+    }
+    
+    /// <summary>累計獲得経験値から現在の熟練度を算出する</summary>
+    internal int CurrentProficiency(SkillExperience cumExp)
+    {
+        return (int)Math.Log(1 - (cumExp.Value / InitRequireExp * (1 - LevelDifferenceMultiplier)), LevelDifferenceMultiplier) + 1;
     }
 }
 ```
 
-### スキル効果
-
-#### 戦闘スキル効果計算
+#### 経験値加算システム
 ```csharp
-// 【未実装】戦闘スキル効果計算システム
-public static class BattleSkillEffectCalculator
+// 【実装済み】SkillProficiency内での経験値加算
+public class SkillProficiency
 {
-    public static BattleSkillEffect CalculateEffect(BattleSkill skill, SkillProficiency proficiency)
-    {
-        var baseEffect = skill.Effect;
-        var proficiencyMultiplier = proficiency.Value / 1000.0f; // 0.001 - 1.0
-        
-        return new BattleSkillEffect(
-            (int)(baseEffect.AttackBonus * proficiencyMultiplier),
-            (int)(baseEffect.DefenseBonus * proficiencyMultiplier),
-            (int)(baseEffect.AccuracyBonus * proficiencyMultiplier),
-            (int)(baseEffect.CriticalRateBonus * proficiencyMultiplier)
-        );
-    }
+    // ...
     
-    public static BattleSkillEffect CombineEffects(IEnumerable<BattleSkillEffect> effects)
+    /// <summary>経験値を加算する</summary>
+    internal SkillProficiency AddExp(SkillExperience exp)
     {
-        return effects.Aggregate(
-            new BattleSkillEffect(),
-            (acc, effect) => new BattleSkillEffect(
-                acc.AttackBonus + effect.AttackBonus,
-                acc.DefenseBonus + effect.DefenseBonus,
-                acc.AccuracyBonus + effect.AccuracyBonus,
-                acc.CriticalRateBonus + effect.CriticalRateBonus
-            )
-        );
+        return new SkillProficiency(CumulativeExp.Add(exp));
     }
 }
 ```
+
+### スキルアクションシステム
+
+#### 生産スキルアクション
+```csharp
+// 【部分実装】生産スキルアクションインターフェースのみ定義
+internal interface IProductionSkill : ISkill
+{
+    CreateSkillAction CreateAction { get; }
+    RefineSkillAction RefineAction { get; }
+    RepairSkillAction RepairAction { get; }
+}
+```
+
+> **注意**: `CreateSkillAction`, `RefineSkillAction`, `RepairSkillAction` の具体的な実装は未定です。
+
+#### 戦闘スキルシステム
+```csharp
+// 【部分実装】戦闘スキルインターフェースのみ定義
+internal interface IBattleSkill : ISkill
+{
+    // 戦闘スキルの内容については要検討
+}
+```
+
+> **注意**: 戦闘スキルの具体的な効果や実装は検討中です。
 
 ## ゲームロジック
 
-### スキル習得プロセス
+### Characterドメインとの統合
 
+#### スキル数制限システム
 ```csharp
-// 【未実装】スキル習得管理サービス
-public static class SkillLearningService
+// 【実装済み】CharacterLevel内でのスキル数管理
+public record CharacterLevel
 {
-    public static PlayerCommonEntity LearnSkill(
-        PlayerCommonEntity player, 
-        Skill skill, 
-        SkillProficiency initialProficiency)
-    {
-        // 既存スキルチェック
-        if (player.Skills.Any(s => s.Skill.Name.Value == skill.Name.Value))
-            throw new InvalidOperationException("Skill already learned");
-        
-        // 習得条件チェック
-        if (!SkillAcquisitionChecker.CanAcquireSkill(skill, player))
-        {
-            var reason = SkillAcquisitionChecker.GetFailureReason(skill, player);
-            throw new InvalidOperationException($"Cannot learn skill: {reason}");
-        }
-        
-        // スキル追加
-        var newSkill = new SkillAndProficiency(skill, initialProficiency);
-        return player with { Skills = player.Skills.Add(newSkill) };
-    }
+    public int Value { get; }
     
-    public static PlayerCommonEntity ImproveSkill(
-        PlayerCommonEntity player,
-        SkillName skillName,
-        int experienceGained)
+    /// <summary>取得できるスキル数を返す</summary>
+    internal int GetNumberOfSkillsAvailable()
     {
-        var skillIndex = player.Skills.ToList().FindIndex(s => 
-            s.Skill.Name.Value == skillName.Value);
+        // 初期状態で2つ
+        // 6, 12レベルで1つずつ増える
+        // 以降、10レベル毎で1つ増える
         
-        if (skillIndex < 0)
-            throw new InvalidOperationException("Skill not found");
+        if (Value < 12)
+            return 2 + (int)Math.Floor((double)Value / 6);
         
-        var currentSkill = player.Skills[skillIndex];
-        var newProficiency = Math.Min(1000, currentSkill.Proficiency.Value + experienceGained);
-        var updatedSkill = currentSkill with 
-        { 
-            Proficiency = new SkillProficiency(newProficiency) 
-        };
-        
-        return player with 
-        { 
-            Skills = player.Skills.SetItem(skillIndex, updatedSkill) 
-        };
+        return 3 + (int)Math.Floor((double)Value / 10);
     }
 }
 ```
 
-### 生産スキル活用
+> **注意**: スキルの具体的な習得・成長システムは未実装です。キャラクターレベルによるスキル数制限のみ実装されています。
+
+### スキルシステム統合
 
 ```csharp
-// 【未実装】生産スキル活用サービス
-public static class ProductionSkillService
-{
-    public static bool CanCraftItem(
-        ICraftableItem item, 
-        PlayerCommonEntity player, 
-        ProductionType requiredProductionType)
-    {
-        // 必要な生産スキルの確認
-        var requiredSkill = player.Skills.FirstOrDefault(s => 
-            s.Skill is ProductionSkill ps && ps.ProductionType == requiredProductionType);
-        
-        if (requiredSkill == null)
-            return false;
-        
-        // 熟練度による成功率計算
-        var successRate = CalculateCraftSuccessRate(requiredSkill.Proficiency, item);
-        return successRate > 0.5f; // 50%以上の成功率が必要
-    }
-    
-    public static float CalculateCraftSuccessRate(SkillProficiency proficiency, ICraftableItem item)
-    {
-        // アイテムの複雑度（将来実装）
-        var itemComplexity = 100; // 仮の値
-        
-        // 熟練度による成功率
-        var baseSuccessRate = proficiency.Value / 1000.0f;
-        var difficultyPenalty = Math.Max(0.1f, 1.0f - (itemComplexity / 1000.0f));
-        
-        return Math.Min(1.0f, baseSuccessRate * difficultyPenalty);
-    }
-    
-    public static int CalculateCraftExperience(ICraftableItem item, bool wasSuccessful)
-    {
-        var baseExperience = 30;
-        var successMultiplier = wasSuccessful ? 1.0f : 0.5f; // 失敗時は半分の経験値
-        
-        return (int)(baseExperience * successMultiplier);
-    }
-}
+// 【部分実装】スキルシステムの基本構造のみ実装済み
+
+// 1. スキルインターフェース階層
+internal interface ISkill { /* ... */ }
+internal interface IProductionSkill : ISkill { /* ... */ }
+internal interface IBattleSkill : ISkill { /* ... */ }
+
+// 2. スキル実装基底クラス
+public abstract class Skill : ISkill { /* ... */ }
+
+// 3. スキル経験値管理システム
+public class SkillExperience { /* ... */ }
+public class SkillProficiency { /* ... */ }
+internal class SkillExpCalculator { /* ... */ }
+
+// 4. スキル取得条件システム
+public class SkillAcquisitionConditions { /* ... */ }
 ```
 
-### スキル管理
+> **注意**: スキルの具体的な習得・使用・効果システムは未実装です。現在はスキルシステムの基本的なデータ構造と経験値計算のみが実装されています。
 
-```csharp
-// 【未実装】統合スキル管理システム
-public static class SkillManager
-{
-    public static IEnumerable<Skill> GetLearnableSkills(PlayerCommonEntity player, IEnumerable<Skill> allSkills)
-    {
-        return allSkills.Where(skill => 
-            !player.Skills.Any(s => s.Skill.Name.Value == skill.Name.Value) &&
-            SkillAcquisitionChecker.CanAcquireSkill(skill, player)
-        );
-    }
-    
-    public static IEnumerable<SkillAndProficiency> GetSkillsByType(PlayerCommonEntity player, SkillType skillType)
-    {
-        return player.Skills.Where(s => s.Skill.Type == skillType);
-    }
-    
-    public static SkillAndProficiency? GetSkillByName(PlayerCommonEntity player, SkillName skillName)
-    {
-        return player.Skills.FirstOrDefault(s => s.Skill.Name.Value == skillName.Value);
-    }
-    
-    public static int GetTotalSkillCount(PlayerCommonEntity player)
-    {
-        return player.Skills.Length;
-    }
-    
-    public static int GetAverageProficiency(PlayerCommonEntity player, SkillType? skillType = null)
-    {
-        var skills = skillType.HasValue 
-            ? player.Skills.Where(s => s.Skill.Type == skillType.Value)
-            : player.Skills;
-        
-        return skills.Any() ? (int)skills.Average(s => s.Proficiency.Value) : 0;
-    }
-}
-```
 
 ## 他ドメインとの連携
 
 ### Character ドメインとの連携
-- **スキル習得**: レベル・ステータス条件チェック
-- **戦闘効果**: 戦闘スキルによる能力値補正
+- **スキル数制限**: `CharacterLevel.GetNumberOfSkillsAvailable()` によるスキル数上限管理
+- **取得条件**: `PlayerLevel`, `Strength`, `Agility` パラメーターによるスキル取得条件
 - 詳細: [Character.md](./Character.md)
 
 ### Item ドメインとの連携
-- **クラフト条件**: 生産スキル熟練度による成功率
-- **装備条件**: 特定スキル習得による装備解放（将来拡張）
-- 詳細: [CraftingSystem.md](../systems/CraftingSystem.md)
+- **生産スキル**: `IProductionSkill` インターフェースでItemドメインと連携（将来拡張）
+- 詳細: [Item.md](./Item.md)
 
-### Inventory ドメインとの連携
-- **素材管理**: クラフト時の素材消費・生成
-- **ツール要求**: 生産スキル使用時の専用ツール（将来拡張）
-- 詳細: [Inventory.md](./Inventory.md)
+> **注意**: 現在の実装ではスキルシステムの基本構造のみが実装されており、他ドメインとの具体的な連携機能は将来的な拡張です。
 
 ## 拡張ポイント
 
-### スキルツリーシステム
-```csharp
-// 【未実装】スキル間の依存関係をツリー構造で管理
-public record SkillTree
-{
-    public SkillTreeNode Root { get; }
-    public ImmutableArray<SkillTreeNode> AllNodes { get; }
-}
+現在の実装はスキルシステムの基本的なデータ構造と経験値管理のみです。以下の機能が将来的な拡張ポイントとして考えられます：
 
-public record SkillTreeNode
-{
-    public Skill Skill { get; }
-    public ImmutableArray<SkillTreeNode> Prerequisites { get; }
-    public ImmutableArray<SkillTreeNode> Unlocks { get; }
-}
-```
+### スキル実装系
+- **具体的なスキルクラス**: `Skill` 抽象クラスを継承した実際のスキル実装
+- **戦闐スキル効果**: `IBattleSkill` インターフェースの具体化
+- **生産スキルアクション**: `CreateSkillAction`, `RefineSkillAction`, `RepairSkillAction`
 
-### スキルコンボシステム
-```csharp
-// 【未実装】複数スキルの組み合わせ効果
-public record SkillCombo
-{
-    public string Name { get; }
-    public ImmutableArray<SkillName> RequiredSkills { get; }
-    public BattleSkillEffect ComboEffect { get; }
-}
-```
+### スキル管理系
+- **スキル習得システム**: キャラクターがスキルを習得する機能
+- **スキル使用システム**: 習得したスキルを実際に使用する機能
+- **スキル成長システム**: 経験値獲得による熟練度上昇
 
-### スキル特化システム
-```csharp
-// 【未実装】スキルの特化方向システム
-public enum SkillSpecialization
-{
-    Damage,      // ダメージ特化
-    Defense,     // 防御特化
-    Utility,     // 補助特化
-    Efficiency   // 効率特化
-}
+### 高度なスキル機能
+- **スキルツリーシステム**: スキル間の依存関係管理
+- **スキルコンボシステム**: 複数スキルの組み合わせ効果
+- **パッシブスキルシステム**: 常時発動する補助効果
 
-public record SpecializedSkill : Skill
-{
-    public SkillSpecialization Specialization { get; }
-    public int SpecializationLevel { get; }
-}
-```
-
-### パッシブスキルシステム
-```csharp
-// 【未実装】常時発動するパッシブスキル
-public record PassiveSkill : Skill
-{
-    public PassiveSkillEffect PassiveEffect { get; }
-    public bool IsActive { get; }
-}
-
-public record PassiveSkillEffect
-{
-    public float MovementSpeedMultiplier { get; }
-    public float ExperienceMultiplier { get; }
-    public int HealthRegeneration { get; }
-}
-```
-
-Skill ドメインは、プレイヤーの成長システムの重要な要素として、長期的なゲームプレイの動機づけとカスタマイゼーションを提供します。

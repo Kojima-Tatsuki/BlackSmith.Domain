@@ -2,568 +2,298 @@
 
 ## 概要
 
-Field ドメインは、ゲーム世界の空間構造を4層階層システムで管理します。World（世界）→ Map（マップ）→ Field（フィールド）→ Chunk（チャンク）の階層により、スケーラブルで効率的な世界管理を実現します。
+Field ドメインは、ゲーム世界の空間管理とキャラクター配置を担当するドメインです。
+
+### 主要な責務
+- **空間管理**：フィールド（エリア）単位でのゲーム空間の識別と管理
+- **キャラクター配置**：各フィールド内に存在するキャラクターの追跡と管理
+- **エリア分類**：Village/Abandoned/Dungeonによるフィールドタイプの分類
+
+### 現在の実装状況
+- **Field**：FieldIDによる識別、名前管理、キャラクター配置機能を実装
+- **Chunk**：フィールド内でのキャラクター存在管理を実装（Guidベース）
+- **FieldType**：Village（街・安全圏）、Abandoned（安全圏外）、Dungeon の3種類を定義
+
+### 設計の特徴
+- **Character ドメイン連携**：CharacterIDを使用したキャラクター配置管理
+- **イミュータブル設計**：Chunkクラスでの状態変更時に新インスタンス生成
+- **拡張性**：将来的なWorld/Map階層やPosition座標システムに対応可能な基盤設計
+
+このドメインは Character ドメインとの連携により、ゲーム世界における基本的な空間管理を提供しています。
 
 ## ドメインモデル
 
 ### 階層構造
 
+#### 実装済み階層
 ```
-World（世界）
-  └── Map（マップ）
-      └── Field（フィールド）
-          └── Chunk（チャンク）
+Field（フィールド）
+  └── Chunk（チャンク）
+```
+
+#### 現在の実装状況
+- **Field**: ✅ 実装済み - FieldIDによる識別、名前管理、キャラクター配置
+- **Chunk**: ✅ 実装済み - Guidベース、キャラクター管理（注意：ChunkIDは未実装）
+
+#### 未実装階層
+```
+World（世界）     ← 未実装（空のクラスのみ）
+  └── Map（マップ）  ← 未実装（空のクラスのみ）
+      └── Field（フィールド）  ← 実装済み
+          └── Chunk（チャンク）  ← 実装済み
 ```
 
 ### 各階層の役割
 
+#### 実装済み階層の役割
+- **Field**: 街やダンジョンを含むマップ単位のエリア管理、キャラクター配置追跡
+- **Chunk**: フィールド内でのキャラクター存在管理、データの分割単位
+
+#### 未実装階層の計画（ドキュメント記載のみ）
 - **World**: 最上位エリア（大陸、次元など）
 - **Map**: 世界内の国、山、平原レベル
-- **Field**: マップ内の町、区画、ダンジョン（主要エリア単位）
-- **Chunk**: フィールド内のレンダリング/処理分割単位
 
 ### 識別子
 
-#### 各階層のID
+#### 実装済み識別子
+
 ```csharp
-public record WorldID : BasicID
-{
-    protected override string Prefix => "WLD_";
-}
-
-public record MapID : BasicID
-{
-    protected override string Prefix => "MAP_";
-}
-
+// 実装済み：Field.cs
 public record FieldID : BasicID
 {
-    protected override string Prefix => "FLD_";
-}
-
-public record ChunkID : BasicID
-{
-    protected override string Prefix => "CHK_";
+    protected override string Prefix => "Field-";
 }
 ```
+
+**注意**：現在の実装は限定的で、以下の識別子は未実装です：
+- `WorldID` - World.csは空のクラス 
+- `MapID` - Map.csは空のクラス
+- `ChunkID` - Chunk（Chank.cs）はGuid ChunkIdを使用
 
 ### エンティティ・値オブジェクト
 
-#### WorldModel
+#### 実装済みエンティティ
+
+##### Field (Field.cs)
 ```csharp
-public record WorldModel
+public class Field
 {
-    public WorldID Id { get; }
+    public FieldID ID { get; }
     public string Name { get; }
-    public string Description { get; }
-    public ImmutableArray<MapID> Maps { get; }
+    public IReadOnlyCollection<CharacterID> CharacterIds => Chunk.CharacterIds;
+    internal Chunk Chunk { get; private set; }
     
-    public WorldModel(WorldID id, string name, string description)
-    {
-        Id = id ?? throw new ArgumentNullException(nameof(id));
-        Name = ValidateName(name);
-        Description = description ?? string.Empty;
-        Maps = ImmutableArray<MapID>.Empty;
-    }
+    // ファクトリーメソッド
+    internal static Field ValueOf(FieldID id, string name, IReadOnlyCollection<CharacterID> ids);
+    internal static Field NameOf(string name);
     
-    public WorldModel AddMap(MapID mapId)
-    {
-        if (Maps.Contains(mapId))
-            throw new InvalidOperationException("Map already exists in this world");
-        
-        return this with { Maps = Maps.Add(mapId) };
-    }
-    
-    public WorldModel RemoveMap(MapID mapId)
-    {
-        return this with { Maps = Maps.Remove(mapId) };
-    }
-    
-    private static string ValidateName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("World name cannot be empty");
-        
-        if (name.Length > 100)
-            throw new ArgumentException("World name cannot exceed 100 characters");
-        
-        return name;
-    }
+    // キャラクター管理
+    internal void AddCharacter(CharacterID id);
+    internal void RemoveCharacter(CharacterID id);
 }
 ```
 
-#### MapModel
+##### Chunk (Chank.cs)
 ```csharp
-public record MapModel
+internal class Chunk
 {
-    public MapID Id { get; }
-    public WorldID WorldId { get; } // 親World参照
-    public string Name { get; }
-    public string Description { get; }
-    public MapType Type { get; }
-    public ImmutableArray<FieldID> Fields { get; }
+    public Guid ChunkId { get; }  // 注意：ChunkIDではなくGuidを使用
+    public IReadOnlyCollection<CharacterID> CharacterIds { get; }
     
-    public MapModel(MapID id, WorldID worldId, string name, string description, MapType type)
-    {
-        Id = id ?? throw new ArgumentNullException(nameof(id));
-        WorldId = worldId ?? throw new ArgumentNullException(nameof(worldId));
-        Name = ValidateName(name);
-        Description = description ?? string.Empty;
-        Type = type;
-        Fields = ImmutableArray<FieldID>.Empty;
-    }
-    
-    public MapModel AddField(FieldID fieldId)
-    {
-        if (Fields.Contains(fieldId))
-            throw new InvalidOperationException("Field already exists in this map");
-        
-        return this with { Fields = Fields.Add(fieldId) };
-    }
-    
-    public MapModel RemoveField(FieldID fieldId)
-    {
-        return this with { Fields = Fields.Remove(fieldId) };
-    }
-    
-    private static string ValidateName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Map name cannot be empty");
-        
-        if (name.Length > 100)
-            throw new ArgumentException("Map name cannot exceed 100 characters");
-        
-        return name;
-    }
-}
-
-public enum MapType
-{
-    Overworld = 1,    // 地上世界
-    Underground = 2,  // 地下世界
-    Sky = 3,          // 空中世界
-    Dungeon = 4,      // ダンジョン
-    Town = 5          // 町・都市
+    internal Chunk RemoveCharacter(CharacterID id);
+    internal Chunk AddCharacter(CharacterID id);
 }
 ```
 
-#### FieldModel
+##### FieldType (Field.cs)
 ```csharp
-public record FieldModel
-{
-    public FieldID Id { get; }
-    public MapID MapId { get; } // 親Map参照
-    public string Name { get; }
-    public string Description { get; }
-    public FieldType Type { get; }
-    public ImmutableArray<ChunkID> Chunks { get; }
-    
-    public FieldModel(FieldID id, MapID mapId, string name, string description, FieldType type)
-    {
-        Id = id ?? throw new ArgumentNullException(nameof(id));
-        MapId = mapId ?? throw new ArgumentNullException(nameof(mapId));
-        Name = ValidateName(name);
-        Description = description ?? string.Empty;
-        Type = type;
-        Chunks = ImmutableArray<ChunkID>.Empty;
-    }
-    
-    public FieldModel AddChunk(ChunkID chunkId)
-    {
-        if (Chunks.Contains(chunkId))
-            throw new InvalidOperationException("Chunk already exists in this field");
-        
-        return this with { Chunks = Chunks.Add(chunkId) };
-    }
-    
-    public FieldModel RemoveChunk(ChunkID chunkId)
-    {
-        return this with { Chunks = Chunks.Remove(chunkId) };
-    }
-    
-    private static string ValidateName(string name)
-    {
-        if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("Field name cannot be empty");
-        
-        if (name.Length > 100)
-            throw new ArgumentException("Field name cannot exceed 100 characters");
-        
-        return name;
-    }
-}
-
 public enum FieldType
 {
-    Plains = 1,       // 平原
-    Forest = 2,       // 森林
-    Mountain = 3,     // 山岳
-    Desert = 4,       // 砂漠
-    Swamp = 5,        // 沼地
-    Town = 6,         // 町
-    Dungeon = 7,      // ダンジョン
-    Castle = 8,       // 城
-    Ruins = 9         // 遺跡
+    Village,   // 街、安全圏内
+    Abandoned, // 安全圏外
+    Dungeon,
 }
 ```
 
-#### ChunkModel
+#### 未実装エンティティ
+
+以下のエンティティはドキュメントに記載されていますが、実装されていません：
+
+##### World (World.cs - 空のクラス)
 ```csharp
-public record ChunkModel
+internal class World
 {
-    public ChunkID Id { get; }
-    public FieldID FieldId { get; } // 親Field参照
-    public Position Position { get; }
-    public ChunkSize Size { get; }
-    public bool IsLoaded { get; }
-    
-    public ChunkModel(ChunkID id, FieldID fieldId, Position position, ChunkSize size)
-    {
-        Id = id ?? throw new ArgumentNullException(nameof(id));
-        FieldId = fieldId ?? throw new ArgumentNullException(nameof(fieldId));
-        Position = position;
-        Size = size;
-        IsLoaded = false;
-    }
-    
-    public ChunkModel Load()
-    {
-        return this with { IsLoaded = true };
-    }
-    
-    public ChunkModel Unload()
-    {
-        return this with { IsLoaded = false };
-    }
-}
-
-// 【未実装】位置管理システム
-public record Position
-{
-    public int X { get; }
-    public int Y { get; }
-    public int Z { get; }
-    
-    public Position(int x, int y, int z = 0)
-    {
-        X = x;
-        Y = y;
-        Z = z;
-    }
-    
-    public float DistanceTo(Position other)
-    {
-        var dx = X - other.X;
-        var dy = Y - other.Y;
-        var dz = Z - other.Z;
-        return (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
-    }
-}
-
-// 【未実装】チャンクサイズ管理
-public record ChunkSize
-{
-    public int Width { get; }
-    public int Height { get; }
-    
-    public ChunkSize(int width, int height)
-    {
-        if (width <= 0 || height <= 0)
-            throw new ArgumentException("Chunk size must be positive");
-        
-        Width = width;
-        Height = height;
-    }
-    
-    public int Area => Width * Height;
+    // 実装なし
 }
 ```
+
+##### Map (Map.cs - 空のクラス)
+```csharp
+public class Map
+{
+    // 実装なし
+}
+```
+
+**注意**：ドキュメントに記載されている`WorldModel`、`MapModel`、`FieldModel`、`ChunkModel`、`Position`、`ChunkSize`などの詳細なモデルクラスは現在未実装です。
 
 ## ビジネスルール
 
-### 階層制約
+### 実装済みルール
 
-#### 親子関係の強制
+#### Field内のキャラクター管理
 ```csharp
-public static class HierarchyValidator
+// Field.cs の実装済み機能
+public class Field
 {
-    public static bool ValidateWorldMapRelation(WorldModel world, MapModel map)
-    {
-        return world.Maps.Contains(map.Id) && map.WorldId == world.Id;
-    }
+    // キャラクターの追加・削除
+    internal void AddCharacter(CharacterID id);
+    internal void RemoveCharacter(CharacterID id);
     
-    public static bool ValidateMapFieldRelation(MapModel map, FieldModel field)
-    {
-        return map.Fields.Contains(field.Id) && field.MapId == map.Id;
-    }
-    
-    public static bool ValidateFieldChunkRelation(FieldModel field, ChunkModel chunk)
-    {
-        return field.Chunks.Contains(chunk.Id) && chunk.FieldId == field.Id;
-    }
+    // 現在のキャラクター一覧取得
+    public IReadOnlyCollection<CharacterID> CharacterIds => Chunk.CharacterIds;
 }
 ```
 
-#### 循環参照の防止
-- 各階層は必ず上位階層への参照を持つ
-- 下位階層から上位階層への逆参照は禁止
-- 同一階層間の直接参照は禁止
-
-### 命名規則
-
-#### 名前の制約
-- **長さ制限**: 各階層名は100文字以内
-- **必須項目**: 名前は必須（空白・null不可）
-- **重複制限**: 同一親内での名前重複は許可（IDで識別）
-
-### チャンク管理
-
-#### 読み込み制限
+#### FieldType による分類
 ```csharp
-public static class ChunkManager
+public enum FieldType
 {
-    public static bool ShouldLoadChunk(ChunkModel chunk, Position playerPosition, int loadRadius)
-    {
-        var distance = chunk.Position.DistanceTo(playerPosition);
-        return distance <= loadRadius;
-    }
-    
-    public static IEnumerable<ChunkModel> GetChunksToLoad(
-        IEnumerable<ChunkModel> allChunks,
-        Position playerPosition,
-        int loadRadius)
-    {
-        return allChunks
-            .Where(chunk => !chunk.IsLoaded)
-            .Where(chunk => ShouldLoadChunk(chunk, playerPosition, loadRadius));
-    }
-    
-    public static IEnumerable<ChunkModel> GetChunksToUnload(
-        IEnumerable<ChunkModel> loadedChunks,
-        Position playerPosition,
-        int unloadRadius)
-    {
-        return loadedChunks
-            .Where(chunk => chunk.IsLoaded)
-            .Where(chunk => !ShouldLoadChunk(chunk, playerPosition, unloadRadius));
-    }
+    Village,   // 街、安全圏内
+    Abandoned, // 安全圏外  
+    Dungeon,   // ダンジョン
 }
 ```
+
+#### Chunk内のキャラクター管理
+```csharp
+internal class Chunk
+{
+    // キャラクターの追加・削除（新しいChunkインスタンスを返す）
+    internal Chunk AddCharacter(CharacterID id);
+    internal Chunk RemoveCharacter(CharacterID id);
+}
+```
+
+### 未実装ルール
+
+**注意**：以下のビジネスルールはドキュメントに記載されていますが、現在未実装です：
+
+- **階層制約**：World/Map/Field/Chunkの親子関係検証
+- **命名規則**：各階層の名前制約（100文字制限等）
+- **チャンク管理**：位置ベースの動的読み込み/アンロード
+- **循環参照防止**：階層間の参照制限
 
 ## ゲームロジック
 
-### 世界構築
+### 実装済み機能
 
+#### Field作成と管理
 ```csharp
-// 世界作成の例
-public static class WorldBuilder
+// Field.cs の実装済み機能
+public class Field
 {
-    public static WorldModel CreateBasicWorld(string worldName)
-    {
-        var worldId = new WorldID();
-        return new WorldModel(worldId, worldName, $"The world of {worldName}");
-    }
+    // ファクトリーメソッドでField作成
+    internal static Field ValueOf(FieldID id, string name, IReadOnlyCollection<CharacterID> ids);
+    internal static Field NameOf(string name);  // 新規Field作成
     
-    public static MapModel CreateMap(WorldModel world, string mapName, MapType type)
-    {
-        var mapId = new MapID();
-        var map = new MapModel(mapId, world.Id, mapName, $"A {type} area", type);
-        
-        // 世界にマップを追加
-        var updatedWorld = world.AddMap(mapId);
-        
-        return map;
-    }
+    // キャラクター管理
+    internal void AddCharacter(CharacterID id);
+    internal void RemoveCharacter(CharacterID id);
+}
+
+// 使用例
+var field = Field.NameOf("スタート村");
+field.AddCharacter(characterId);
+```
+
+#### Chunk管理
+```csharp
+// Chank.cs の実装済み機能  
+internal class Chunk
+{
+    public Guid ChunkId { get; }  // 自動生成
+    public IReadOnlyCollection<CharacterID> CharacterIds { get; }
     
-    public static FieldModel CreateField(MapModel map, string fieldName, FieldType type)
-    {
-        var fieldId = new FieldID();
-        var field = new FieldModel(fieldId, map.Id, fieldName, $"A {type} field", type);
-        
-        // マップにフィールドを追加
-        var updatedMap = map.AddField(fieldId);
-        
-        return field;
-    }
-    
-    public static ChunkModel CreateChunk(FieldModel field, Position position, ChunkSize size)
-    {
-        var chunkId = new ChunkID();
-        var chunk = new ChunkModel(chunkId, field.Id, position, size);
-        
-        // フィールドにチャンクを追加
-        var updatedField = field.AddChunk(chunkId);
-        
-        return chunk;
-    }
+    // イミュータブルなキャラクター操作
+    internal Chunk AddCharacter(CharacterID id);
+    internal Chunk RemoveCharacter(CharacterID id);
 }
 ```
 
-### プレイヤー位置管理
+### 未実装機能
 
-```csharp
-public record PlayerLocation
-{
-    public WorldID WorldId { get; }
-    public MapID MapId { get; }
-    public FieldID FieldId { get; }
-    public ChunkID? ChunkId { get; }
-    public Position Position { get; }
-    
-    public PlayerLocation(
-        WorldID worldId,
-        MapID mapId,
-        FieldID fieldId,
-        Position position,
-        ChunkID? chunkId = null)
-    {
-        WorldId = worldId ?? throw new ArgumentNullException(nameof(worldId));
-        MapId = mapId ?? throw new ArgumentNullException(nameof(mapId));
-        FieldId = fieldId ?? throw new ArgumentNullException(nameof(fieldId));
-        Position = position;
-        ChunkId = chunkId;
-    }
-    
-    public PlayerLocation MoveTo(Position newPosition)
-    {
-        return this with { Position = newPosition };
-    }
-    
-    public PlayerLocation ChangeField(FieldID newFieldId, Position newPosition)
-    {
-        return this with 
-        { 
-            FieldId = newFieldId, 
-            Position = newPosition,
-            ChunkId = null // チャンクは再計算
-        };
-    }
-}
-```
+**注意**：以下の機能はドキュメントに記載されていますが、現在未実装です：
 
-### エリア遷移
+#### 世界構築システム
+- `WorldBuilder`クラス
+- `WorldModel`、`MapModel`、`FieldModel`、`ChunkModel`の作成
+- 階層的な世界構造の管理
 
-```csharp
-public static class AreaTransition
-{
-    public static PlayerLocation TransferToField(
-        PlayerLocation currentLocation,
-        FieldID targetFieldId,
-        Position spawnPosition)
-    {
-        // フィールド間移動
-        return currentLocation.ChangeField(targetFieldId, spawnPosition);
-    }
-    
-    public static PlayerLocation TransferToMap(
-        PlayerLocation currentLocation,
-        MapID targetMapId,
-        FieldID targetFieldId,
-        Position spawnPosition)
-    {
-        // マップ間移動
-        return new PlayerLocation(
-            currentLocation.WorldId,
-            targetMapId,
-            targetFieldId,
-            spawnPosition
-        );
-    }
-    
-    public static PlayerLocation TransferToWorld(
-        WorldID targetWorldId,
-        MapID targetMapId,
-        FieldID targetFieldId,
-        Position spawnPosition)
-    {
-        // 世界間移動
-        return new PlayerLocation(
-            targetWorldId,
-            targetMapId,
-            targetFieldId,
-            spawnPosition
-        );
-    }
-}
-```
+#### プレイヤー位置管理
+- `PlayerLocation`レコード
+- `Position`システム
+- 階層間の位置追跡
+
+#### エリア遷移システム
+- `AreaTransition`クラス
+- フィールド間/マップ間/世界間移動
+- 位置ベースの遷移処理
 
 ## 他ドメインとの連携
 
 ### Character ドメインとの連携
-- **プレイヤー位置**: 現在位置の追跡
-- **移動制限**: エリア固有の移動制限（将来拡張）
-- 詳細: [Character.md](./Character.md)
+
+#### 実装済み連携
+- **キャラクター配置管理**: `Field`と`Chunk`がキャラクターの位置情報を管理
+- **フィールド内キャラクター追跡**: 各フィールド内に存在するキャラクターをIDで管理
+
+```csharp
+// 実装済みの連携機能
+public class Field
+{
+    public IReadOnlyCollection<CharacterID> CharacterIds => Chunk.CharacterIds;
+    internal void AddCharacter(CharacterID id);     // キャラクターがフィールドに入る
+    internal void RemoveCharacter(CharacterID id);  // キャラクターがフィールドから出る
+}
+
+internal class Chunk
+{
+    public IReadOnlyCollection<CharacterID> CharacterIds { get; }
+    // キャラクターの追加・削除でChunk状態を管理
+}
+```
+
+#### 設計上の連携点
+- **ID参照**: `CharacterID`を使用してキャラクターを識別
+- **位置管理**: フィールド単位でのキャラクター存在管理
+- **状態同期**: キャラクターの移動に応じてフィールド情報を更新
 
 ### Quest ドメインとの連携
-- **クエスト条件**: 特定エリアでの達成条件
-- **目標位置**: クエスト目標の位置指定
-- 詳細: [Quest.md](./Quest.md)
+> **⚠️ 要更新**: この情報は Quest.md 修正後に実装済み機能との照合が必要です
 
 ### 将来の連携可能性
+> **⚠️ 要更新**: 以下は将来の拡張案であり、現在は未実装です
 - **NPCシステム**: エリア固有NPC配置
 - **イベントシステム**: 位置トリガーイベント
 - **PvPシステム**: エリア制限PvP
 
-## 拡張ポイント
+## まとめ
 
-### エリア属性システム
-```csharp
-// エリア固有の属性・効果
-public record AreaAttributes
-{
-    public float MovementSpeedMultiplier { get; }
-    public float ExperienceMultiplier { get; }
-    public bool IsPvPEnabled { get; }
-    public bool IsSafeZone { get; }
-    public WeatherType Weather { get; }
-}
+Field ドメインは現在基本的なフィールドとチャンクによるキャラクター配置管理が実装されており、Character ドメインとの連携によってゲーム世界の基礎的な空間管理を提供しています。
 
-public record FieldModel
-{
-    // 既存プロパティ...
-    public AreaAttributes Attributes { get; }
-}
-```
+### 現在の実装範囲
+- **Field**: FieldIDによる識別、名前管理、キャラクター配置
+- **Chunk**: キャラクターの追加・削除によるフィールド内管理
+- **FieldType**: Village/Abandoned/Dungeonによる分類
 
-### ワープポイントシステム
-```csharp
-public record WarpPoint
-{
-    public WarpPointID Id { get; }
-    public string Name { get; }
-    public FieldID TargetFieldId { get; }
-    public Position TargetPosition { get; }
-    public bool IsUnlocked { get; }
-    public Currency Cost { get; }
-}
-```
+### 今後の拡張可能性
+> **⚠️ 注意**: 以下は将来の拡張案であり、現在は未実装です
 
-### 動的エリア生成
-```csharp
-// 手続き生成システム
-public interface IAreaGenerator
-{
-    FieldModel GenerateField(MapModel parentMap, FieldType type, int seed);
-    IEnumerable<ChunkModel> GenerateChunks(FieldModel field, int chunkSize);
-}
-```
+- **階層構造**: World→Map→Field→Chunkの完全な階層管理
+- **位置システム**: 座標ベースの位置管理とエリア遷移
+- **エリア属性**: フィールド固有の効果やルール
+- **動的生成**: 手続き的なエリア生成システム
+- **アクセス制限**: レベルやクエスト条件によるエリア制限
 
-### エリア制限システム
-```csharp
-public record AccessRestriction
-{
-    public PlayerLevel MinLevel { get; }
-    public ImmutableArray<QuestID> RequiredQuests { get; }
-    public ImmutableArray<ItemID> RequiredItems { get; }
-}
-
-public record FieldModel
-{
-    // 既存プロパティ...
-    public AccessRestriction? AccessRestriction { get; }
-}
-```
-
-Field ドメインは、ゲーム世界の空間的基盤を提供し、他のドメインと連携してリッチなゲーム体験を実現します。\
-4層階層により、小規模から大規模まで柔軟にスケールできる設計となっています。
+現在の実装は将来的な機能拡張に対応できる柔軟な設計基盤を提供しています。

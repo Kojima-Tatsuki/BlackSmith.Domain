@@ -2,375 +2,586 @@
 
 ## 概要
 
-Item ドメインは、ゲーム内のあらゆるアイテム、装備品、クラフトシステムを管理する基盤ドメインです。\
-アイテムの種別、特性、強化、クラフトレシピなどを統一的に扱います。
+Item ドメインは、ゲーム内のあらゆるアイテム、装備品、クラフトシステムを管理する基盤ドメインです。
+
+### 主要な責務
+- **アイテム管理**：ゲーム内アイテムの識別と基本情報管理
+- **装備システム**：装備アイテムの作成、強化、効果管理
+- **クラフトシステム**：素材アイテムからのアイテム作成管理
+- **NPCショップ**：アイテム購入・販売システム
+
+### 現在の実装状況
+- **IItem/Item**：基本アイテムインターフェースとレコードクラスを実装
+- **EquippableItem**：装備アイテムの完全な作成・強化システムを実装
+- **CraftingRecipe**：素材ベースのクラフトシステムを実装
+- **NPCItemShop**：通貨システム統合型ショップを実装
+- **EquipmentEnhanceService**：確率ベース強化システムを実装
+
+### 設計の特徴
+- **コマンドパターン**：CreateCommandによる安全なアイテム作成
+- **ドメインサービス**：強化・クラフト処理の分離
+- **JSON対応**：完全なシリアライゼーション対応
+- **Character ドメイン連携**：制作者ID・装備要件の管理
+- **Currency ドメイン連携**：通貨システムとの統合
+
+このドメインは Inventory、Character、Currency ドメインとの密接な連携により、ゲームの中核システムを支えています。
 
 ## ドメインモデル
 
-### 基底インターフェース・クラス
+### 識別子
 
-#### IItem
+#### 実装済み識別子
+
 ```csharp
+// Item.cs の実装済み識別子
+public record ItemID : BasicID
+{
+    protected override string Prefix => "Item-";
+}
+```
+
+### エンティティ・値オブジェクト
+
+#### 基底インターフェース・クラス
+
+##### IItem (Item.cs)
+```csharp
+// 実装済み：基本アイテムインターフェース
 public interface IItem
 {
     string ItemName { get; }
 }
 ```
 
-#### Item（基底クラス）
+##### Item (Item.cs)
 ```csharp
+// 実装済み：基底アイテムレコード
 public record Item : IItem
 {
-    protected readonly ItemName itemName;
     public string ItemName => itemName.Value;
+    private protected readonly ItemName itemName;
     
-    protected Item(ItemName itemName)
-    {
-        this.itemName = itemName;
-    }
+    [JsonConstructor]
+    internal Item(string itemName);
 }
 ```
 
-### 装備システム
-
-#### EquippableItem
+##### ItemName (Item.cs)
 ```csharp
-public record EquippableItem : Item
-{
-    public EquipmentType EquipmentType { get; }
-    public EnhancementParameter Enhancement { get; }
-    
-    public EquippableItem(
-        ItemName itemName, 
-        EquipmentType equipmentType, 
-        EnhancementParameter enhancement) 
-        : base(itemName)
-    {
-        EquipmentType = equipmentType;
-        Enhancement = enhancement;
-    }
-}
-```
-
-#### 装備種別
-```csharp
-public enum EquipmentType
-{
-    Weapon = 1,     // 武器
-    Armor = 2,      // 防具
-    Accessary = 3   // アクセサリ
-}
-```
-
-#### 強化パラメータ
-```csharp
-// 【部分実装】基本構造は実装済みだが、攻撃力・防御力計算メソッドは未実装
-public record EnhancementParameter
-{
-    public int Sharpness { get; }   // 鋭さ（攻撃力に寄与）
-    public int Speed { get; }       // 速さ（攻撃力に寄与）
-    public int Accuracy { get; }    // 正確さ（攻撃力に寄与）
-    public int Weight { get; }      // 重さ（防御力に寄与）
-    public int Durability { get; }  // 丈夫さ（防御力に寄与）
-    
-    public EnhancementParameter(int sharpness, int speed, int accuracy, int weight, int durability)
-    {
-        Sharpness = Math.Max(0, sharpness);
-        Speed = Math.Max(0, speed);
-        Accuracy = Math.Max(0, accuracy);
-        Weight = Math.Max(0, weight);
-        Durability = Math.Max(0, durability);
-    }
-    
-    // 【未実装】攻撃力計算
-    public int GetAttackValue() => Sharpness + Speed + Accuracy;
-    
-    // 【未実装】防御力計算
-    public int GetDefenseValue() => Weight + Durability;
-}
-```
-
-### クラフトシステム
-
-#### ICraftableItem
-```csharp
-// 【部分実装】基本インターフェースは実装済みだが、レシピシステムは未実装
-public interface ICraftableItem : IItem
-{
-    // 【未実装】CraftingRecipeプロパティ
-    CraftingRecipe Recipe { get; }
-}
-```
-
-#### ICraftMaterialItem
-```csharp
-// 【実装済み】素材アイテムのマーカーインターフェース
-public interface ICraftMaterialItem : IItem
-{
-    // 素材アイテムのマーカーインターフェース
-    // 実装クラスで素材特有のプロパティを定義
-}
-```
-
-#### CraftingRecipe
-```csharp
-// 【部分実装】基本構造は実装済みだが、数量管理システムは未実装
-public record CraftingRecipe
-{
-    // 【未実装】数量管理機能付きの必要素材
-    public ImmutableArray<ItemAndQuantity> RequiredMaterials { get; }
-    // 【未実装】数量管理機能付きの生成物
-    public ImmutableArray<ItemAndQuantity> Products { get; }
-    
-    public CraftingRecipe(
-        ImmutableArray<ItemAndQuantity> requiredMaterials,
-        ImmutableArray<ItemAndQuantity> products)
-    {
-        RequiredMaterials = requiredMaterials;
-        Products = products;
-    }
-}
-
-// 【未実装】アイテムと数量のペア
-public record ItemAndQuantity
-{
-    public IItem Item { get; }
-    public int Quantity { get; }
-    
-    public ItemAndQuantity(IItem item, int quantity)
-    {
-        if (quantity <= 0)
-            throw new ArgumentException("Quantity must be positive");
-        
-        Item = item;
-        Quantity = quantity;
-    }
-}
-```
-
-### 値オブジェクト
-
-#### ItemName
-```csharp
-public record ItemName
+// 実装済み：アイテム名値オブジェクト
+internal record ItemName
 {
     public string Value { get; }
     
-    public ItemName(string value)
+    [JsonConstructor]
+    internal ItemName(string value); // 1文字以上の検証実装
+}
+```
+
+##### ItemType (Item.cs)
+```csharp
+// 実装済み：アイテム種別
+internal enum ItemType
+{
+    None = 0x0,    // なし
+    Weapon = 0x1,  // 武器
+    Armor = 0x2,   // 防具
+    Consum = 0x4,  // 消費アイテム
+}
+```
+
+##### ItemComparer (Item.cs)
+```csharp
+// 実装済み：アイテム比較用クラス
+internal class ItemComparer : IEqualityComparer<Item>
+{
+    public bool Equals(Item? x, Item? y);
+    public int GetHashCode(Item obj);
+}
+```
+
+#### 装備システム
+
+##### IEquipableItem (EquippableItem.cs)
+```csharp
+// 実装済み：装備アイテムインターフェース
+public interface IEquipableItem : IItem
+{
+    IEquipableItem Enchant(EnhancementParameter parameter);
+    IEquipableItem Repair(); // 注意：NotImplementedException実装
+}
+```
+
+##### EquippableItem (EquippableItem.cs)
+```csharp
+// 実装済み：装備アイテムレコード
+public record EquippableItem : Item, IEquipableItem
+{
+    public EquipmentType EquipType { get; }
+    public EquipmentAttack Attack { get; }
+    public EquipmentDefense Defense { get; }
+    public EnhancementParameter EnhancementParameter { get; }
+    public AdditionalParameter AdditionalParameter { get; }
+    public RequireParameter RequireParameter { get; }
+    
+    // コマンドパターンによる作成
+    internal EquippableItem(CreateCommand command);
+    
+    // JSON用コンストラクタ
+    [JsonConstructor]
+    private EquippableItem(/* 全プロパティ */);
+    
+    // 強化メソッド
+    internal EquippableItem Enchant(EnhancementParameter parameter);
+    
+    // コマンドパターン
+    internal record CreateCommand { /* 全プロパティ */ }
+}
+```
+
+##### EquipmentType (EquippableItem.cs)
+```csharp
+// 実装済み：装備種別
+public enum EquipmentType
+{
+    Weapon,     // 武器
+    Armor,      // 防具
+    Accessary,  // アクセサリ
+}
+```
+
+##### 装備パラメータ値オブジェクト群
+```csharp
+// EquipmentAttack (EquippableItem.cs)
+public record EquipmentAttack
+{
+    public int Value { get; }
+    [JsonConstructor]
+    internal EquipmentAttack(int value);
+}
+
+// EquipmentDefense (EquippableItem.cs)
+public record EquipmentDefense
+{
+    public int Value { get; }
+    [JsonConstructor]
+    internal EquipmentDefense(int value);
+}
+```
+
+##### EnhancementParameter (EquippableItem.cs)
+```csharp
+// 実装済み：強化パラメータ
+public record EnhancementParameter
+{
+    public int Sharpness { get; }  // 鋭さ
+    public int Quickness { get; }  // 速さ（注意：Speedではない）
+    public int Accuracy { get; }   // 正確さ
+    public int Heaviness { get; }  // 重さ（注意：Weightではない）
+    public int Durability { get; } // 丈夫さ
+    
+    internal EnhancementParameter(); // 全て0で初期化
+    [JsonConstructor]
+    internal EnhancementParameter(int sharpness, int quickness, int accuracy, int heaviness, int durability);
+    
+    // 実装済み：強化回数計算
+    public int GetEnchancedCount => Sharpness + Quickness + Accuracy + Heaviness + Durability;
+    
+    // 実装済み：強化実行
+    internal EnhancementParameter AddEnhance(EnhanceType type);
+    
+    public enum EnhanceType
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Item name cannot be empty");
-        
-        if (value.Length > 50)
-            throw new ArgumentException("Item name cannot exceed 50 characters");
-        
-        Value = value;
+        Sharpness, Quickness, Accuracy, Heaviness, Durability,
+    }
+}
+```
+
+##### AdditionalParameter (EquippableItem.cs)
+```csharp
+// 実装済み（部分）：追加パラメータ（注意：コンストラクタ未実装）
+public record AdditionalParameter
+{
+    public int Attack { get; }
+    public int Defense { get; }
+    public int STR { get; }
+    public int AGI { get; }
+}
+```
+
+##### RequireParameter (EquippableItem.cs)
+```csharp
+// 実装済み：装備要求パラメータ
+public record RequireParameter
+{
+    public PlayerLevel Level { get; }
+    public Strength Strength { get; }
+    public Agility Agility { get; }
+    
+    [JsonConstructor]
+    internal RequireParameter(PlayerLevel level, Strength strength, Agility agility);
+}
+```
+
+#### クラフトシステム
+
+##### ICraftMaterialItem (CraftableItem.cs)
+```csharp
+// 実装済み：素材アイテムマーカーインターフェース
+public interface ICraftMaterialItem : IItem
+{
+    // マーカーインターフェース（実装は空）
+}
+```
+
+##### ICraftableItem (CraftableItem.cs)
+```csharp
+// 実装済み：クラフト可能アイテムインターフェース
+public interface ICraftableItem : IItem
+{
+    CharacterID CreatedBy { get; } // 制作者ID
+    IReadOnlyCollection<ICraftMaterialItem> GetRequireMaterials();
+}
+```
+
+##### CraftingRecipe (CraftableItem.cs)
+```csharp
+// 実装済み：クラフトレシピクラス
+public class CraftingRecipe
+{
+    public readonly ICraftableItem Craftable; // 完成アイテム
+    public readonly IReadOnlyList<ICraftMaterialItem> Materials; // 必要素材（順序あり）
+    
+    internal CraftingRecipe(ICraftableItem craftable, IReadOnlyList<ICraftMaterialItem> materials);
+    
+    // 実装済み：素材チェック機能
+    public bool IsCraftable(IReadOnlyCollection<ICraftMaterialItem> materials);
+}
+```
+
+#### NPCショップシステム
+
+```csharp
+// NPCItemShop.cs の実装済み機能
+public interface IItemPurchasable
+{
+    IItem Purchase(IItem item, Currency.Currency money);
+}
+
+public interface IItemExhibitable
+{
+    Currency.Currency GetPrice(IItem item);
+    bool IsExisting(IItem item);
+}
+
+public class NPCItemShop : IItemPurchasable, IItemExhibitable
+{
+    // 無限在庫ショップ
+    private readonly Dictionary<IItem, Currency.Currency> items;
+    
+    internal NPCItemShop(Dictionary<IItem, Currency.Currency> items);
+    
+    // アイテム購入
+    public IItem Purchase(IItem item, Currency.Currency money);
+    
+    // 価格取得・在庫確認
+    public Currency.Currency GetPrice(IItem item);
+    public bool IsExisting(IItem item);
+}
+```
+
+#### ドメインサービス
+
+##### EquipmentEnhanceService (EquippableItemService.cs)
+```csharp
+// 実装済み：装備強化サービス
+public static class EquipmentEnhanceService
+{
+    // 強化成功確率計算
+    public static EnhanceSuccessRatio CalcSuccessRatio(EquippableItem item, PlayerLevel playerLevel);
+    
+    public enum EnhanceSuccessRatio
+    {
+        Success, // 成功
+        Endure,  // 変化なし
+        Failure, // 失敗
+    }
+}
+```
+
+##### CraftableItemService (CraftableItemService.cs)
+```csharp
+// 実装済み：クラフトサービス
+public class CraftableItemService
+{
+    public CraftingResult CreateItem(CraftingRecipe recipe, CharacterID createrId);
+    
+    public record CraftingResult
+    {
+        public bool IsSuccess { get; }
+        public ICraftableItem? CreatedItem { get; }
+        public CharacterID CreatedBy { get; }
     }
 }
 ```
 
 ## ビジネスルール
 
-### 装備制限
+### 実装済みルール
 
-#### 装備パラメータ制約
-- **強化値下限**: 各パラメータは0以上
-- **強化値上限**: 実装上の制限なし（バランス調整は運用で対応）
-- **強化回数制限**: なし（各パラメータ個別管理）
-
-#### 装備効果計算
+#### アイテム名制限
 ```csharp
+// ItemName.cs の実装済み制限
+internal record ItemName
+{
+    internal ItemName(string value)
+    {
+        if (value is null) throw new ArgumentNullException(nameof(value));
+        if (value.Length == 0) throw new ArgumentOutOfRangeException("nameは1文字以上です。");
+        // 注意：上限制限は現在未実装
+    }
+}
+```
+
+#### 装備強化ルール
+```csharp
+// EnhancementParameter.cs の実装済み機能
 public record EnhancementParameter
 {
-    // 攻撃力寄与度
-    public int GetAttackValue() => Sharpness + Speed + Accuracy;
+    // 強化値制限なし（負値も許可）
+    internal EnhancementParameter(int sharpness, int quickness, int accuracy, int heaviness, int durability);
     
-    // 防御力寄与度  
-    public int GetDefenseValue() => Weight + Durability;
+    // 実装済み：強化回数計算
+    public int GetEnchancedCount => Sharpness + Quickness + Accuracy + Heaviness + Durability;
     
-    // 強化合計値
-    public int GetTotalEnhancement() => GetAttackValue() + GetDefenseValue();
+    // 実装済み：個別パラメータ強化
+    internal EnhancementParameter AddEnhance(EnhanceType type);
 }
 ```
 
-### クラフト制限
-
-#### クラフト実行条件
+#### 装備成功確率ルール
 ```csharp
-// 【未実装】クラフト可能性チェック機能
-public bool CanCraft(CraftingRecipe recipe, IInventory inventory)
+// EquipmentEnhanceService.cs の実装済み機能
+public static class EquipmentEnhanceService
 {
-    // 必要素材の完全一致チェック
-    foreach (var required in recipe.RequiredMaterials)
+    // プレイヤーレベルと装備要求レベルに基づく成功確率計算
+    public static EnhanceSuccessRatio CalcSuccessRatio(EquippableItem item, PlayerLevel playerLevel);
+}
+```
+
+#### クラフト成功ルール
+```csharp
+// CraftingRecipe.cs の実装済み機能
+public class CraftingRecipe
+{
+    // 素材の必要性チェック（完全一致ベース）
+    public bool IsCraftable(IReadOnlyCollection<ICraftMaterialItem> materials)
     {
-        var availableQuantity = inventory.GetItemQuantity(required.Item);
-        if (availableQuantity < required.Quantity)
-            return false;
+        return Materials.All(item => materials.Contains(item));
     }
-    
-    return true;
+}
+
+// CraftableItemService.cs の実装済み機能
+public class CraftableItemService
+{
+    // クラフトは素材があれば必ず成功
+    public CraftingResult CreateItem(CraftingRecipe recipe, CharacterID createrId);
 }
 ```
 
-#### クラフト結果
+#### NPCショップルール
 ```csharp
-// 【未実装】クラフト結果管理システム
-public record CraftResult
+// NPCItemShop.cs の実装済み機能
+public class NPCItemShop
 {
-    public bool IsSuccess { get; }
-    public string ErrorMessage { get; }
-    public ImmutableArray<ItemAndQuantity> CreatedItems { get; }
-    
-    public static CraftResult Success(ImmutableArray<ItemAndQuantity> items) =>
-        new CraftResult(true, string.Empty, items);
-    
-    public static CraftResult Failed(string errorMessage) =>
-        new CraftResult(false, errorMessage, ImmutableArray<ItemAndQuantity>.Empty);
+    // 無限在庫システム
+    // 固定価格システム
+    // 通貨交換レート対応
+    public IItem Purchase(IItem item, Currency.Currency money);
 }
 ```
 
-### アイテム種別制限
+### 未実装ルール
 
-#### スタック制限
-```csharp
-// 【未実装】アイテム種別によるスタック制限システム
-public static int GetMaxStackSize(IItem item) => item switch
-{
-    ICraftMaterialItem => 999,      // 素材: 999個まで
-    EquippableItem => 1,            // 装備: 1個まで（個別管理）
-    _ => 99                         // その他: 99個まで
-};
-```
+**注意**：以下のビジネスルールはドキュメントに記載されていますが、現在未実装です：
+
+#### アイテムスタック制限
+- **種別別制限**：素材999個、装備1個、その他99個
+- **現在の実装**：Inventory ドメインで管理
+
+#### 装備制限システム
+- **レベル制限**：RequireParameter は定義済みだが制限チェック未実装
+- **ステータス制限**：Strength/Agility 要件チェック未実装
+
+#### 品質・耐久度システム
+- **アイテム品質**：Common/Rare/Epic等の品質分類
+- **耐久度**：装備の使用による劣化システム
 
 ## ゲームロジック
 
-### 装備品作成
+### 実装済み機能
 
+#### 装備品作成
 ```csharp
-// 【未実装】基本装備の作成ファクトリー
-public static EquippableItem CreateBasicWeapon(string name)
-{
-    return new EquippableItem(
-        new ItemName(name),
-        EquipmentType.Weapon,
-        new EnhancementParameter(5, 3, 2, 0, 1) // 基本的な武器パラメータ
-    );
-}
+// EquippableItem.cs の実装済み機能
+var command = new EquippableItem.CreateCommand(
+    "アイアンソード",
+    EquipmentType.Weapon,
+    new EquipmentAttack(10),
+    new EquipmentDefense(2),
+    new EnhancementParameter(0, 0, 0, 0, 0),
+    new AdditionalParameter(), // 注意：コンストラクタ未実装
+    new RequireParameter(new PlayerLevel(5), new Strength(10), new Agility(5))
+);
 
-// 【部分実装】強化装備の作成（基本強化システムは実装済み）
-public static EquippableItem EnhanceEquipment(
-    EquippableItem baseEquipment,
-    int sharpnessBonus = 0,
-    int speedBonus = 0,
-    int accuracyBonus = 0,
-    int weightBonus = 0,
-    int durabilityBonus = 0)
+var weapon = new EquippableItem(command);
+```
+
+#### 装備強化
+```csharp
+// EnhancementParameter.cs の実装済み機能
+var enhancedParameter = weapon.EnhancementParameter.AddEnhance(EnhanceType.Sharpness);
+var enhancedWeapon = weapon.Enchant(enhancedParameter);
+
+// 成功確率計算
+var successRatio = EquipmentEnhanceService.CalcSuccessRatio(weapon, playerLevel);
+```
+
+#### クラフト実行
+```csharp
+// CraftableItemService.cs の実装済み機能
+var service = new CraftableItemService();
+var result = service.CreateItem(recipe, creatorId);
+
+if (result.IsSuccess)
 {
-    var currentEnhancement = baseEquipment.Enhancement;
-    var newEnhancement = new EnhancementParameter(
-        currentEnhancement.Sharpness + sharpnessBonus,
-        currentEnhancement.Speed + speedBonus,
-        currentEnhancement.Accuracy + accuracyBonus,
-        currentEnhancement.Weight + weightBonus,
-        currentEnhancement.Durability + durabilityBonus
-    );
-    
-    return baseEquipment with { Enhancement = newEnhancement };
+    var createdItem = result.CreatedItem;
+    var creator = result.CreatedBy;
 }
 ```
 
-### クラフト実行
-
+#### クラフトレシピ検証
 ```csharp
-// 【未実装】クラフト実行システム
-public static CraftResult ExecuteCraft(CraftingRecipe recipe, IInventory inventory)
-{
-    // 1. クラフト可能性チェック
-    if (!CanCraft(recipe, inventory))
-        return CraftResult.Failed("Insufficient materials");
-    
-    // 2. 素材消費（実際のインベントリ操作は Inventory ドメインで実行）
-    var materialConsumption = recipe.RequiredMaterials;
-    
-    // 3. 生成物作成
-    var products = recipe.Products;
-    
-    return CraftResult.Success(products);
-}
+// CraftingRecipe.cs の実装済み機能
+var recipe = new CraftingRecipe(craftableItem, materials);
+bool canCraft = recipe.IsCraftable(availableMaterials);
 ```
 
-### 装備比較
-
+#### NPCショップ利用
 ```csharp
-// 【未実装】装備比較システム
-public static class EquipmentComparer
-{
-    public static int CompareAttackPower(EquippableItem item1, EquippableItem item2)
-    {
-        return item1.Enhancement.GetAttackValue().CompareTo(item2.Enhancement.GetAttackValue());
-    }
-    
-    public static int CompareDefensePower(EquippableItem item1, EquippableItem item2)
-    {
-        return item1.Enhancement.GetDefenseValue().CompareTo(item2.Enhancement.GetDefenseValue());
-    }
-    
-    public static int CompareTotalPower(EquippableItem item1, EquippableItem item2)
-    {
-        var total1 = item1.Enhancement.GetTotalEnhancement();
-        var total2 = item2.Enhancement.GetTotalEnhancement();
-        return total1.CompareTo(total2);
-    }
-}
+// NPCItemShop.cs の実装済み機能
+var shop = new NPCItemShop(itemPriceDict);
+
+// アイテム価格確認
+var price = shop.GetPrice(item);
+bool available = shop.IsExisting(item);
+
+// アイテム購入
+var purchasedItem = shop.Purchase(item, currency);
 ```
+
+### 未実装機能
+
+**注意**：以下の機能はドキュメントに記載されていますが、現在未実装です：
+
+#### 装備比較システム
+- **パフォーマンス比較**：攻撃力・防御力の比較機能
+- **装備評価**：総合評価値の計算
+
+#### 高度なクラフトシステム
+- **クラフト失敗**：現在は必ず成功
+- **品質ランダム**：生成アイテムの品質ランダム化
+- **レシピ習得**：プレイヤーのレシピ管理
+
+#### アイテム修理システム
+- **耐久度修理**：IEquipableItem.Repair()は未実装
+- **修理コスト**：修理に必要な素材・費用
 
 ## 他ドメインとの連携
 
 ### Character ドメインとの連携
-- **装備効果**: 戦闘パラメータ計算への寄与
-- **装備条件**: レベル・ステータス要件（将来拡張）
-- 詳細: [EquipmentSystem.md](../systems/EquipmentSystem.md)
 
-### Inventory ドメインとの連携
-- **アイテム所有**: インベントリでの管理
-- **アイテム移動**: スロット間の移動制御
-- 詳細: [Inventory.md](./Inventory.md)
+#### 実装済み連携
+- **制作者ID管理**: ICraftableItemでCharacterIDによる制作者追跡
+- **装備要求パラメータ**: RequireParameterでPlayerLevel、Strength、Agility要件定義
+- **強化成功確率**: EquipmentEnhanceServiceでプレイヤーレベル連携
 
-### Skill ドメインとの連携
-- **クラフト条件**: 生産スキル熟練度要件
-- **装備条件**: 装備可能スキル要件（将来拡張）
-- 詳細: [CraftingSystem.md](../systems/CraftingSystem.md)
-
-## 拡張ポイント
-
-### 装備条件システム
 ```csharp
-// 【部分実装】基本的な装備条件は実装済み（RequireParameter）
-// 将来的な拡張例：より詳細な装備条件
-public record EquipmentRequirements
+// 実装済みの連携機能
+public interface ICraftableItem : IItem
 {
-    public PlayerLevel RequiredLevel { get; }
-    public Strength RequiredStrength { get; }
-    public Agility RequiredAgility { get; }
-    // 【未実装】スキル要件システム
-    public ImmutableArray<SkillAndProficiency> RequiredSkills { get; }
+    CharacterID CreatedBy { get; } // 制作者追跡
 }
 
-public record EquippableItem : Item
+public record RequireParameter
 {
-    // 既存プロパティ...
-    // 【未実装】詳細な装備条件システム
-    public EquipmentRequirements? Requirements { get; }
+    public PlayerLevel Level { get; }
+    public Strength Strength { get; }
+    public Agility Agility { get; }
 }
 ```
 
-### アイテム品質システム
+#### 設計上の連携点
+- **装備制限**: プレイヤーステータスによる装備可能性チェック
+- **制作履歴**: クラフトアイテムの制作者記録
+- **レベル連動**: 強化成功確率のプレイヤーレベル依存
+
+### Inventory ドメインとの連携
+
+#### 実装済み連携
+- **IItemインターフェース**: 全インベントリシステムでアイテム管理
+- **型制約**: EquippableItemの装備インベントリ管理
+- **アイテム識別**: ItemComparerによる効率的な辞書操作
+
 ```csharp
-// 【未実装】品質システムの追加
+// 実装済みの連携機能
+public interface IItem
+{
+    string ItemName { get; }
+}
+
+internal class ItemComparer : IEqualityComparer<Item>
+{
+    // Dictionary最適化用比較器
+}
+```
+
+#### 設計上の連携点
+- **アイテム保存**: インベントリでのアイテム所有管理
+- **装備管理**: 装備インベントリでの装備状態管理
+- **アイテム識別**: 等価性比較による重複管理
+
+### Currency ドメインとの連携
+
+#### 実装済み連携
+- **NPCショップシステム**: Currency統合によるアイテム売買
+- **価格管理**: アイテム固定価格と通貨交換レート対応
+
+```csharp
+// 実装済みの連携機能
+public class NPCItemShop : IItemPurchasable, IItemExhibitable
+{
+    public IItem Purchase(IItem item, Currency.Currency money);
+    public Currency.Currency GetPrice(IItem item);
+}
+```
+
+### 将来の連携可能性
+> **⚠️ 要更新**: 以下は将来の拡張案であり、現在は未実装です
+- **Skill ドメイン**: クラフトスキル要件、装備スキル制限
+- **Quest ドメイン**: クエスト報酬アイテム、必要アイテム管理
+
+## 拡張ポイント
+
+### 実装可能な拡張
+
+#### アイテム品質システム
+```csharp
+// 将来実装可能：品質システム
 public enum ItemQuality
 {
     Common = 1,    // 一般
-    Uncommon = 2,  // 上級
+    Uncommon = 2,  // 上級  
     Rare = 3,      // 希少
     Epic = 4,      // 史詩
     Legendary = 5  // 伝説
@@ -378,15 +589,14 @@ public enum ItemQuality
 
 public record Item : IItem
 {
-    // 既存プロパティ...
-    // 【未実装】品質システム
     public ItemQuality Quality { get; }
+    // 品質による価格倍率、ドロップ確率等に影響
 }
 ```
 
-### 耐久度システム
+#### 耐久度システム
 ```csharp
-// 【未実装】装備の耐久度システム
+// 将来実装可能：装備耐久度管理
 public record Durability
 {
     public int Current { get; }
@@ -394,32 +604,88 @@ public record Durability
     
     public float DurabilityRatio => (float)Current / Maximum;
     public bool IsBroken => Current <= 0;
+    public bool NeedsRepair => DurabilityRatio < 0.5f;
 }
 
 public record EquippableItem : Item
 {
-    // 既存プロパティ...
-    // 【未実装】耐久度システム
     public Durability Durability { get; }
+    
+    // IEquipableItem.Repair()の実装で使用
+    public EquippableItem RepairDurability(int repairAmount);
 }
 ```
 
-### 特殊効果システム
+#### 特殊効果・アビリティシステム
 ```csharp
-// 【未実装】アイテム固有の特殊効果
+// 将来実装可能：アイテム固有効果
 public interface IItemEffect
 {
     string EffectName { get; }
     string Description { get; }
+    EffectType Type { get; }
+}
+
+public enum EffectType
+{
+    PassiveBonus,    // パッシブ効果
+    ActiveSkill,     // アクティブスキル
+    SetBonus,        // セット効果
+    Enchantment,     // エンチャント効果
 }
 
 public record EquippableItem : Item
 {
-    // 既存プロパティ...
-    // 【未実装】特殊効果システム
-    public ImmutableArray<IItemEffect> SpecialEffects { get; }
+    public IReadOnlyList<IItemEffect> SpecialEffects { get; }
 }
 ```
 
-Item ドメインは装備システムとクラフトシステムの基盤となる重要なドメインです。\
-他のドメインとの連携により、豊富なゲームコンテンツを提供します。
+#### 高度な装備要件システム
+```csharp
+// 将来実装可能：詳細装備条件
+public record EquipmentRequirements
+{
+    public PlayerLevel RequiredLevel { get; }
+    public Strength RequiredStrength { get; }
+    public Agility RequiredAgility { get; }
+    public IReadOnlyList<SkillRequirement> RequiredSkills { get; }
+    public IReadOnlyList<QuestRequirement> RequiredQuests { get; }
+    
+    public bool CanEquip(Character.Player player);
+}
+
+public record SkillRequirement
+{
+    public SkillType Skill { get; }
+    public int RequiredLevel { get; }
+}
+```
+
+#### アイテムセットシステム
+```csharp
+// 将来実装可能：装備セット効果
+public record ItemSet
+{
+    public string SetName { get; }
+    public IReadOnlyList<EquippableItem> SetItems { get; }
+    public IReadOnlyList<SetBonus> SetBonuses { get; }
+}
+
+public record SetBonus
+{
+    public int RequiredPieces { get; }
+    public IItemEffect BonusEffect { get; }
+}
+```
+
+### 設計基盤の特徴
+
+現在の実装は将来の拡張に対応できる堅牢な設計基盤を提供：
+
+- **コマンドパターン**: CreateCommandによる安全なオブジェクト作成
+- **ドメインサービス**: ビジネスロジックの適切な分離
+- **JSON互換性**: 完全なシリアライゼーション対応
+- **型安全性**: recordによるイミュータブル設計
+- **拡張性**: インターフェース分離による機能追加容易性
+
+Item ドメインは装備システムとクラフトシステムの中核として、Character、Inventory、Currency ドメインとの統合により、豊富なゲームプレイ体験を支える基盤を提供しています。

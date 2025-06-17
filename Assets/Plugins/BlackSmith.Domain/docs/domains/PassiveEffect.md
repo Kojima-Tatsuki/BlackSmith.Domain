@@ -2,647 +2,391 @@
 
 ## 概要
 
-PassiveEffect ドメインは、プレイヤーに影響を与える一時的・持続的な効果を管理します。\
-バフ・デバフ、ステータス効果、環境効果など、戦闘パラメータやゲームプレイに影響を与える全ての効果を統一的に扱います。
+PassiveEffect ドメインは、キャラクターに影響を与える一時的・持続的な効果を管理するドメインです。
+
+### 主要な責務
+- **戦闘ステータス効果**：攻撃力・防御力・体力・移動速度の補正管理
+- **効果の識別**：EffectIDによるユニークな効果識別
+- **効果の適用**：CharacterドメインのBattleStatusEffectModuleとの連携
+- **継続効果**：時間ベースの効果処理システム
+
+### 現在の実装状況
+- **BattleStatusEffect**：基本的な戦闘ステータス効果を実装
+- **EffectID**：GUID ベースの効果識別子を実装
+- **BattleStatusEffectModel**：4種類のステータス補正（MaxHealth, Attack, Defense, MovementSpeed）を実装
+- **ContinuouslyEffect**：継続効果インターフェースを実装
+- **BattleStatusEffectModule**：Character ドメインでの効果管理を実装
+- **PassiveEffectService**：継続効果処理サービスを実装
+
+### 設計の特徴
+- **イミュータブル設計**：record による不変オブジェクト設計
+- **Character ドメイン連携**：BattleStatusEffectModule での効果コレクション管理
+- **非同期処理対応**：UniTask による継続効果の非同期実行
+- **JSON 対応**：完全なシリアライゼーション対応
+- **ミニマル実装**：必要最小限の機能に絞った実装
+
+このドメインは Character ドメインとの密接な連携により、戦闘システムの基盤効果管理を提供しています。
 
 ## ドメインモデル
 
-### 基底クラス・識別子
+### 識別子
 
-#### EffectID
+#### 実装済み識別子
+
 ```csharp
-// 【部分実装】基本的なEffectIDは実装済みだが、BasicID継承ではない
-public record EffectID : BasicID
+// BattleStatusEffect.cs の実装済み識別子
+public record EffectID
 {
-    protected override string Prefix => "EFF_";
+    public Guid Value { get; }
+    
+    [JsonConstructor]
+    internal EffectID(Guid? value = null)
+    {
+        Value = value ?? Guid.NewGuid(); // 自動GUID生成
+    }
 }
 ```
 
-### ステータス効果
+**注意**：現在の実装では BasicID を継承していない独自の GUID ベース識別子です。
 
-#### BattleStatusEffect
+### エンティティ・値オブジェクト
+
+#### 実装済みエンティティ
+
+##### BattleStatusEffect (BattleStatusEffect.cs)
 ```csharp
-// 【部分実装】基本的なBattleStatusEffectは実装済みだが、持続時間等の機能は未実装
+// 実装済み：戦闘ステータス効果レコード
 public record BattleStatusEffect
 {
     public EffectID Id { get; }
-    public EffectName Name { get; }
     public BattleStatusEffectModel StatusModel { get; }
-    public int Duration { get; }
-    public EffectType Type { get; }
-    public bool IsStackable { get; }
     
-    public BattleStatusEffect(
-        EffectID id,
-        EffectName name,
-        BattleStatusEffectModel statusModel,
-        int duration,
-        EffectType type,
-        bool isStackable = false)
-    {
-        Id = id ?? throw new ArgumentNullException(nameof(id));
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        StatusModel = statusModel ?? throw new ArgumentNullException(nameof(statusModel));
-        Duration = Math.Max(0, duration);
-        Type = type;
-        IsStackable = isStackable;
-    }
-    
-    public BattleStatusEffect DecreaseDuration(int turns = 1)
-    {
-        return this with { Duration = Math.Max(0, Duration - turns) };
-    }
-    
-    public bool IsExpired => Duration <= 0;
-    
-    public bool IsPermanent => Duration == -1; // -1は永続効果
+    [JsonConstructor]
+    internal BattleStatusEffect(EffectID id, BattleStatusEffectModel statusModel);
 }
 ```
 
-#### BattleStatusEffectModel
+##### BattleStatusEffectModel (BattleStatusEffect.cs)
 ```csharp
-// 【部分実装】基本的なパラメータは実装済みだが、乗算系パラメータは未実装
+// 実装済み：ステータス補正値オブジェクト
 public record BattleStatusEffectModel
 {
-    public int MaxHealth { get; }
-    public int Attack { get; }
-    public int Defense { get; }
-    public int MovementSpeed { get; }
-    public float AttackSpeedMultiplier { get; }
-    public float ExperienceMultiplier { get; }
+    public int MaxHealth { get; }    // 体力補正
+    public int Attack { get; }       // 攻撃力補正
+    public int Defense { get; }      // 防御力補正
+    public int MovementSpeed { get; } // 移動速度補正
     
-    public BattleStatusEffectModel(
-        int maxHealth = 0,
-        int attack = 0,
-        int defense = 0,
-        int movementSpeed = 0,
-        float attackSpeedMultiplier = 1.0f,
-        float experienceMultiplier = 1.0f)
+    [JsonConstructor]
+    internal BattleStatusEffectModel(int maxHealth, int attack, int defense, int movementSpeed);
+}
+```
+
+#### 実装済みインターフェース
+
+##### ContinuouslyEffect (ContinuouslyEffect.cs)
+```csharp
+// 実装済み：継続効果インターフェース
+public interface ContinuouslyEffect
+{
+    float ContinueTime { get; }
+    UniTask DoEffect(CharacterID targetId);
+}
+```
+
+##### InstantEffect (ContinuouslyEffect.cs)
+```csharp
+// 実装済み：瞬間効果インターフェース（マーカーインターフェース）
+public interface InstantEffect
+{
+    // 現在は空のマーカーインターフェース
+}
+```
+
+#### 実装済みクラス
+
+##### InstantDamageEffect (InstantDamageEvent.cs)
+```csharp
+// 実装済み（部分）：瞬間ダメージ効果（注意：実装は空）
+internal class InstantDamageEffect : InstantEffect
+{
+    public void DoEffect(CharacterID id)
     {
-        MaxHealth = maxHealth;
-        Attack = attack;
-        Defense = defense;
-        MovementSpeed = movementSpeed;
-        AttackSpeedMultiplier = Math.Max(0.1f, attackSpeedMultiplier);
-        ExperienceMultiplier = Math.Max(0.0f, experienceMultiplier);
-    }
-    
-    // 【未実装】複数効果の統合
-    public static BattleStatusEffectModel Combine(IEnumerable<BattleStatusEffectModel> effects)
-    {
-        if (!effects.Any())
-            return new BattleStatusEffectModel();
-        
-        return effects.Aggregate(
-            new BattleStatusEffectModel(),
-            (acc, effect) => new BattleStatusEffectModel(
-                acc.MaxHealth + effect.MaxHealth,
-                acc.Attack + effect.Attack,
-                acc.Defense + effect.Defense,
-                acc.MovementSpeed + effect.MovementSpeed,
-                acc.AttackSpeedMultiplier * effect.AttackSpeedMultiplier,
-                acc.ExperienceMultiplier * effect.ExperienceMultiplier
-            )
-        );
-    }
-    
-    // 【未実装】効果の逆転（デバフ除去用）
-    public BattleStatusEffectModel Negate()
-    {
-        return new BattleStatusEffectModel(
-            -MaxHealth,
-            -Attack,
-            -Defense,
-            -MovementSpeed,
-            1.0f / AttackSpeedMultiplier,
-            1.0f / ExperienceMultiplier
-        );
+        // 現在は空実装
     }
 }
 ```
 
-### 効果種別・値オブジェクト
+#### ドメインサービス
 
-#### EffectType
+##### PassiveEffectService (PassiveEffectService.cs)
 ```csharp
-public enum EffectType
+// 実装済み：パッシブ効果処理サービス
+internal class PassiveEffectService
 {
-    Buff = 1,        // 有利効果
-    Debuff = 2,      // 不利効果
-    Neutral = 3,     // 中性効果
-    Environmental = 4 // 環境効果
-}
-```
-
-#### EffectName
-```csharp
-// 【未実装】効果名の値オブジェクト
-public record EffectName
-{
-    public string Value { get; }
-    
-    public EffectName(string value)
+    internal async UniTask PlayContinuouslyEffect(CharacterID targetId, ContinuouslyEffect effect)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Effect name cannot be empty");
-        
-        if (value.Length > 50)
-            throw new ArgumentException("Effect name cannot exceed 50 characters");
-        
-        Value = value;
+        await effect.DoEffect(targetId);
     }
 }
 ```
 
-### 効果管理
+#### Character ドメイン連携
 
-#### EffectCollection
+##### BattleStatusEffectModule (Character/Battle/BattleStatusEffectModule.cs)
 ```csharp
-// 【未実装】効果のコレクション管理システム
-public record EffectCollection
+// 実装済み：キャラクターの効果管理モジュール
+public record BattleStatusEffectModule
 {
-    private readonly ImmutableArray<BattleStatusEffect> effects;
+    public IReadOnlyCollection<BattleStatusEffect> StatusEffects { get; }
+    private readonly ImmutableDictionary<EffectID, BattleStatusEffect> statusEffects;
     
-    public ImmutableArray<BattleStatusEffect> Effects => effects;
-    public int Count => effects.Length;
+    [JsonConstructor]
+    internal BattleStatusEffectModule(IReadOnlyCollection<BattleStatusEffect>? statusEffects = null);
     
-    public EffectCollection() : this(ImmutableArray<BattleStatusEffect>.Empty) { }
+    // 効果追加・削除
+    internal BattleStatusEffectModule AddStatusEffect(BattleStatusEffect statusEffect);
+    internal BattleStatusEffectModule RemoveStatusEffect(BattleStatusEffect statusEffect);
     
-    public EffectCollection(ImmutableArray<BattleStatusEffect> effects)
-    {
-        this.effects = effects;
-    }
-    
-    public EffectCollection AddEffect(BattleStatusEffect effect)
-    {
-        // スタック不可効果の重複チェック
-        if (!effect.IsStackable)
-        {
-            var existingIndex = effects.ToList().FindIndex(e => 
-                e.Name.Value == effect.Name.Value);
-            
-            if (existingIndex >= 0)
-            {
-                // 既存効果を上書き
-                return this with { effects = effects.SetItem(existingIndex, effect) };
-            }
-        }
-        
-        // 新規効果追加
-        return this with { effects = effects.Add(effect) };
-    }
-    
-    public EffectCollection RemoveEffect(EffectID effectId)
-    {
-        return this with { effects = effects.RemoveAll(e => e.Id == effectId) };
-    }
-    
-    public EffectCollection RemoveEffectByName(EffectName effectName)
-    {
-        return this with { effects = effects.RemoveAll(e => e.Name.Value == effectName.Value) };
-    }
-    
-    public EffectCollection ProcessTurn()
-    {
-        // 持続時間を減らし、期限切れ効果を削除
-        var updatedEffects = effects
-            .Select(e => e.DecreaseDuration())
-            .Where(e => !e.IsExpired)
-            .ToImmutableArray();
-        
-        return this with { effects = updatedEffects };
-    }
-    
-    public BattleStatusEffectModel GetCombinedEffect()
-    {
-        var activeEffects = effects
-            .Where(e => !e.IsExpired)
-            .Select(e => e.StatusModel);
-        
-        return BattleStatusEffectModel.Combine(activeEffects);
-    }
-    
-    public IEnumerable<BattleStatusEffect> GetEffectsByType(EffectType type)
-    {
-        return effects.Where(e => e.Type == type && !e.IsExpired);
-    }
-    
-    public bool HasEffect(EffectName effectName)
-    {
-        return effects.Any(e => e.Name.Value == effectName.Value && !e.IsExpired);
-    }
-}
-```
-
-### 効果ファクトリー
-
-#### EffectFactory
-```csharp
-// 【未実装】効果作成ファクトリー
-public static class EffectFactory
-{
-    // 基本バフ効果
-    public static BattleStatusEffect CreateAttackBuff(int attackBonus, int duration)
-    {
-        return new BattleStatusEffect(
-            new EffectID(),
-            new EffectName("Attack Boost"),
-            new BattleStatusEffectModel(attack: attackBonus),
-            duration,
-            EffectType.Buff
-        );
-    }
-    
-    public static BattleStatusEffect CreateDefenseBuff(int defenseBonus, int duration)
-    {
-        return new BattleStatusEffect(
-            new EffectID(),
-            new EffectName("Defense Boost"),
-            new BattleStatusEffectModel(defense: defenseBonus),
-            duration,
-            EffectType.Buff
-        );
-    }
-    
-    public static BattleStatusEffect CreateHealthBuff(int healthBonus, int duration)
-    {
-        return new BattleStatusEffect(
-            new EffectID(),
-            new EffectName("Health Boost"),
-            new BattleStatusEffectModel(maxHealth: healthBonus),
-            duration,
-            EffectType.Buff
-        );
-    }
-    
-    // 基本デバフ効果
-    public static BattleStatusEffect CreateAttackDebuff(int attackPenalty, int duration)
-    {
-        return new BattleStatusEffect(
-            new EffectID(),
-            new EffectName("Attack Reduction"),
-            new BattleStatusEffectModel(attack: -attackPenalty),
-            duration,
-            EffectType.Debuff
-        );
-    }
-    
-    public static BattleStatusEffect CreateSpeedDebuff(float speedMultiplier, int duration)
-    {
-        return new BattleStatusEffect(
-            new EffectID(),
-            new EffectName("Speed Reduction"),
-            new BattleStatusEffectModel(attackSpeedMultiplier: speedMultiplier),
-            duration,
-            EffectType.Debuff
-        );
-    }
-    
-    // 特殊効果
-    public static BattleStatusEffect CreateExperienceBoost(float expMultiplier, int duration)
-    {
-        return new BattleStatusEffect(
-            new EffectID(),
-            new EffectName("Experience Boost"),
-            new BattleStatusEffectModel(experienceMultiplier: expMultiplier),
-            duration,
-            EffectType.Buff
-        );
-    }
-    
-    // 永続効果
-    public static BattleStatusEffect CreatePermanentEffect(
-        EffectName name,
-        BattleStatusEffectModel model,
-        EffectType type)
-    {
-        return new BattleStatusEffect(
-            new EffectID(),
-            name,
-            model,
-            -1, // 永続
-            type
-        );
-    }
+    // 等価性比較
+    public virtual bool Equals(BattleStatusEffectModule? other);
 }
 ```
 
 ## ビジネスルール
 
-### 効果重複制限
+### 実装済みルール
 
-#### スタッキングルール
+#### 効果ID の一意性
 ```csharp
-// 【未実装】効果重複管理システム
-public static class EffectStackingRules
+// BattleStatusEffectModule.cs の実装済み制限
+internal BattleStatusEffectModule AddStatusEffect(BattleStatusEffect statusEffect)
 {
-    public static bool CanStack(BattleStatusEffect existingEffect, BattleStatusEffect newEffect)
-    {
-        // 同名効果のスタック判定
-        if (existingEffect.Name.Value == newEffect.Name.Value)
-            return newEffect.IsStackable;
-        
-        // 異なる効果は常にスタック可能
-        return true;
-    }
-    
-    public static BattleStatusEffect ResolveConflict(
-        BattleStatusEffect existingEffect, 
-        BattleStatusEffect newEffect)
-    {
-        if (!CanStack(existingEffect, newEffect))
-        {
-            // 強い効果を優先（効果量・持続時間で判定）
-            var existingPower = CalculateEffectPower(existingEffect);
-            var newPower = CalculateEffectPower(newEffect);
-            
-            return newPower >= existingPower ? newEffect : existingEffect;
-        }
-        
-        return newEffect;
-    }
-    
-    private static int CalculateEffectPower(BattleStatusEffect effect)
-    {
-        var model = effect.StatusModel;
-        var basePower = Math.Abs(model.MaxHealth) + Math.Abs(model.Attack) + Math.Abs(model.Defense);
-        return basePower * effect.Duration;
-    }
+    if (dict.Keys.Contains(statusEffect.Id))
+        throw new InvalidOperationException($"The effect aleady exists. id: {statusEffect.Id}.");
+    // 重複ID防止
 }
 ```
 
-### 効果制限
-
-#### 最大効果数制限
+#### 効果の削除制限
 ```csharp
-// 【未実装】効果数制限システム
-public static class EffectLimits
+// BattleStatusEffectModule.cs の実装済み制限
+internal BattleStatusEffectModule RemoveStatusEffect(BattleStatusEffect statusEffect)
 {
-    public const int MaxEffectsPerCharacter = 20;
-    public const int MaxSameNameEffects = 5;
-    
-    public static bool CanAddEffect(EffectCollection collection, BattleStatusEffect newEffect)
-    {
-        // 総効果数チェック
-        if (collection.Count >= MaxEffectsPerCharacter)
-            return false;
-        
-        // 同名効果数チェック
-        var sameNameCount = collection.Effects.Count(e => 
-            e.Name.Value == newEffect.Name.Value);
-        
-        if (sameNameCount >= MaxSameNameEffects)
-            return false;
-        
-        return true;
-    }
-    
-    public static EffectCollection EnforceLimit(EffectCollection collection)
-    {
-        if (collection.Count <= MaxEffectsPerCharacter)
-            return collection;
-        
-        // 優先度による効果削除（期限切れ > デバフ > 弱いバフ）
-        var prioritizedEffects = collection.Effects
-            .OrderBy(e => e.IsExpired ? 0 : 1)
-            .ThenBy(e => e.Type == EffectType.Debuff ? 0 : 1)
-            .ThenBy(e => EffectStackingRules.CalculateEffectPower(e))
-            .Take(MaxEffectsPerCharacter)
-            .ToImmutableArray();
-        
-        return new EffectCollection(prioritizedEffects);
-    }
+    if (!dict.Keys.Contains(statusEffect.Id))
+        throw new InvalidOperationException($"Does not exist the effect. id: {statusEffect.Id}.");
+    // 存在しない効果の削除エラー
 }
 ```
+
+#### GUID 自動生成
+```csharp
+// EffectID.cs の実装済み機能
+internal EffectID(Guid? value = null)
+{
+    Value = value ?? Guid.NewGuid(); // 自動GUID生成
+}
+```
+
+### 未実装ルール
+
+**注意**：以下のビジネスルールはドキュメントに記載されていますが、現在未実装です：
+
+#### 効果制限システム
+- **最大効果数制限**：キャラクター当たりの最大効果数
+- **同名効果制限**：同じ効果の重複制限
+- **持続時間管理**：時間ベースの効果期限切れ
+
+#### 効果重複ルール
+- **スタッキング制御**：効果の重複許可・禁止制御
+- **効果競合解決**：同じタイプの効果の優先度
+- **効果上書き**：より強い効果による上書き
+
+#### 効果種別分類
+- **バフ・デバフ分類**：有利・不利効果の分類
+- **効果タイプ**：戦闘・環境・永続等の分類
 
 ## ゲームロジック
 
-### 効果適用システム
+### 実装済み機能
 
+#### 効果作成と管理
 ```csharp
-// 【未実装】効果適用システム
-public static class EffectApplicationService
-{
-    public static EffectCollection ApplyEffect(
-        EffectCollection collection,
-        BattleStatusEffect effect)
-    {
-        // 制限チェック
-        if (!EffectLimits.CanAddEffect(collection, effect))
-        {
-            // 制限適用後に再試行
-            collection = EffectLimits.EnforceLimit(collection);
-            if (!EffectLimits.CanAddEffect(collection, effect))
-                throw new InvalidOperationException("Cannot add more effects");
-        }
-        
-        // 競合解決
-        var existingEffect = collection.Effects.FirstOrDefault(e => 
-            e.Name.Value == effect.Name.Value);
-        
-        if (existingEffect != null && !effect.IsStackable)
-        {
-            var resolvedEffect = EffectStackingRules.ResolveConflict(existingEffect, effect);
-            return collection.RemoveEffect(existingEffect.Id).AddEffect(resolvedEffect);
-        }
-        
-        return collection.AddEffect(effect);
-    }
-    
-    public static EffectCollection RemoveEffectsOfType(
-        EffectCollection collection,
-        EffectType effectType)
-    {
-        var effectsToRemove = collection.GetEffectsByType(effectType).ToList();
-        
-        var result = collection;
-        foreach (var effect in effectsToRemove)
-        {
-            result = result.RemoveEffect(effect.Id);
-        }
-        
-        return result;
-    }
-    
-    public static EffectCollection CleanseDebuffs(EffectCollection collection)
-    {
-        return RemoveEffectsOfType(collection, EffectType.Debuff);
-    }
-    
-    public static EffectCollection ProcessTimeBasedEffects(EffectCollection collection)
-    {
-        return collection.ProcessTurn();
-    }
-}
+// BattleStatusEffect の基本使用例
+var effectId = new EffectID();
+var statusModel = new BattleStatusEffectModel(
+    maxHealth: 50,    // +50 体力
+    attack: 10,       // +10 攻撃力
+    defense: 5,       // +5 防御力
+    movementSpeed: 2  // +2 移動速度
+);
+
+var effect = new BattleStatusEffect(effectId, statusModel);
 ```
 
-### 戦闘効果統合
-
+#### キャラクターへの効果適用
 ```csharp
-// 【未実装】戦闘パラメータへの効果統合システム
-public static class CombatEffectIntegration
-{
-    public static BattleParameter ApplyEffectsToParameters(
-        BattleParameter baseParameters,
-        EffectCollection effects)
-    {
-        var combinedEffect = effects.GetCombinedEffect();
-        
-        return new BattleParameter(
-            Math.Max(1, baseParameters.MaxHealth + combinedEffect.MaxHealth),
-            Math.Max(1, baseParameters.AttackValue + combinedEffect.Attack),
-            Math.Max(0, baseParameters.DefenseValue + combinedEffect.Defense)
-        );
-    }
-    
-    public static float CalculateAttackSpeed(
-        float baseAttackSpeed,
-        EffectCollection effects)
-    {
-        var combinedEffect = effects.GetCombinedEffect();
-        return Math.Max(0.1f, baseAttackSpeed * combinedEffect.AttackSpeedMultiplier);
-    }
-    
-    public static float CalculateExperienceMultiplier(EffectCollection effects)
-    {
-        var combinedEffect = effects.GetCombinedEffect();
-        return Math.Max(0.0f, combinedEffect.ExperienceMultiplier);
-    }
-}
+// BattleStatusEffectModule での効果管理
+var effectModule = new BattleStatusEffectModule();
+
+// 効果追加
+var updatedModule = effectModule.AddStatusEffect(effect);
+
+// 効果削除
+var removedModule = updatedModule.RemoveStatusEffect(effect);
+
+// 現在の効果一覧取得
+var currentEffects = effectModule.StatusEffects;
 ```
 
-### 効果管理
-
+#### 継続効果処理
 ```csharp
-// 【未実装】効果のライフサイクル管理サービス
-public static class EffectManagementService
-{
-    public static EffectCollection StartCombat(EffectCollection effects)
-    {
-        // 戦闘開始時の効果処理
-        // 例: 戦闘外効果の除去、戦闘開始バフの適用など
-        return effects;
-    }
-    
-    public static EffectCollection EndCombat(EffectCollection effects)
-    {
-        // 戦闘終了時の効果処理
-        // 例: 戦闘専用効果の除去
-        var combatOnlyEffects = effects.Effects
-            .Where(e => e.Name.Value.Contains("Combat"))
-            .ToList();
-        
-        var result = effects;
-        foreach (var effect in combatOnlyEffects)
-        {
-            result = result.RemoveEffect(effect.Id);
-        }
-        
-        return result;
-    }
-    
-    public static EffectCollection ApplyAreaEffect(
-        EffectCollection effects,
-        FieldID currentField)
-    {
-        // エリア固有の環境効果を適用
-        // 例: 毒沼地での毒効果、聖域での回復効果など
-        
-        // 実装例（将来拡張）
-        return effects;
-    }
-}
+// PassiveEffectService での継続効果実行
+var service = new PassiveEffectService();
+
+// 継続効果の非同期実行
+await service.PlayContinuouslyEffect(characterId, continuousEffect);
 ```
+
+### 未実装機能
+
+**注意**：以下の機能はドキュメントに記載されていますが、現在未実装です：
+
+#### 効果ファクトリーシステム
+- **標準効果作成**：AttackBuff、DefenseBuff等の標準効果
+- **カスタム効果**：ゲーム固有の特殊効果
+- **効果テンプレート**：再利用可能な効果定義
+
+#### 効果統合システム
+- **複数効果合成**：複数の効果を統合した最終効果計算
+- **戦闘パラメータ統合**：効果による最終戦闘パラメータ計算
+- **効果相互作用**：効果間のシナジー・競合処理
+
+#### 時間管理システム
+- **持続時間**：ターンベースまたは時間ベースの持続時間
+- **期限切れ処理**：自動的な効果削除
+- **ターン処理**：戦闘ターン毎の効果更新
 
 ## 他ドメインとの連携
 
 ### Character ドメインとの連携
-- **戦闘パラメータ**: 効果による攻撃力・防御力・体力の補正
-- **経験値獲得**: 経験値倍率効果の適用
-- 詳細: [BattleSystem.md](../systems/BattleSystem.md)
 
-### Skill ドメインとの連携
-- **スキル効果**: 戦闘スキル・生産スキルによる効果付与
-- **熟練度補正**: スキル熟練度による効果強化
-- 詳細: [Skill.md](./Skill.md)
+#### 実装済み連携
+- **BattleStatusEffectModule**: Character ドメインで効果コレクション管理
+- **CharacterID 参照**: 継続効果での対象キャラクター指定
+- **戦闘ステータス補正**: MaxHealth、Attack、Defense、MovementSpeed の補正値提供
 
-### Item ドメインとの連携
-- **装備効果**: 装備品による永続的ステータス効果
-- **消耗品効果**: ポーション等による一時的効果（将来拡張）
-- 詳細: [Item.md](./Item.md)
+```csharp
+// 実装済みの連携機能
+public interface ContinuouslyEffect
+{
+    UniTask DoEffect(CharacterID targetId); // キャラクターID連携
+}
 
-### Field ドメインとの連携
-- **環境効果**: エリア固有の効果（天候、地形等）
-- **位置効果**: 特定位置での効果発動（将来拡張）
-- 詳細: [Field.md](./Field.md)
+public record BattleStatusEffectModule
+{
+    public IReadOnlyCollection<BattleStatusEffect> StatusEffects { get; }
+    // Character ドメイン内での効果管理
+}
+```
+
+#### 設計上の連携点
+- **効果適用**: Character の戦闘パラメータへの効果反映
+- **効果管理**: キャラクター固有の効果状態管理
+- **非同期処理**: UniTask による継続効果の非同期実行
+
+### 将来の連携可能性
+> **⚠️ 要更新**: 以下は将来の拡張案であり、現在は未実装です
+- **Item ドメイン**: 装備品・消耗品による効果付与
+- **Skill ドメイン**: スキル使用による効果発動
+- **Field ドメイン**: エリア固有の環境効果
 
 ## 拡張ポイント
 
-### 条件付き効果システム
-```csharp
-// 【未実装】特定条件下でのみ発動する効果システム
-public record ConditionalEffect : BattleStatusEffect
-{
-    public IEffectCondition Condition { get; }
-    public bool IsActive(GameState gameState) => Condition.IsMet(gameState);
-}
+### 実装可能な拡張
 
-public interface IEffectCondition
-{
-    bool IsMet(GameState gameState);
-}
-```
-
-### 効果連鎖システム
+#### 持続時間システム
 ```csharp
-// 【未実装】効果の終了時に別の効果を発動するシステム
-public record ChainedEffect : BattleStatusEffect
+// 将来実装可能：時間管理付き効果
+public record TimedBattleStatusEffect : BattleStatusEffect
 {
-    public BattleStatusEffect? NextEffect { get; }
+    public int Duration { get; }        // ターン数
+    public float RemainingTime { get; } // 残り時間（秒）
     
-    public BattleStatusEffect OnExpire()
-    {
-        return NextEffect ?? throw new InvalidOperationException("No chained effect");
-    }
+    public TimedBattleStatusEffect DecreaseDuration(int turns = 1);
+    public bool IsExpired => Duration <= 0;
 }
 ```
 
-### 効果レベルシステム
+#### 効果タイプシステム
 ```csharp
-// 【未実装】効果の強度レベルシステム
-public record LeveledEffect : BattleStatusEffect
+// 将来実装可能：効果分類システム
+public enum EffectType
 {
-    public int Level { get; }
-    public int MaxLevel { get; }
-    
-    public LeveledEffect UpgradeLevel()
-    {
-        if (Level >= MaxLevel) return this;
-        
-        var enhancedModel = EnhanceEffectModel(StatusModel, Level + 1);
-        return this with 
-        { 
-            Level = Level + 1,
-            StatusModel = enhancedModel
-        };
-    }
+    Buff,           // 有利効果
+    Debuff,         // 不利効果
+    Neutral,        // 中性効果
+    Environmental,  // 環境効果
+}
+
+public record CategorizedBattleStatusEffect : BattleStatusEffect
+{
+    public EffectType Type { get; }
+    public bool IsStackable { get; }
 }
 ```
 
-### 効果相互作用システム
+#### 効果統合システム
 ```csharp
-// 【未実装】複数効果間の相互作用システム
-public static class EffectSynergy
+// 将来実装可能：複数効果の統合計算
+public static class EffectAggregator
 {
-    public static BattleStatusEffect? CheckSynergy(
+    public static BattleStatusEffectModel CombineEffects(
         IEnumerable<BattleStatusEffect> effects)
     {
-        // 特定の効果組み合わせによる追加効果
-        // 例: 攻撃バフ + 速度バフ = クリティカル率上昇
-        return null;
+        return effects.Aggregate(
+            new BattleStatusEffectModel(0, 0, 0, 0),
+            (acc, effect) => new BattleStatusEffectModel(
+                acc.MaxHealth + effect.StatusModel.MaxHealth,
+                acc.Attack + effect.StatusModel.Attack,
+                acc.Defense + effect.StatusModel.Defense,
+                acc.MovementSpeed + effect.StatusModel.MovementSpeed
+            )
+        );
     }
 }
 ```
 
-PassiveEffect ドメインは、ゲームの戦術性と深さを提供する重要なシステムです。\
-他のドメインと連携することで、豊富なゲームプレイ体験を実現します。
+#### 効果ファクトリーシステム
+```csharp
+// 将来実装可能：標準効果作成
+public static class EffectFactory
+{
+    public static BattleStatusEffect CreateAttackBuff(int bonus)
+    {
+        return new BattleStatusEffect(
+            new EffectID(),
+            new BattleStatusEffectModel(0, bonus, 0, 0)
+        );
+    }
+    
+    public static BattleStatusEffect CreateDefenseBuff(int bonus)
+    {
+        return new BattleStatusEffect(
+            new EffectID(),
+            new BattleStatusEffectModel(0, 0, bonus, 0)
+        );
+    }
+}
+```
+
+### 設計基盤の特徴
+
+現在の実装は将来の拡張に対応できる堅実な設計基盤を提供：
+
+- **レコード型設計**: イミュータブルな効果管理
+- **インターフェース分離**: 継続効果・瞬間効果の分離
+- **Character 統合**: BattleStatusEffectModule による効果管理
+- **非同期対応**: UniTask による効果処理
+- **JSON 対応**: 完全なシリアライゼーション対応
+
+PassiveEffect ドメインは Character ドメインとの密接な連携により、戦闘システムの効果管理基盤を提供しています。現在の実装は基本的な戦闘ステータス補正に特化していますが、将来の複雑な効果システムに対応できる柔軟な設計基盤を持っています。
