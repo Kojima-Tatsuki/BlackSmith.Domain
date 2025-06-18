@@ -481,44 +481,6 @@ Currency exchanged = sakuraCurrency.Exchange(CurrencyType.Aren);
 #### アイテムスタック制限
 - **種別別制限**: 素材999個、装備1個、その他99個の制限機能
 
-## 他ドメインとの連携
-
-### Item ドメインとの連携
-
-#### 実装済み連携
-- **IItem インターフェース**: 全てのインベントリクラスでIItemを使用
-- **EquippableItem 管理**: EquipmentInventoryで装備アイテムを管理
-- **アイテム識別**: ItemSlotでアイテムの等価性チェック実装
-
-```csharp
-// 実装済みの連携機能
-internal class InfiniteSlotInventory : IInventoryService
-{
-    private Dictionary<IItem, ItemSlot> ItemSlots; // IItemを使用
-}
-
-internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
-{
-    private readonly Dictionary<EquipmentType, EquippableItem> Equipments; // 装備アイテム管理
-}
-```
-
-#### 設計上の連携点
-- **型制約**: インベントリの型パラメータでIItemを制約
-- **装備種別**: EquipmentTypeによる装備分類
-- **アイテム等価性**: ItemSlot.IsContaining()でアイテム比較
-
-### Character ドメインとの連携
-> **⚠️ 要更新**: この情報は Character.md 修正後に実装済み機能との照合が必要です
-
-### Skill ドメインとの連携
-> **⚠️ 要更新**: この情報は Skill.md 修正後に実装済み機能との照合が必要です
-
-### 将来の連携可能性
-> **⚠️ 要更新**: 以下は将来の拡張案であり、現在は未実装です
-- **装備効果システム**: 装備中アイテムの効果自動適用
-- **レベル制限システム**: キャラクターレベルによる装備制限
-- **クラフトシステム**: 素材アイテムからのアイテム生成
 
 ## 拡張ポイント
 

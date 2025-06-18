@@ -154,32 +154,6 @@ string description = quest.Discription; // typo注意
 - **動的生成**：プレイヤーレベルに応じた自動クエスト生成
 - **テンプレート**：再利用可能なクエストテンプレート
 
-## 他ドメインとの連携
-
-### Character ドメインとの連携
-
-#### 実装済み連携
-- **依頼人ID管理**: CharacterID による依頼人追跡
-
-```csharp
-// 実装済みの連携機能
-internal class QuestModel
-{
-    private CharacterID ClientId { get; } // Character ドメイン連携
-}
-```
-
-#### 設計上の連携点
-- **依頼人識別**: Character ドメインのCharacterID を使用
-- **データ依存**: Character ドメインへの直接依存
-
-### 将来の連携可能性
-> **⚠️ 要更新**: 以下は将来の拡張案であり、現在は未実装です
-- **Item ドメイン**: アイテム収集目標、アイテム報酬システム
-- **Inventory ドメイン**: 報酬アイテムの格納、容量チェック
-- **Field ドメイン**: 位置到達目標、エリア限定クエスト
-- **Skill ドメイン**: スキル習得目標、制作クエスト
-- **Currency ドメイン**: 通貨報酬システム
 
 ## 拡張ポイント
 

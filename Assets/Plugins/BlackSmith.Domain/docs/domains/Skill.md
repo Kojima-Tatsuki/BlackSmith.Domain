@@ -371,18 +371,6 @@ public class SkillAcquisitionConditions { /* ... */ }
 > **注意**: スキルの具体的な習得・使用・効果システムは未実装です。現在はスキルシステムの基本的なデータ構造と経験値計算のみが実装されています。
 
 
-## 他ドメインとの連携
-
-### Character ドメインとの連携
-- **スキル数制限**: `CharacterLevel.GetNumberOfSkillsAvailable()` によるスキル数上限管理
-- **取得条件**: `PlayerLevel`, `Strength`, `Agility` パラメーターによるスキル取得条件
-- 詳細: [Character.md](./Character.md)
-
-### Item ドメインとの連携
-- **生産スキル**: `IProductionSkill` インターフェースでItemドメインと連携（将来拡張）
-- 詳細: [Item.md](./Item.md)
-
-> **注意**: 現在の実装ではスキルシステムの基本構造のみが実装されており、他ドメインとの具体的な連携機能は将来的な拡張です。
 
 ## 拡張ポイント
 

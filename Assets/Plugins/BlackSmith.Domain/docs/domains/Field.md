@@ -240,43 +240,6 @@ internal class Chunk
 - フィールド間/マップ間/世界間移動
 - 位置ベースの遷移処理
 
-## 他ドメインとの連携
-
-### Character ドメインとの連携
-
-#### 実装済み連携
-- **キャラクター配置管理**: `Field`と`Chunk`がキャラクターの位置情報を管理
-- **フィールド内キャラクター追跡**: 各フィールド内に存在するキャラクターをIDで管理
-
-```csharp
-// 実装済みの連携機能
-public class Field
-{
-    public IReadOnlyCollection<CharacterID> CharacterIds => Chunk.CharacterIds;
-    internal void AddCharacter(CharacterID id);     // キャラクターがフィールドに入る
-    internal void RemoveCharacter(CharacterID id);  // キャラクターがフィールドから出る
-}
-
-internal class Chunk
-{
-    public IReadOnlyCollection<CharacterID> CharacterIds { get; }
-    // キャラクターの追加・削除でChunk状態を管理
-}
-```
-
-#### 設計上の連携点
-- **ID参照**: `CharacterID`を使用してキャラクターを識別
-- **位置管理**: フィールド単位でのキャラクター存在管理
-- **状態同期**: キャラクターの移動に応じてフィールド情報を更新
-
-### Quest ドメインとの連携
-> **⚠️ 要更新**: この情報は Quest.md 修正後に実装済み機能との照合が必要です
-
-### 将来の連携可能性
-> **⚠️ 要更新**: 以下は将来の拡張案であり、現在は未実装です
-- **NPCシステム**: エリア固有NPC配置
-- **イベントシステム**: 位置トリガーイベント
-- **PvPシステム**: エリア制限PvP
 
 ## まとめ
 

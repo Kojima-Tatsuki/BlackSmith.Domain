@@ -130,27 +130,6 @@ internal class PassiveEffectService
 }
 ```
 
-#### Character ドメイン連携
-
-##### BattleStatusEffectModule (Character/Battle/BattleStatusEffectModule.cs)
-```csharp
-// 実装済み：キャラクターの効果管理モジュール
-public record BattleStatusEffectModule
-{
-    public IReadOnlyCollection<BattleStatusEffect> StatusEffects { get; }
-    private readonly ImmutableDictionary<EffectID, BattleStatusEffect> statusEffects;
-    
-    [JsonConstructor]
-    internal BattleStatusEffectModule(IReadOnlyCollection<BattleStatusEffect>? statusEffects = null);
-    
-    // 効果追加・削除
-    internal BattleStatusEffectModule AddStatusEffect(BattleStatusEffect statusEffect);
-    internal BattleStatusEffectModule RemoveStatusEffect(BattleStatusEffect statusEffect);
-    
-    // 等価性比較
-    public virtual bool Equals(BattleStatusEffectModule? other);
-}
-```
 
 ## ビジネスルール
 

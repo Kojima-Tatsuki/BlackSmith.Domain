@@ -1,359 +1,145 @@
 # BlackSmith.Domain アーキテクチャ設計
 
-## アーキテクチャ概要
+## 概要
 
-BlackSmith.Domain は**ドメイン駆動設計（DDD）**と**クリーンアーキテクチャ**の原則に基づいて設計されています。\
-ドメインロジックをインフラストラクチャから分離し、テスタビリティと保守性を重視した構造になっています。
+BlackSmith.Domain は、ゲームアプリケーションのドメイン層を提供する Unity ライブラリです。\
+**ドメイン駆動設計（DDD）**と**クリーンアーキテクチャ**の原則に基づき、ゲームのビジネスロジックを UI や永続化から分離し、\
+再利用可能で保守性の高いドメインライブラリとして設計されています。
 
-## レイヤー構成
+### 設計目標
+- **ドメインロジックの純粋性**: ゲームルールとビジネスロジックの明確な定義
+- **ライブラリとしての独立性**: Unity 依存を最小限に抑えた移植可能な設計
+- **型安全性**: 強型付けによるコンパイル時エラー検出
+- **テスタビリティ**: 単体テスト可能なドメイン設計
 
-### 1. ドメイン層（Domain Layer）
-**場所**: `Assets/Plugins/BlackSmith.Domain/Domain/`
+## アーキテクチャ構造
 
-#### 責務
-- コアビジネスロジックの実装
-- ドメインエンティティ・値オブジェクトの定義
-- ビジネスルールの表現
-- ドメインイベントの定義
+### レイヤー構成
 
-#### 主要構成要素
+ライブラリは以下の3層構造で構成されています：
+
+#### 1. Domain層
+**責務**: ゲームのコアビジネスロジックとルールの定義
+- エンティティ・値オブジェクトによるドメインモデル
+- ドメインサービスによるビジネスルール実装
+- ゲーム固有の制約と不変条件の保証
+
+#### 2. Usecase層  
+**責務**: ドメインロジックの統合とアプリケーション向けサービス提供
+- 複数ドメインをまたがる処理の調整
+- 外部システムとの境界定義（リポジトリインターフェース）
+- トランザクション境界の管理
+
+#### 3. Test層
+**責務**: ドメインロジックの品質保証
+- 単体テストによるビジネスルール検証
+- ドメインモデルの不変条件テスト
+
+### ドメイン構成
+
+ゲームドメインを7つのコアドメインに分割し、それぞれが特定のゲーム要素を管理します：
 
 ```
 Domain/
-├── Character/         # プレイヤー・戦闘システム
-├── Item/              # アイテム・装備システム
-├── Inventory/         # インベントリ・通貨システム
-├── Field/             # 世界・フィールドシステム
-├── Skill/             # スキルシステム
-├── PassiveEffect/     # ステータス効果システム
-└── Quest/             # クエストシステム
+├── Character/         # キャラクター成長とステータス管理
+├── Item/              # アイテム定義と装備システム
+├── Inventory/         # アイテム所有と通貨管理
+├── Field/             # 世界構造とフィールド階層
+├── Skill/             # スキルと熟練度システム
+├── PassiveEffect/     # ステータス効果と一時的変更
+└── Quest/             # クエスト基本情報管理
 ```
 
-### 2. ユースケース層（Application Layer）
-**場所**: `Assets/Plugins/BlackSmith.Domain/Usecase/`
+各ドメインの詳細実装については [domains/](./domains/) ディレクトリを参照してください。
 
-#### 責務
-- アプリケーション固有のビジネスロジック
-- ドメインオブジェクトのオーケストレーション
-- 外部システムとの統合インターフェース
-- トランザクション境界の定義
+## 設計原則
 
-#### 主要構成要素
+### 採用している主要パターン
 
+#### ドメインモデリング
+- **値オブジェクト**: record型による不変性とビジネス制約の表現
+- **エンティティ**: 一意性を持つゲームオブジェクトの表現
+- **ドメインサービス**: エンティティに属さないゲームルールの実装
+
+#### オブジェクト生成
+- **ファクトリーパターン**: 複雑なエンティティ生成ロジックのカプセル化
+- **コマンドパターン**: エンティティ再構築とパラメータ転送
+
+#### 永続化抽象
+- **リポジトリパターン**: データ永続化の抽象化とドメイン層の独立性維持
+
+### SOLID原則の適用
+- **単一責任**: 各クラスは単一のゲーム要素を管理
+- **開放閉鎖**: 新しいアイテムタイプやスキルの追加が既存コードを変更せずに可能
+- **依存性逆転**: ドメイン層は外部システムに依存しない
+
+## 品質特性への対応
+
+### パフォーマンス
+- **非同期処理**: UniTaskによる効率的な非同期ゲームロジック
+- **イミュータブル設計**: 状態変更の予測可能性とスレッドセーフティ
+- **効率的なコレクション**: ImmutableArrayによるメモリ効率
+
+### セキュリティと堅牢性
+- **不変性の保証**: record型とprivateコンストラクタによる状態保護
+- **入力検証**: ドメインモデルレベルでのビジネスルール検証
+- **カプセル化**: 内部状態の隠蔽と制御されたアクセス
+
+### 拡張性
+- **オープン/クローズド原則**: 新しいゲーム要素の追加が容易
+- **戦略パターン**: ゲームルールの切り替え可能な実装
+- **プラグイン可能**: インターフェース経由での機能拡張
+
+## 技術スタック
+
+### Unity環境
+- **対象バージョン**: Unity 2023.2 以降
+- **C#バージョン**: C# 9.0 (record型、パターンマッチング使用)
+- **Null許容参照型**: 有効化 (#nullable enable)
+
+### 依存ライブラリ
+- **UniTask 2.5.5**: 効率的な非同期処理とゲームループ統合
+- **R3 1.2.8**: リアクティブエクステンションによるイベント処理
+- **Newtonsoft.Json 3.2.1**: ドメインオブジェクトのシリアライゼーション
+- **System.Collections.Immutable**: 不変コレクションによる安全な状態管理
+
+## ライブラリ利用ガイド
+
+### インストール
+
+Unity Package Manager を使用してインストール:
 ```
-Usecase/
-├── Character/        # キャラクター操作ユースケース
-├── Item/             # アイテム操作ユースケース
-├── Inventory/        # インベントリ操作ユースケース
-└── Repository/       # リポジトリインターフェース定義
-```
-
-### 3. テスト層（Test Layer）
-**場所**: `Assets/Plugins/BlackSmith.Domain/Tests/`
-
-## 設計パターン
-
-### 1. 値オブジェクト（Value Object）
-
-```csharp
-// record型による不変オブジェクト
-public abstract record BasicID
-{
-    protected abstract string Prefix { get; }
-    public string Value => Prefix + guid;
-    private Guid guid { get; }
-}
-
-public record Experience
-{
-    public int Value { get; }
-    public Experience(int value) => Value = Math.Max(0, value);
-}
-```
-
-**特徴**:
-- record型による構造的等価性
-- 不変性の保証
-- メソッドチェーンによる状態変更
-
-### 2. ファクトリーパターン
-
-```csharp
-public static class PlayerFactory
-{
-    public static PlayerCommonEntity CreateNew(
-        PlayerCommonCreateCommand command)
-    {
-        // エンティティ作成ロジック
-    }
-    
-    public static PlayerCommonEntity Reconstruct(
-        PlayerCommonReconstructCommand command)
-    {
-        // エンティティ再構築ロジック
-    }
-}
+https://github.com/Kojima-Tatsuki/BlackSmith.Domain.git?path=Assets/Plugins/BlackSmith.Domain
 ```
 
-**用途**:
-- エンティティ作成の複雑性を隠蔽
-- 作成・再構築の責務分離
-- ビジネスルールの一元化
+### 基本的な利用フロー
 
-### 3. コマンドパターン
+1. **ドメインサービスの利用**
+   - 各種Usecaseクラスを通じてドメインロジックにアクセス
+   - リポジトリインターフェースの実装を提供
 
-```csharp
-public record PlayerCommonCreateCommand
-{
-    public PlayerName Name { get; }
-    public PlayerLevel Level { get; }
-    public Strength Strength { get; }
-    public Agility Agility { get; }
-}
+2. **ドメインイベントの購読**
+   - R3のObservableを通じてゲームイベントを監視
+   - UI層やエフェクト層との疎結合な連携
 
-public record PlayerCommonReconstructCommand
-{
-    public PlayerID Id { get; }
-    public PlayerName Name { get; }
-    // ... その他のプロパティ
-}
-```
+3. **カスタマイズポイント**
+   - リポジトリ実装によるデータ永続化
+   - ドメインサービスの拡張
 
-**用途**:
-- エンティティ再構築時のデータ転送
-- パラメータオブジェクトパターンの実装
-- データバリデーションの一元化
+### アセンブリ構成
+- **BlackSmith.Domain.asmdef**: メインドメインライブラリ
+- **BlackSmith.Domain.Test.asmdef**: テストアセンブリ
 
-### 4. リポジトリパターン
+## 関連ドキュメント
 
-```csharp
-public interface IPlayerCommonEntityRepository
-{
-    UniTask<PlayerCommonEntity> FindByIdAsync(PlayerID id);
-    UniTask SaveAsync(PlayerCommonEntity entity);
-    UniTask DeleteAsync(PlayerID id);
-}
-```
+### 実装詳細
+- **[domains/](./domains/)**: 各ドメインの詳細仕様と実装
+- **[systems/](./systems/)**: ドメインサービスの仕様
+- **[integration/](./integration/)**: ドメイン間の技術的連携
 
-**特徴**:
-- データアクセスの抽象化
-- ドメイン層の独立性保持
-- テスタビリティの向上
+### プロジェクト情報
+- **[CLAUDE.md](../../../../CLAUDE.md)**: プロジェクト全体の設定とルール
+- **[README.md](./README.md)**: ドキュメント構成ガイド
 
-### 5. モジュールパターン
-
-```csharp
-public class CharacterBattleModule
-{
-    private readonly BattleEquipmentModule equipmentModule;
-    private readonly BattleStatusEffectModule statusEffectModule;
-    
-    public BattleParameter GetBattleParameter()
-    {
-        // 複数モジュールの統合処理
-    }
-}
-```
-
-**用途**:
-- 関連機能の凝集
-- 複雑なビジネスロジックの分割
-- 単一責任原則の実現
-
-## 依存関係の管理
-
-### 1. 依存関係逆転の原則（DIP）
-
-```csharp
-// ドメイン層: インターフェース定義
-public interface IPlayerCommonEntityRepository { }
-
-// ユースケース層: インターフェース使用
-public class PlayerCommonEntityProvideUsecase
-{
-    private readonly IPlayerCommonEntityRepository repository;
-}
-
-// インフラ層: 具象実装（プロジェクト外で実装）
-public class PlayerCommonEntityRepository : IPlayerCommonEntityRepository { }
-```
-
-### 2. 循環依存の回避
-
-```mermaid
-graph TD
-    A[Character] -->|uses| B[Item]
-    B -->|through interface| C[ICharacterRepository]
-    A -->|implements| C
-    
-    D[Inventory] -->|uses| A
-    D -->|uses| B
-    
-    E[Skill] -->|uses| A
-    F[PassiveEffect] -->|used by| A
-```
-
-**手法**:
-- インターフェース分離
-- コマンドオブジェクトによるデータ転送
-- イベント駆動による疎結合
-
-## 非機能要件への対応
-
-### 1. 非同期処理
-
-```csharp
-// UniTaskによる非同期処理
-public class PlayerCommonEntityProvideUsecase
-{
-    public async UniTask<PlayerCommonEntity> ExecuteAsync(PlayerID id)
-    {
-        return await repository.FindByIdAsync(id);
-    }
-}
-```
-
-### 2. リアクティブプログラミング
-
-```csharp
-// R3によるイベント駆動
-public class PlayerEventPublisher
-{
-    private readonly Subject<PlayerLevelUpEvent> levelUpSubject = new();
-    public Observable<PlayerLevelUpEvent> OnLevelUp => levelUpSubject;
-}
-```
-
-### 3. パフォーマンス
-
-```csharp
-// イミュータブルコレクションによる効率的な状態管理
-public record PlayerCommonEntity
-{
-    public ImmutableArray<SkillAndProficiency> Skills { get; }
-}
-```
-
-## セキュリティ設計
-
-### 1. 不変性の保証
-
-- record型による構造的不変性
-- privateコンストラクタによる生成制御
-- 防御的コピーの実装
-
-### 2. バリデーション
-
-```csharp
-public record PlayerLevel
-{
-    public int Value { get; }
-    
-    public PlayerLevel(int value)
-    {
-        if (value < 1) throw new ArgumentException("Level must be 1 or greater");
-        Value = value;
-    }
-}
-```
-
-### 3. カプセル化
-
-```csharp
-public record PlayerCommonEntity
-{
-    private readonly PlayerLevel level;
-    private readonly Experience experience;
-    
-    // 外部からは制御されたメソッドのみ公開
-    public PlayerCommonEntity LevelUp() => this with 
-    { 
-        level = new PlayerLevel(level.Value + 1),
-        experience = new Experience(0)
-    };
-}
-```
-
-## 拡張性設計
-
-### 1. オープン/クローズド原則
-
-```csharp
-// 抽象基底クラス
-public abstract record Skill
-{
-    public abstract SkillType Type { get; }
-}
-
-// 拡張クラス
-public record BattleSkill : Skill
-{
-    public override SkillType Type => SkillType.Battle;
-}
-
-public record ProductionSkill : Skill
-{
-    public override SkillType Type => SkillType.Production;
-}
-```
-
-### 2. 戦略パターン
-
-```csharp
-public interface IExperienceCalculator
-{
-    int CalculateRequiredExperience(int level);
-}
-
-public class StandardExperienceCalculator : IExperienceCalculator
-{
-    public int CalculateRequiredExperience(int level)
-    {
-        // 標準計算ロジック
-    }
-}
-```
-
-## パッケージ構成
-
-### Unity Package Manager 対応
-
-```json
-{
-  "name": "com.cactus.blacksmith-domain",
-  "version": "1.3.1",
-  "displayName": "BlackSmith Domain",
-  "description": "Domain layer for BlackSmith game project",
-  "unity": "2023.2",
-  "dependencies": {
-    "com.cysharp.unitask": "2.5.5",
-    "com.cysharp.r3": "1.2.8",
-    "com.unity.nuget.newtonsoft-json": "3.2.1"
-  }
-}
-```
-
-### アセンブリ定義
-
-- **BlackSmith.Domain.asmdef**: ドメイン層
-- **BlackSmith.Domain.Test.asmdef**: テスト層
-
-## 設計原則への準拠
-
-### SOLID原則
-
-1. **S**ingle Responsibility: 各クラスは単一の責務
-2. **O**pen/Closed: 拡張に開かれ、変更に閉じている
-3. **L**iskov Substitution: 派生型は基底型と置換可能
-4. **I**nterface Segregation: インターフェースの分離
-5. **D**ependency Inversion: 依存関係の逆転
-
-### DDD戦術パターン
-
-- **エンティティ**: 一意性を持つオブジェクト
-- **値オブジェクト**: 不変な値を表現
-- **ドメインサービス**: エンティティに属さないロジック
-- **ファクトリー**: 複雑な生成ロジック
-- **リポジトリ**: 永続化の抽象化
-
-この設計により、BlackSmith.Domain は拡張性、保守性、テスタビリティを兼ね備えた堅牢なドメインライブラリとなっています。
+BlackSmith.Domain は、ゲームロジックの中核を担う堅牢なドメインライブラリとして、\
+型安全で保守性の高いゲーム開発を支援します。

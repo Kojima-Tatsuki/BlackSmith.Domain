@@ -14,23 +14,23 @@
 - **[PassiveEffect.md](./domains/PassiveEffect.md)** - ステータス効果システム
 - **[Quest.md](./domains/Quest.md)** - クエスト・依頼システム
 
-### 📁 [systems/](./systems/) - 複合システム仕様
-複数ドメインを統合した統合システム
-- **[BattleSystem.md](./systems/BattleSystem.md)** - 戦闘システム (Character + Item + PassiveEffect)
-- **[CraftingSystem.md](./systems/CraftingSystem.md)** - クラフトシステム (Item + Inventory + Skill)
-- **[EquipmentSystem.md](./systems/EquipmentSystem.md)** - 装備システム (Character + Item + Inventory)
-- **[LevelingSystem.md](./systems/LevelingSystem.md)** - レベリングシステム (Character + Skill + PassiveEffect)
+### 📁 [systems/](./systems/) - ドメインサービスシステム
+複数ドメインを統合したドメインサービスの仕様（What）
+- **[BattleSystem.md](./systems/BattleSystem.md)** - 戦闘ドメインサービス (Character + Item + PassiveEffect)
+- **[CraftingSystem.md](./systems/CraftingSystem.md)** - クラフトドメインサービス (Item + Inventory + Skill)
+- **[CurrencySystem.md](./systems/CurrencySystem.md)** - 通貨ドメインサービス (Inventory + Item)
+- **[EquipmentSystem.md](./systems/EquipmentSystem.md)** - 装備ドメインサービス (Character + Item + Inventory)
+- **[InventoryManagementSystem.md](./systems/InventoryManagementSystem.md)** - インベントリドメインサービス (Inventory + Item)
+- **[LevelingSystem.md](./systems/LevelingSystem.md)** - レベリングドメインサービス (Character + Skill + PassiveEffect)
+- **[QuestManagementSystem.md](./systems/QuestManagementSystem.md)** - クエストドメインサービス (Quest)
 
-### 📁 [integration/](./integration/) - ドメイン統合
-ドメイン間の相互作用と統合パターン
+### 📁 [integration/](./integration/) - 技術的ドメイン統合
+開発者視点でのドメイン間連携の技術的説明（How）
 - **[DomainInteractions.md](./integration/DomainInteractions.md)** - ドメイン間依存関係とデータフロー
 - **[SystemIntegration.md](./integration/SystemIntegration.md)** - システム統合パターンとアーキテクチャ
 
 ### 📄 基盤ドキュメント
 - **[Architecture.md](./Architecture.md)** - 全体アーキテクチャ設計
-- **[GameLogic.md](./GameLogic.md)** - ゲームロジック概要（レガシー）
-- **[DomainModels.md](./DomainModels.md)** - ドメインモデル概要（レガシー）
-- **[BusinessRules.md](./BusinessRules.md)** - ビジネスルール概要（レガシー）
 
 ## 推奨読み順
 
@@ -41,11 +41,11 @@
 4. 必要に応じて他のドメイン・システムドキュメントを参照
 
 ### 🔧 開発者向け
-1. 担当ドメインの `domains/*.md` を熟読
-2. 関連する `systems/*.md` で統合パターンを確認
-3. `integration/*.md` でドメイン間連携を理解
+1. 担当ドメインの `domains/*.md` で実装詳細を理解
+2. 関連する `systems/*.md` でドメインサービス仕様を確認
+3. `integration/*.md` で技術的連携方法を理解
 
-### 🏗️ アーキテクト向け
+### 🏷️ アーキテクト向け
 1. **[Architecture.md](./Architecture.md)** - 設計思想
 2. **[integration/](./integration/)** - 統合パターン
 3. **[systems/](./systems/)** - 複合システム設計
@@ -57,9 +57,11 @@
 - **アイテム・装備関連**: [domains/Item.md](./domains/Item.md) + [systems/EquipmentSystem.md](./systems/EquipmentSystem.md)
 - **レベル・成長関連**: [domains/Character.md](./domains/Character.md) + [systems/LevelingSystem.md](./systems/LevelingSystem.md)
 
-### システム横断的な情報を探す場合
-- **戦闘処理**: [systems/BattleSystem.md](./systems/BattleSystem.md)
-- **アイテム作成**: [systems/CraftingSystem.md](./systems/CraftingSystem.md)
+### ドメインサービスを探す場合
+- **戦闘ドメインサービス**: [systems/BattleSystem.md](./systems/BattleSystem.md)
+- **クラフトドメインサービス**: [systems/CraftingSystem.md](./systems/CraftingSystem.md)
+- **通貨ドメインサービス**: [systems/CurrencySystem.md](./systems/CurrencySystem.md)
+- **インベントリドメインサービス**: [systems/InventoryManagementSystem.md](./systems/InventoryManagementSystem.md)
 - **ドメイン間連携**: [integration/DomainInteractions.md](./integration/DomainInteractions.md)
 
 ## 対象読者
@@ -75,7 +77,26 @@
 - [Assets/Plugins/BlackSmith.Domain/](../Assets/Plugins/BlackSmith.Domain/) - 実装コード
 - [Tests/](../Assets/Plugins/BlackSmith.Domain/Tests/) - 単体テスト
 
+## ドキュメント管理方針
+
+### 実装状況の記載ルール
+- **実装済み機能のみ記載**: ドキュメントには現在実装されている機能のみを記載
+- **未実装機能の排除**: 「〜予定」「〜する計画」「今後の拡張」などの表現は使用禁止
+- **将来拡張は明示**: 将来的な拡張ポイントは専用セクションで明示的に分離
+
+### ドメイン間連携の記載方針
+- **domains/*.md**: 各ドメインの詳細な実装内容とビジネスルール
+- **integration/*.md**: ドメイン間連携の技術的実装方法
+- **systems/*.md**: 複数ドメインを統合したドメインサービス仕様
+
+### 情報の重複回避
+- **詳細実装**: 各ドメインファイルに記載
+- **連携概要**: integration ディレクトリに技術的連携を記載
+- **ドメインサービス**: systems ディレクトリでドモインサービス仕様を説明
+- **相互参照**: 適切なリンクで情報を繋ぐ
+
 ## 更新履歴
 
+- 2025-06-18: ドメイン間連携の整理とドキュメント管理方針の明確化
 - 2025-06-15: ドメイン分割構造への移行完了
 - 2025-06-15: 初版作成
