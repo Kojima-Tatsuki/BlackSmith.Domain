@@ -3,7 +3,7 @@
 ## 概要
 
 装備システムは、Character、Item、Inventory の3つのドメインを統合し、プレイヤーの装備管理を行うシステムです。\
-装備の着脱、効果適用、制限チェック、インベントリ間の移動を統合的に処理します。
+装備品の着脱、強化、制限チェック、インベントリ管理が充実して実装されており、包括的な装備管理体験を提供します。
 
 ## システム構成
 
@@ -13,683 +13,280 @@
 - **[Item](../domains/Item.md)**: 装備品、強化パラメータ、装備種別
 - **[Inventory](../domains/Inventory.md)**: 装備インベントリ、一般インベントリ
 
-### 統合フロー
+### 実装済み機能
 
-```mermaid
-graph TD
-    A[装備変更要求] --> B[装備条件チェック]
-    B --> C[インベントリ容量チェック]
-    C --> D[現装備の取り外し]
-    D --> E[新装備の装着]
-    E --> F[戦闘パラメータ更新]
-    F --> G[インベントリ更新]
-```
-
-## 装備統合サービス
-
-### EquipmentIntegrationService
-複数ドメインを統合した装備管理の中核サービス。
+#### 装備品管理
+Item ドメインの装備アイテムシステム。
 
 ```csharp
-public class EquipmentIntegrationService
+// 実装済み：装備可能アイテム
+public class EquippableItem : IItem
 {
-    public EquipmentChangeResult ChangeEquipment(
-        PlayerCommonEntity player,
-        EquipmentInventory equipmentInventory,
-        InfiniteSlotInventory generalInventory,
-        EquippableItem newEquipment)
-    {
-        // 1. 装備条件チェック（Character ドメイン）
-        if (!CanEquipItem(player, newEquipment))
-        {
-            var reason = GetEquipmentRestrictionReason(player, newEquipment);
-            return EquipmentChangeResult.Failed(reason);
-        }
-        
-        // 2. インベントリ存在チェック（Inventory ドメイン）
-        if (generalInventory.GetItemQuantity(newEquipment) < 1)
-        {
-            return EquipmentChangeResult.Failed("Item not found in inventory");
-        }
-        
-        // 3. 現在の装備取り外し
-        var (updatedEquipment, updatedGeneral) = UnequipCurrentItem(
-            equipmentInventory, generalInventory, newEquipment.EquipmentType);
-        
-        // 4. 新装備の装着
-        try
-        {
-            updatedGeneral = updatedGeneral.RemoveItem(newEquipment, 1);
-            updatedEquipment = updatedEquipment.EquipItem(newEquipment);
-        }
-        catch (InvalidOperationException ex)
-        {
-            return EquipmentChangeResult.Failed($"Failed to equip item: {ex.Message}");
-        }
-        
-        // 5. 戦闘パラメータの再計算
-        var updatedBattleParameters = RecalculateBattleParameters(player, updatedEquipment);
-        
-        return EquipmentChangeResult.Success(
-            updatedEquipment,
-            updatedGeneral,
-            updatedBattleParameters,
-            $"Successfully equipped {newEquipment.ItemName}"
-        );
-    }
+    public ItemID ID { get; }
+    public ItemName ItemName { get; }
+    public EnhancementParameter Enhancement { get; }
+    public IReadOnlyDictionary<EquipmentSlotType, int> EquipmentSlots { get; }
+    public RequireParameter RequireParameter { get; }
     
-    public EquipmentChangeResult UnequipItem(
-        EquipmentInventory equipmentInventory,
-        InfiniteSlotInventory generalInventory,
-        EquipmentType equipmentType)
-    {
-        // 現在装備中のアイテム取得
-        var currentItem = GetCurrentlyEquippedItem(equipmentInventory, equipmentType);
-        if (currentItem == null)
-        {
-            return EquipmentChangeResult.Failed("No item equipped in this slot");
-        }
-        
-        // インベントリ容量チェック
-        if (!generalInventory.CanAddItem(currentItem, 1))
-        {
-            return EquipmentChangeResult.Failed("Insufficient inventory space");
-        }
-        
-        // 装備取り外し
-        var updatedEquipment = equipmentInventory.UnequipItem(equipmentType);
-        var updatedGeneral = generalInventory.AddItem(currentItem, 1);
-        
-        return EquipmentChangeResult.Success(
-            updatedEquipment,
-            updatedGeneral,
-            null, // 戦闘パラメータは外部で再計算
-            $"Successfully unequipped {currentItem.ItemName}"
-        );
-    }
-    
-    private bool CanEquipItem(PlayerCommonEntity player, EquippableItem equipment)
-    {
-        // 基本装備条件チェック（将来拡張）
-        // 現在は制限なしだが、レベル・ステータス要件を追加可能
-        return true;
-    }
-    
-    private string GetEquipmentRestrictionReason(PlayerCommonEntity player, EquippableItem equipment)
-    {
-        // 装備制限の詳細理由を返す（将来拡張）
-        return "Equipment requirements not met";
-    }
-    
-    private (EquipmentInventory, InfiniteSlotInventory) UnequipCurrentItem(
-        EquipmentInventory equipmentInventory,
-        InfiniteSlotInventory generalInventory,
-        EquipmentType equipmentType)
-    {
-        var currentItem = GetCurrentlyEquippedItem(equipmentInventory, equipmentType);
-        
-        if (currentItem == null)
-            return (equipmentInventory, generalInventory);
-        
-        var updatedEquipment = equipmentInventory.UnequipItem(equipmentType);
-        var updatedGeneral = generalInventory.AddItem(currentItem, 1);
-        
-        return (updatedEquipment, updatedGeneral);
-    }
-    
-    private EquippableItem? GetCurrentlyEquippedItem(
-        EquipmentInventory equipmentInventory,
-        EquipmentType equipmentType)
-    {
-        return equipmentType switch
-        {
-            EquipmentType.Weapon => equipmentInventory.WeaponSlot,
-            EquipmentType.Armor => equipmentInventory.ArmorSlot,
-            EquipmentType.Accessary => equipmentInventory.AccessarySlot,
-            _ => null
-        };
-    }
-    
-    private BattleParameter RecalculateBattleParameters(
-        PlayerCommonEntity player,
-        EquipmentInventory equipment)
-    {
-        // Character ドメインの基本パラメータ
-        var baseParams = new BattleParameter(
-            maxHealth: player.Level.Value * 10,
-            attackValue: (player.Strength.Value + player.Agility.Value) * 2,
-            defenseValue: (player.Strength.Value + player.Agility.Value) * 2
-        );
-        
-        // Item ドメインの装備効果
-        var equipmentBonus = CalculateEquipmentBonus(equipment);
-        
-        return new BattleParameter(
-            Math.Max(1, baseParams.MaxHealth + equipmentBonus.MaxHealth),
-            Math.Max(1, baseParams.AttackValue + equipmentBonus.AttackValue),
-            Math.Max(0, baseParams.DefenseValue + equipmentBonus.DefenseValue)
-        );
-    }
-    
-    private BattleParameter CalculateEquipmentBonus(EquipmentInventory equipment)
-    {
-        var totalAttack = 0;
-        var totalDefense = 0;
-        
-        if (equipment.WeaponSlot != null)
-        {
-            totalAttack += equipment.WeaponSlot.Enhancement.GetAttackValue();
-            totalDefense += equipment.WeaponSlot.Enhancement.GetDefenseValue();
-        }
-        
-        if (equipment.ArmorSlot != null)
-        {
-            totalAttack += equipment.ArmorSlot.Enhancement.GetAttackValue();
-            totalDefense += equipment.ArmorSlot.Enhancement.GetDefenseValue();
-        }
-        
-        if (equipment.AccessarySlot != null)
-        {
-            totalAttack += equipment.AccessarySlot.Enhancement.GetAttackValue();
-            totalDefense += equipment.AccessarySlot.Enhancement.GetDefenseValue();
-        }
-        
-        return new BattleParameter(0, totalAttack, totalDefense);
-    }
+    // コマンドパターンによる生成
+    public record CreateCommand(ItemID ItemID, ItemName ItemName, 
+        EnhancementParameter EnhancementParameter, 
+        IReadOnlyDictionary<EquipmentSlotType, int> EquipmentSlots) : ICommand;
 }
 ```
 
-## 装備比較システム
-
-### EquipmentComparisonService
-装備品の性能比較を行うサービス。
+#### 装備インベントリ管理
+Inventory ドメインの装備専用管理。
 
 ```csharp
-public class EquipmentComparisonService
+// 実装済み：装備インベントリ
+internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
 {
-    public EquipmentComparison CompareEquipment(
-        PlayerCommonEntity player,
-        EquipmentInventory currentEquipment,
-        EquippableItem candidateItem)
-    {
-        var equipmentType = candidateItem.EquipmentType;
-        var currentItem = GetCurrentlyEquippedItem(currentEquipment, equipmentType);
-        
-        // 現在の戦闘パラメータ
-        var currentParams = CalculateParametersWithEquipment(player, currentEquipment);
-        
-        // 候補装備での戦闘パラメータ
-        var candidateEquipment = SimulateEquipmentChange(currentEquipment, candidateItem);
-        var candidateParams = CalculateParametersWithEquipment(player, candidateEquipment);
-        
-        // 変化量計算
-        var healthDiff = candidateParams.MaxHealth - currentParams.MaxHealth;
-        var attackDiff = candidateParams.AttackValue - currentParams.AttackValue;
-        var defenseDiff = candidateParams.DefenseValue - currentParams.DefenseValue;
-        
-        return new EquipmentComparison(
-            currentItem,
-            candidateItem,
-            new ParameterDifference(healthDiff, attackDiff, defenseDiff),
-            DetermineOverallImprovement(healthDiff, attackDiff, defenseDiff)
-        );
-    }
+    private readonly Dictionary<EquipmentType, EquippableItem> Equipments;
     
-    public IEnumerable<EquipmentUpgrade> FindUpgrades(
-        PlayerCommonEntity player,
-        EquipmentInventory currentEquipment,
-        InfiniteSlotInventory availableItems)
-    {
-        var upgrades = new List<EquipmentUpgrade>();
-        
-        // 利用可能な装備品を全チェック
-        var equipmentItems = availableItems.Slots
-            .Where(slot => slot.Item is EquippableItem)
-            .Select(slot => (EquippableItem)slot.Item);
-        
-        foreach (var item in equipmentItems)
-        {
-            var comparison = CompareEquipment(player, currentEquipment, item);
-            
-            if (comparison.OverallImprovement > 0)
-            {
-                upgrades.Add(new EquipmentUpgrade(item, comparison));
-            }
-        }
-        
-        // 改善度で降順ソート
-        return upgrades.OrderByDescending(u => u.Comparison.OverallImprovement);
-    }
-    
-    private EquipmentInventory SimulateEquipmentChange(
-        EquipmentInventory currentEquipment,
-        EquippableItem candidateItem)
-    {
-        return candidateItem.EquipmentType switch
-        {
-            EquipmentType.Weapon => currentEquipment with { WeaponSlot = candidateItem },
-            EquipmentType.Armor => currentEquipment with { ArmorSlot = candidateItem },
-            EquipmentType.Accessary => currentEquipment with { AccessarySlot = candidateItem },
-            _ => currentEquipment
-        };
-    }
-    
-    private BattleParameter CalculateParametersWithEquipment(
-        PlayerCommonEntity player,
-        EquipmentInventory equipment)
-    {
-        // 戦闘パラメータ計算（BattleSystemと連携）
-        var baseParams = new BattleParameter(
-            player.Level.Value * 10,
-            (player.Strength.Value + player.Agility.Value) * 2,
-            (player.Strength.Value + player.Agility.Value) * 2
-        );
-        
-        var equipmentBonus = CalculateEquipmentBonus(equipment);
-        
-        return new BattleParameter(
-            baseParams.MaxHealth + equipmentBonus.MaxHealth,
-            baseParams.AttackValue + equipmentBonus.AttackValue,
-            baseParams.DefenseValue + equipmentBonus.DefenseValue
-        );
-    }
-    
-    private BattleParameter CalculateEquipmentBonus(EquipmentInventory equipment)
-    {
-        var totalAttack = 0;
-        var totalDefense = 0;
-        
-        if (equipment.WeaponSlot != null)
-        {
-            totalAttack += equipment.WeaponSlot.Enhancement.GetAttackValue();
-            totalDefense += equipment.WeaponSlot.Enhancement.GetDefenseValue();
-        }
-        
-        if (equipment.ArmorSlot != null)
-        {
-            totalAttack += equipment.ArmorSlot.Enhancement.GetAttackValue();
-            totalDefense += equipment.ArmorSlot.Enhancement.GetDefenseValue();
-        }
-        
-        if (equipment.AccessarySlot != null)
-        {
-            totalAttack += equipment.AccessarySlot.Enhancement.GetAttackValue();
-            totalDefense += equipment.AccessarySlot.Enhancement.GetDefenseValue();
-        }
-        
-        return new BattleParameter(0, totalAttack, totalDefense);
-    }
-    
-    private EquippableItem? GetCurrentlyEquippedItem(
-        EquipmentInventory equipment,
-        EquipmentType equipmentType)
-    {
-        return equipmentType switch
-        {
-            EquipmentType.Weapon => equipment.WeaponSlot,
-            EquipmentType.Armor => equipment.ArmorSlot,
-            EquipmentType.Accessary => equipment.AccessarySlot,
-            _ => null
-        };
-    }
-    
-    private int DetermineOverallImprovement(int healthDiff, int attackDiff, int defenseDiff)
-    {
-        // 重み付けによる総合改善度計算
-        return (healthDiff / 10) + (attackDiff * 2) + (defenseDiff * 2);
-    }
+    public bool IsAddable(EquippableItem item);
+    public EquippableItem AddItem(EquippableItem item);
+    public EquippableItem RemoveItem(EquippableItem item);
+    public bool Contains(EquippableItem item);
 }
 ```
 
-## 装備セット効果システム（将来拡張）
-
-### EquipmentSetService
+#### 装備強化システム
+装備品の性能向上機能。
 
 ```csharp
-public class EquipmentSetService
+// 実装済み：装備強化サービス
+internal class EquipmentEnhanceService
 {
-    public SetEffectResult CalculateSetEffects(EquipmentInventory equipment)
-    {
-        var setEffects = new List<SetEffect>();
-        
-        // セット装備の判定
-        var equippedSets = DetectEquipmentSets(equipment);
-        
-        foreach (var set in equippedSets)
-        {
-            var effect = CalculateSetEffect(set);
-            if (effect != null)
-                setEffects.Add(effect);
-        }
-        
-        return new SetEffectResult(setEffects);
-    }
-    
-    private IEnumerable<EquipmentSet> DetectEquipmentSets(EquipmentInventory equipment)
-    {
-        // 装備セットの検出（将来実装）
-        // 例: "ドラゴンセット"、"魔法使いセット" など
-        return Enumerable.Empty<EquipmentSet>();
-    }
-    
-    private SetEffect? CalculateSetEffect(EquipmentSet set)
-    {
-        // セット効果の計算（将来実装）
-        return null;
-    }
+    internal EquippableItem Execute(EquippableItem item, EnhancementMaterial material);
 }
 
-public record EquipmentSet
+// 実装済み：強化パラメータ
+public record EnhancementParameter
 {
-    public string SetName { get; }
-    public ImmutableArray<EquippableItem> Items { get; }
-    public int EquippedCount { get; }
-    public int RequiredCount { get; }
-}
-
-public record SetEffect
-{
-    public string EffectName { get; }
-    public BattleStatusEffectModel StatusEffect { get; }
-    public bool IsActive { get; }
-}
-
-public record SetEffectResult
-{
-    public IReadOnlyList<SetEffect> Effects { get; }
-    
-    public SetEffectResult(IReadOnlyList<SetEffect> effects)
-    {
-        Effects = effects;
-    }
-    
-    public BattleStatusEffectModel GetCombinedSetEffect()
-    {
-        var activeEffects = Effects
-            .Where(e => e.IsActive)
-            .Select(e => e.StatusEffect);
-        
-        return BattleStatusEffectModel.Combine(activeEffects);
-    }
+    public int AttackValue { get; }
+    public int DefenseValue { get; }
+    public AdditionalParameter AdditionalParameter { get; }
 }
 ```
 
-## 装備条件システム（将来拡張）
-
-### EquipmentRequirementChecker
+#### 装備制限システム
+Character ドメインとの連携による装備制限。
 
 ```csharp
-public class EquipmentRequirementChecker
+// 実装済み：装備要求パラメータ
+public record RequireParameter
 {
-    public RequirementCheckResult CheckRequirements(
-        PlayerCommonEntity player,
-        EquippableItem equipment)
-    {
-        var failures = new List<string>();
-        
-        // レベル要件チェック
-        if (equipment.Requirements?.RequiredLevel != null &&
-            player.Level.Value < equipment.Requirements.RequiredLevel.Value)
-        {
-            failures.Add($"Required level: {equipment.Requirements.RequiredLevel.Value} (Current: {player.Level.Value})");
-        }
-        
-        // ステータス要件チェック
-        if (equipment.Requirements?.RequiredStrength != null &&
-            player.Strength.Value < equipment.Requirements.RequiredStrength.Value)
-        {
-            failures.Add($"Required strength: {equipment.Requirements.RequiredStrength.Value} (Current: {player.Strength.Value})");
-        }
-        
-        if (equipment.Requirements?.RequiredAgility != null &&
-            player.Agility.Value < equipment.Requirements.RequiredAgility.Value)
-        {
-            failures.Add($"Required agility: {equipment.Requirements.RequiredAgility.Value} (Current: {player.Agility.Value})");
-        }
-        
-        // スキル要件チェック
-        if (equipment.Requirements?.RequiredSkills != null)
-        {
-            foreach (var requiredSkill in equipment.Requirements.RequiredSkills)
-            {
-                var playerSkill = player.Skills.FirstOrDefault(s => 
-                    s.Skill.Name.Value == requiredSkill.Skill.Name.Value);
-                
-                if (playerSkill == null)
-                {
-                    failures.Add($"Required skill: {requiredSkill.Skill.Name.Value}");
-                }
-                else if (playerSkill.Proficiency.Value < requiredSkill.Proficiency.Value)
-                {
-                    failures.Add($"Required {requiredSkill.Skill.Name.Value} proficiency: {requiredSkill.Proficiency.Value} (Current: {playerSkill.Proficiency.Value})");
-                }
-            }
-        }
-        
-        return new RequirementCheckResult(failures.Count == 0, failures);
-    }
+    public PlayerLevel Level { get; }
+    public Strength Strength { get; }
+    public Agility Agility { get; }
 }
 
-public record RequirementCheckResult
+// 実装済み：追加パラメータ
+public record AdditionalParameter
 {
-    public bool CanEquip { get; }
-    public IReadOnlyList<string> FailureReasons { get; }
-    
-    public RequirementCheckResult(bool canEquip, IReadOnlyList<string> failureReasons)
-    {
-        CanEquip = canEquip;
-        FailureReasons = failureReasons;
-    }
-}
-
-// 将来拡張用の装備要件
-public record EquipmentRequirements
-{
-    public PlayerLevel? RequiredLevel { get; }
-    public Strength? RequiredStrength { get; }
-    public Agility? RequiredAgility { get; }
-    public ImmutableArray<SkillAndProficiency>? RequiredSkills { get; }
+    public int Attack { get; }
+    public int Defense { get; }
+    public int STR { get; }
+    public int AGI { get; }
 }
 ```
 
-## 結果処理
-
-### EquipmentChangeResult
+#### 戦闘中装備管理（Usecase層）
+戦闘中の装備変更とインベントリ整合性保証。
 
 ```csharp
-public record EquipmentChangeResult
+// 実装済み：戦闘中装備変更
+internal class BattleEquipmentUsecase
 {
-    public bool IsSuccess { get; }
-    public string Message { get; }
-    public EquipmentInventory? UpdatedEquipment { get; }
-    public InfiniteSlotInventory? UpdatedInventory { get; }
-    public BattleParameter? UpdatedBattleParameters { get; }
+    // 装備交換処理
+    internal async UniTask ChengeEquipment(CharacterID playerId, InventoryID inventoryId, 
+        EquippableItem equipment, EquippableItem remove);
     
-    private EquipmentChangeResult(
-        bool isSuccess,
-        string message,
-        EquipmentInventory? updatedEquipment = null,
-        InfiniteSlotInventory? updatedInventory = null,
-        BattleParameter? updatedBattleParameters = null)
-    {
-        IsSuccess = isSuccess;
-        Message = message;
-        UpdatedEquipment = updatedEquipment;
-        UpdatedInventory = updatedInventory;
-        UpdatedBattleParameters = updatedBattleParameters;
-    }
-    
-    public static EquipmentChangeResult Success(
-        EquipmentInventory equipment,
-        InfiniteSlotInventory inventory,
-        BattleParameter? battleParams,
-        string message) =>
-        new(true, message, equipment, inventory, battleParams);
-    
-    public static EquipmentChangeResult Failed(string reason) =>
-        new(false, reason);
-}
-
-public record EquipmentComparison
-{
-    public EquippableItem? CurrentItem { get; }
-    public EquippableItem CandidateItem { get; }
-    public ParameterDifference Difference { get; }
-    public int OverallImprovement { get; }
-    
-    public EquipmentComparison(
-        EquippableItem? currentItem,
-        EquippableItem candidateItem,
-        ParameterDifference difference,
-        int overallImprovement)
-    {
-        CurrentItem = currentItem;
-        CandidateItem = candidateItem;
-        Difference = difference;
-        OverallImprovement = overallImprovement;
-    }
-}
-
-public record ParameterDifference
-{
-    public int HealthDifference { get; }
-    public int AttackDifference { get; }
-    public int DefenseDifference { get; }
-    
-    public ParameterDifference(int healthDiff, int attackDiff, int defenseDiff)
-    {
-        HealthDifference = healthDiff;
-        AttackDifference = attackDiff;
-        DefenseDifference = defenseDiff;
-    }
-    
-    public bool HasAnyImprovement => 
-        HealthDifference > 0 || AttackDifference > 0 || DefenseDifference > 0;
-}
-
-public record EquipmentUpgrade
-{
-    public EquippableItem Item { get; }
-    public EquipmentComparison Comparison { get; }
-    
-    public EquipmentUpgrade(EquippableItem item, EquipmentComparison comparison)
-    {
-        Item = item;
-        Comparison = comparison;
-    }
+    // 装備解除処理
+    internal async UniTask RemoveEquipment(CharacterID playerId, InventoryID inventoryId, 
+        EquippableItem remove);
 }
 ```
 
-## 装備管理UI支援
+## 提供するドメインサービス
 
-### EquipmentDisplayService（UI層支援）
+### 装備管理サービス
+装備品の着脱と状態管理を提供します。
 
+**提供する操作:**
+- 装備アイテムの着用、取り外し
+- 装備種別ごとの状態管理
+- 装備インベントリと一般インベントリ間の移動
+- 戦闘中の安全な装備変更
+
+**ドメインルール:**
+- 同種類装備は1つまでのみ装備可能
+- 装備変更時のインベントリ操作はアトミックに実行
+- 装備制限チェックの事前実行
+
+### 装備制限チェックサービス
+プレイヤーのステータスに基づく装備可否判定を提供します。
+
+**提供するチェック:**
+- プレイヤーレベルの要件確認
+- Strength、Agilityステータスの要件確認
+- 装備種別の重複チェック
+
+**制限ルール:**
+- RequireParameterで指定された最低レベル以上が必要
+- 必要ステータスを満たさない場合は装備不可
+
+### 装備強化サービス
+装備品の性能向上処理を提供します。
+
+**提供する機能:**
+- 強化素材を使用した装備性能向上
+- 攻撃力、防御力、追加パラメータの強化
+- 強化結果の予測可能性
+
+**強化ルール:**
+- 強化素材と装備品の組み合わせにより結果が決定
+- 強化後のパラメータは強化前に加算
+- 強化は非可逆操作
+
+## ビジネスルール・制約
+
+### 装備管理制約
+- **種別重複制約**: 同じEquipmentTypeの装備は1つまでのみ装備可能
+- **装備制限**: RequireParameterの条件を満たさない装備は着用不可
+- **インベントリ連携**: 装備変更時のアイテム移動はアトミックに実行
+
+### 装備効果適用ルール
+- **パラメータ加算**: 装備のEnhancementParameterがプレイヤーのパラメータに加算
+- **効果結合**: 複数装備の効果は累積適用
+- **即座反映**: 装備変更時のパラメータ変更は即座反映
+
+### 強化システム制約
+- **素材消費**: 強化実行時に強化素材を消費
+- **非可逆性**: 強化結果は元に戻すこと不可
+- **パラメータ結合**: 強化パラメータは元のパラメータと加算結合
+
+### ドメイン整合性
+- **戦闘連携**: 装備変更時の戦闘パラメータ自動更新
+- **インベントリ同期**: 装備とインベントリ状態の一貫性保証
+- **ステータス連携**: プレイヤーステータスと装備制限の連動
+
+## 実装状況
+
+### Domain層実装
+- ✅ **EquippableItemクラス**: 装備可能アイテムの完全定義
+- ✅ **EquipmentInventoryクラス**: 装備品専用インベントリ
+- ✅ **EquipmentEnhanceService**: 装備強化処理サービス
+- ✅ **EnhancementParameter**: 強化パラメータのイミュータブル管理
+- ✅ **RequireParameter**: 装備要件パラメータ
+- ✅ **AdditionalParameter**: 装備追加効果パラメータ
+
+### Usecase層実装
+- ✅ **BattleEquipmentUsecase**: 戦闘中装備変更サービス
+- ✅ **装備交換処理**: ChengeEquipment()メソッド
+- ✅ **装備解除処理**: RemoveEquipment()メソッド
+
+### インターフェース定義
+- ✅ **IOneByInventoryService**: 装備インベントリの抽象化
+- ✅ **ICommandパターン**: 装備アイテム生成コマンド
+
+## ドメインサービス API
+
+### 装備管理サービス
 ```csharp
-public class EquipmentDisplayService
+// 装備アイテムの定義
+public class EquippableItem : IItem
 {
-    public EquipmentSummary GetEquipmentSummary(
-        PlayerCommonEntity player,
-        EquipmentInventory equipment)
-    {
-        var totalStats = CalculateEquipmentBonus(equipment);
-        var recommendations = GetEquipmentRecommendations(player, equipment);
-        
-        return new EquipmentSummary(
-            equipment,
-            totalStats,
-            recommendations
-        );
-    }
+    public ItemID ID { get; }
+    public ItemName ItemName { get; }
+    public EnhancementParameter Enhancement { get; }        // 強化パラメータ
+    public RequireParameter RequireParameter { get; }       // 装備要件
     
-    public string FormatParameterChange(ParameterDifference difference)
-    {
-        var changes = new List<string>();
-        
-        if (difference.HealthDifference != 0)
-        {
-            var symbol = difference.HealthDifference > 0 ? "+" : "";
-            changes.Add($"HP: {symbol}{difference.HealthDifference}");
-        }
-        
-        if (difference.AttackDifference != 0)
-        {
-            var symbol = difference.AttackDifference > 0 ? "+" : "";
-            changes.Add($"ATK: {symbol}{difference.AttackDifference}");
-        }
-        
-        if (difference.DefenseDifference != 0)
-        {
-            var symbol = difference.DefenseDifference > 0 ? "+" : "";
-            changes.Add($"DEF: {symbol}{difference.DefenseDifference}");
-        }
-        
-        return string.Join(", ", changes);
-    }
-    
-    private BattleParameter CalculateEquipmentBonus(EquipmentInventory equipment)
-    {
-        // 装備による総合補正値計算
-        return new BattleParameter(0, 0, 0); // 実装は他メソッドと同様
-    }
-    
-    private IEnumerable<string> GetEquipmentRecommendations(
-        PlayerCommonEntity player,
-        EquipmentInventory equipment)
-    {
-        var recommendations = new List<string>();
-        
-        // 空きスロットの推奨
-        if (equipment.WeaponSlot == null)
-            recommendations.Add("武器を装備することで攻撃力が向上します");
-        
-        if (equipment.ArmorSlot == null)
-            recommendations.Add("防具を装備することで防御力が向上します");
-        
-        if (equipment.AccessarySlot == null)
-            recommendations.Add("アクセサリを装備することで特殊効果が得られます");
-        
-        return recommendations;
-    }
+    // コマンドパターンによる生成
+    public record CreateCommand(ItemID ItemID, ItemName ItemName, 
+        EnhancementParameter EnhancementParameter, 
+        IReadOnlyDictionary<EquipmentSlotType, int> EquipmentSlots) : ICommand;
 }
 
-public record EquipmentSummary
+// 装備インベントリ管理
+internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
 {
-    public EquipmentInventory Equipment { get; }
-    public BattleParameter TotalBonus { get; }
-    public IEnumerable<string> Recommendations { get; }
-    
-    public EquipmentSummary(
-        EquipmentInventory equipment,
-        BattleParameter totalBonus,
-        IEnumerable<string> recommendations)
-    {
-        Equipment = equipment;
-        TotalBonus = totalBonus;
-        Recommendations = recommendations;
-    }
+    public bool IsAddable(EquippableItem item);            // 装備可否判定
+    public EquippableItem AddItem(EquippableItem item);    // 装備着用
+    public EquippableItem RemoveItem(EquippableItem item); // 装備解除
+    public bool Contains(EquippableItem item);             // 装備状態確認
 }
 ```
 
-## 拡張ポイント
-
-### 装備プリセットシステム
+### 装備強化サービス
 ```csharp
-public record EquipmentPreset
+// 装備強化処理
+internal class EquipmentEnhanceService
 {
-    public string Name { get; }
-    public EquipmentInventory Configuration { get; }
-    public string Purpose { get; } // "戦闘用", "生産用" など
+    internal EquippableItem Execute(EquippableItem item, EnhancementMaterial material);
+}
+
+// 強化パラメータの定義
+public record EnhancementParameter
+{
+    public int AttackValue { get; }                        // 攻撃力加算値
+    public int DefenseValue { get; }                       // 防御力加算値
+    public AdditionalParameter AdditionalParameter { get; } // 追加パラメータ
 }
 ```
 
-### 装備強化予約システム
+### 戦闘中装備管理サービス
 ```csharp
-public class EquipmentEnhancementQueue
+// 戦闘中の安全な装備変更
+internal class BattleEquipmentUsecase
 {
-    public void QueueEnhancement(EquippableItem item, EnhancementPlan plan);
-    public void ProcessQueue(PlayerCommonEntity player, InfiniteSlotInventory inventory);
+    // 装備交換（新装備着用+旧装備解除）
+    internal async UniTask ChengeEquipment(CharacterID playerId, InventoryID inventoryId, 
+        EquippableItem equipment, EquippableItem remove);
+    
+    // 装備解除（装備をインベントリに戻す）
+    internal async UniTask RemoveEquipment(CharacterID playerId, InventoryID inventoryId, 
+        EquippableItem remove);
 }
 ```
 
-装備システムは、プレイヤーの戦闘力向上と戦略的な装備選択を支援する重要なシステムです。\
-複数ドメインの連携により、直感的で効率的な装備管理を実現します。
+### 装備制限チェック
+```csharp
+// 装備要件パラメータ
+public record RequireParameter
+{
+    public PlayerLevel Level { get; }      // 必要レベル
+    public Strength Strength { get; }      // 必要筋力
+    public Agility Agility { get; }        // 必要敏捷性
+}
+
+// 装備追加効果
+public record AdditionalParameter
+{
+    public int Attack { get; }   // 攻撃力ボーナス
+    public int Defense { get; }  // 防御力ボーナス
+    public int STR { get; }      // 筋力ボーナス
+    public int AGI { get; }      // 敏捷性ボーナス
+}
+```
+
+### 基本的な利用パターン
+1. **装備制限チェック**: `RequireParameter` でプレイヤーの装備可否を判定
+2. **装備着脱**: `EquipmentInventory` で装備品の着脱管理
+3. **装備強化**: `EquipmentEnhanceService` で装備性能向上
+4. **戦闘中変更**: `BattleEquipmentUsecase` で安全な装備交換
+
+### ドメインサービスの特徴
+- **UniTask対応**: 非同期での装備変更処理
+- **アトミック操作**: 装備変更とインベントリ操作の原子性
+- **コマンドパターン**: 装備アイテム生成の結果予測性
+- **強型付き装備管理**: タイプセーフな装備システム
+
+## 関連ドキュメント
+
+- [Item.md](../domains/Item.md) - 装備アイテム実装詳細
+- [Inventory.md](../domains/Inventory.md) - 装備インベントリ管理
+- [Character.md](../domains/Character.md) - 装備制限・効果適用
+- [BattleSystem.md](./BattleSystem.md) - 戦闘パラメータ連携
+- [InventoryManagementSystem.md](./InventoryManagementSystem.md) - インベントリ管理

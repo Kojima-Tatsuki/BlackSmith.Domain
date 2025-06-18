@@ -2,545 +2,600 @@
 
 ## 概要
 
-Inventory ドメインは、プレイヤーのアイテム所有・管理システムを担当します。\
-装備インベントリ、一般インベントリ、通貨システム、アイテム取引システムを統合的に管理します。
+Inventory ドメインは、プレイヤーのアイテム所有・管理システムを担当するドメインです。
+
+### 主要な責務
+- **アイテム管理**：プレイヤーが所有するアイテムの保存・追加・削除
+- **装備管理**：装備アイテムの装着・取り外し管理
+- **通貨管理**：ゲーム内通貨の所持・使用・両替
+- **インベントリ操作**：アイテムの移動・整理・検索
+
+### 現在の実装状況
+- **InfiniteSlotInventory**：無制限容量の一般インベントリを実装
+- **EquipmentInventory**：装備専用インベントリを実装
+- **Wallet**：通貨管理システムを実装
+- **ItemSlot**：アイテム数量管理の値オブジェクトを実装
+- **InventoryFactory**：インベントリ作成ファクトリーを実装
+
+### 設計の特徴
+- **インターフェースベース設計**：BaseInventory基底クラスを使わず、インターフェースで機能を分離
+- **Item ドメイン連携**：IItemインターフェースを通じてアイテム情報を管理
+- **通貨システム統合**：Currency recordによる型安全な通貨処理
+- **拡張性重視**：将来の容量制限・重量制限・取引履歴に対応可能な基盤設計
+
+このドメインは Item ドメインとの密接な連携により、ゲーム内経済システムの基盤を提供しています。
 
 ## ドメインモデル
 
-### 基底クラス
+### 識別子
 
-#### BaseInventory
+#### 実装済み識別子
+
+現在のInventoryドメインでは、識別子は他のドメインのIDを参照する形で使用されています：
+
 ```csharp
-public abstract record BaseInventory
+// 実装なし：InventoryID は現在未実装
+// 各インベントリクラスは独自の識別子を持たない設計
+```
+
+**注意**：現在の実装では以下の識別子が未実装です：
+- `InventoryID` - インベントリの識別子
+- `WalletID` - ウォレットの識別子
+
+### エンティティ・値オブジェクト
+
+#### 実装済みエンティティ
+
+**重要**：現在の実装では`BaseInventory`基底クラスは存在せず、インターフェースベースの設計を採用しています。
+
+##### ItemSlot (ItemSlot.cs)
+```csharp
+// 実装済み：アイテム所有数管理の値オブジェクト
+internal class ItemSlot
 {
-    protected readonly ImmutableArray<ItemSlot> slots;
+    internal IItem Item { get; }
+    internal ItemCountNumber Count { get; }
     
-    public ImmutableArray<ItemSlot> Slots => slots;
-    
-    public abstract bool CanAddItem(IItem item, int quantity);
-    public abstract BaseInventory AddItem(IItem item, int quantity);
-    public abstract BaseInventory RemoveItem(IItem item, int quantity);
-    public abstract int GetItemQuantity(IItem item);
+    internal ItemSlot(IItem item, ItemCountNumber count);
+    internal ItemSlot AddItem(IItem item, ItemCountNumber count = null!);
+    internal ItemSlot RemoveItem(IItem item, ItemCountNumber count = null!);
+    internal bool IsContaining(IItem item);
 }
 ```
 
-#### ItemSlot
+##### ItemCountNumber (ItemSlot.cs)
 ```csharp
-public record ItemSlot
+// 実装済み：アイテム数量管理の値オブジェクト
+internal class ItemCountNumber : IEquatable<ItemCountNumber>
 {
-    public IItem Item { get; }
-    public int Quantity { get; }
+    internal int Value { get; }
     
-    public ItemSlot(IItem item, int quantity)
-    {
-        if (quantity <= 0)
-            throw new ArgumentException("Quantity must be positive");
-        
-        Item = item;
-        Quantity = quantity;
-    }
+    internal ItemCountNumber(int value);
+    internal ItemCountNumber Add(ItemCountNumber count);
+    internal ItemCountNumber Subtract(ItemCountNumber count);
     
-    public ItemSlot AddQuantity(int amount)
-    {
-        if (amount <= 0)
-            throw new ArgumentException("Amount must be positive");
-        
-        return this with { Quantity = Quantity + amount };
-    }
-    
-    public ItemSlot RemoveQuantity(int amount)
-    {
-        if (amount <= 0)
-            throw new ArgumentException("Amount must be positive");
-        
-        if (amount > Quantity)
-            throw new InvalidOperationException("Cannot remove more items than available");
-        
-        return this with { Quantity = Quantity - amount };
-    }
+    // 比較演算子とEquals実装
+    public bool Equals(ItemCountNumber? other);
+    public static bool operator ==(ItemCountNumber x, ItemCountNumber y);
+    // その他の比較演算子...
 }
 ```
 
-### 装備インベントリ
-
-#### EquipmentInventory
+##### ItemHoldableCapacity (ItemSlot.cs)
 ```csharp
-public record EquipmentInventory : BaseInventory
+// 実装済み：アイテム保持容量管理
+internal class ItemHoldableCapacity
 {
-    public EquippableItem? WeaponSlot { get; }
-    public EquippableItem? ArmorSlot { get; }
-    public EquippableItem? AccessarySlot { get; }
+    internal ItemCountNumber Value { get; }
+    private const int MAXIMUM_CAPACITY = 64;
     
-    public EquipmentInventory() : this(null, null, null) { }
-    
-    public EquipmentInventory(
-        EquippableItem? weaponSlot,
-        EquippableItem? armorSlot,
-        EquippableItem? accessarySlot)
-    {
-        WeaponSlot = weaponSlot;
-        ArmorSlot = armorSlot;
-        AccessarySlot = accessarySlot;
-    }
-    
-    public override bool CanAddItem(IItem item, int quantity)
-    {
-        if (item is not EquippableItem equipItem)
-            return false;
-        
-        if (quantity != 1)
-            return false; // 装備は1つまで
-        
-        return equipItem.EquipmentType switch
-        {
-            EquipmentType.Weapon => WeaponSlot == null,
-            EquipmentType.Armor => ArmorSlot == null,
-            EquipmentType.Accessary => AccessarySlot == null,
-            _ => false
-        };
-    }
-    
-    public EquipmentInventory EquipItem(EquippableItem item)
-    {
-        if (!CanAddItem(item, 1))
-            throw new InvalidOperationException("Cannot equip item");
-        
-        return item.EquipmentType switch
-        {
-            EquipmentType.Weapon => this with { WeaponSlot = item },
-            EquipmentType.Armor => this with { ArmorSlot = item },
-            EquipmentType.Accessary => this with { AccessarySlot = item },
-            _ => throw new ArgumentException("Invalid equipment type")
-        };
-    }
-    
-    public EquipmentInventory UnequipItem(EquipmentType equipmentType)
-    {
-        return equipmentType switch
-        {
-            EquipmentType.Weapon => this with { WeaponSlot = null },
-            EquipmentType.Armor => this with { ArmorSlot = null },
-            EquipmentType.Accessary => this with { AccessarySlot = null },
-            _ => throw new ArgumentException("Invalid equipment type")
-        };
-    }
+    internal ItemHoldableCapacity(ItemCountNumber capacity);
 }
 ```
 
-### 無制限インベントリ
+#### 実装済みインターフェース
 
-#### InfiniteSlotInventory
+##### インベントリサービスインターフェース (IInventoryService.cs)
 ```csharp
-public record InfiniteSlotInventory : BaseInventory
+// 実装済み：インベントリの基本操作インターフェース
+public interface IInventoryService : IInventoryService<IItem>, IInventoryStateViewable<IItem> { }
+
+public interface IInventoryService<T> : IInventoryStateViewable<T> where T : IItem
 {
-    public InfiniteSlotInventory() : this(ImmutableArray<ItemSlot>.Empty) { }
-    
-    public InfiniteSlotInventory(ImmutableArray<ItemSlot> slots)
-    {
-        this.slots = slots;
-    }
-    
-    public override bool CanAddItem(IItem item, int quantity)
-    {
-        if (quantity <= 0) return false;
-        
-        var existingSlot = FindItemSlot(item);
-        if (existingSlot != null)
-        {
-            var maxStack = GetMaxStackSize(item);
-            return existingSlot.Quantity + quantity <= maxStack;
-        }
-        
-        return true; // 新規スロット作成可能
-    }
-    
-    public override InfiniteSlotInventory AddItem(IItem item, int quantity)
-    {
-        if (!CanAddItem(item, quantity))
-            throw new InvalidOperationException("Cannot add item");
-        
-        var existingSlotIndex = FindItemSlotIndex(item);
-        if (existingSlotIndex >= 0)
-        {
-            // 既存スロットに追加
-            var updatedSlot = slots[existingSlotIndex].AddQuantity(quantity);
-            return this with { slots = slots.SetItem(existingSlotIndex, updatedSlot) };
-        }
-        else
-        {
-            // 新規スロット作成
-            var newSlot = new ItemSlot(item, quantity);
-            return this with { slots = slots.Add(newSlot) };
-        }
-    }
-    
-    public override InfiniteSlotInventory RemoveItem(IItem item, int quantity)
-    {
-        var slotIndex = FindItemSlotIndex(item);
-        if (slotIndex < 0)
-            throw new InvalidOperationException("Item not found");
-        
-        var currentSlot = slots[slotIndex];
-        if (currentSlot.Quantity < quantity)
-            throw new InvalidOperationException("Insufficient quantity");
-        
-        if (currentSlot.Quantity == quantity)
-        {
-            // スロット削除
-            return this with { slots = slots.RemoveAt(slotIndex) };
-        }
-        else
-        {
-            // 数量減少
-            var updatedSlot = currentSlot.RemoveQuantity(quantity);
-            return this with { slots = slots.SetItem(slotIndex, updatedSlot) };
-        }
-    }
-    
-    private static int GetMaxStackSize(IItem item) => item switch
-    {
-        ICraftMaterialItem => 999,
-        EquippableItem => 1,
-        _ => 99
-    };
+    T AddItem(T item, int count = 1!);
+    T RemoveItem(T item, int count = 1!);
+    bool Contains(T item);
+    bool IsAddable(T item, int count = 1!);
+}
+
+public interface IOneByInventoryService<T> : IInventoryStateViewable<T> where T : IItem
+{
+    T AddItem(T item);
+    T RemoveItem(T item);
+    bool Contains(T item);
+    bool IsAddable(T item);
+}
+
+public interface IInventoryStateViewable<T> where T : IItem
+{
+    IReadOnlyDictionary<T, int> GetInventory();
+    IReadOnlyCollection<T> GetContainItems();
+    int GetContainItemCount(T item);
+}
+
+public interface IWallet
+{
+    void AdditionMoney(Currency money);
+    void SubtractMoney(Currency money);
+    IReadOnlyCollection<Currency> GetMoney();
+    Currency GetMoney(CurrencyType type);
+    bool ContainsType(CurrencyType type);
 }
 ```
 
-### 通貨システム
+#### 実装済みインベントリクラス
 
-#### Currency
+##### InfiniteSlotInventory (InfiniteSlotInventory.cs)
 ```csharp
+// 実装済み：無制限容量インベントリ
+internal class InfiniteSlotInventory : IInventoryService
+{
+    private InventoryID ID { get; }
+    private Dictionary<IItem, ItemSlot> ItemSlots { get; }
+    
+    internal InfiniteSlotInventory(InventoryID id);
+    
+    public IItem AddItem(IItem item, int count = 1!);
+    public IItem RemoveItem(IItem item, int count = 1!);
+    public bool Contains(IItem item);
+    public bool IsAddable(IItem item, int count = 1);
+    public ItemCountNumber ContainingItemCount(IItem item);
+    
+    // IInventoryStateViewable実装
+    public IReadOnlyDictionary<IItem, int> GetInventory();
+    IReadOnlyCollection<IItem> GetContainItems();
+    int GetContainItemCount(IItem item);
+}
+
+// 実装済み：インベントリ識別子
+public record InventoryID : BasicID
+{
+    protected override string Prefix => "Inventory-";
+}
+
+// 実装済み：インベントリ容量クラス
+public class InventoryCapacity
+{
+    public int Value { get; }
+    public InventoryCapacity(int value);
+}
+```
+
+##### EquipmentInventory (EquipmentInventory.cs)
+```csharp
+// 実装済み：装備専用インベントリ
+internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
+{
+    internal InventoryID ID { get; }
+    private readonly Dictionary<EquipmentType, EquippableItem> Equipments;
+    
+    internal EquipmentInventory(InventoryID id);
+    
+    public EquippableItem AddItem(EquippableItem item);
+    public EquippableItem RemoveItem(EquippableItem item);
+    public bool Contains(EquippableItem item);
+    public bool IsAddable(EquippableItem item);
+    
+    // 装備固有機能
+    private bool IsOccupiedType(EquipmentType type);
+    
+    // IInventoryStateViewable実装
+    public IReadOnlyDictionary<EquippableItem, int> GetInventory();
+    public IReadOnlyCollection<EquippableItem> GetContainItems();
+    public int GetContainItemCount(EquippableItem item);
+}
+```
+
+#### 実装済み通貨システム
+
+##### Currency (Currency.cs)
+```csharp
+// 実装済み：通貨レコード
 public record Currency
 {
     public CurrencyType Type { get; }
-    public int Value { get; }
+    public int Value => value.Value;
+    private readonly CurrencyValue value;
     
-    public Currency(CurrencyType type, int value)
-    {
-        if (value < 0)
-            throw new ArgumentException("Currency value cannot be negative");
-        
-        Type = type;
-        Value = value;
-    }
+    internal Currency(CurrencyType type, int value);
+    internal Currency Add(Currency other);
+    internal Currency Subtract(Currency other);
+    internal Currency Exchange(CurrencyType type); // 実装済み
+    public bool EqualsType(Currency other);
     
-    public Currency Add(int amount)
+    // 内部値オブジェクト
+    private record CurrencyValue
     {
-        if (amount < 0)
-            throw new ArgumentException("Amount cannot be negative");
-        
-        return this with { Value = Value + amount };
-    }
-    
-    public Currency Subtract(int amount)
-    {
-        if (amount < 0)
-            throw new ArgumentException("Amount cannot be negative");
-        
-        if (amount > Value)
-            throw new InvalidOperationException("Insufficient funds");
-        
-        return this with { Value = Value - amount };
-    }
-    
-    // 両替機能
-    public Currency Exchange(CurrencyType targetType)
-    {
-        if (Type == targetType) return this;
-        
-        var rate = GetExchangeRate(Type, targetType);
-        var convertedValue = (int)(Value * rate);
-        
-        return new Currency(targetType, convertedValue);
-    }
-    
-    private static float GetExchangeRate(CurrencyType from, CurrencyType to)
-    {
-        return (from, to) switch
-        {
-            (CurrencyType.Sakura, CurrencyType.Aren) => 0.8f,
-            (CurrencyType.Aren, CurrencyType.Sakura) => 1.25f,
-            _ => 1.0f
-        };
+        public int Value { get; }
+        internal CurrencyValue(int value);
+        internal CurrencyValue Add(CurrencyValue other);
+        internal CurrencyValue Subtract(CurrencyValue other);
+        public static bool IsValidValue(int value);
     }
 }
 
+// 実装済み：通貨タイプ（注意：enum値が両替レートを表す問題あり）
 public enum CurrencyType
 {
-    Sakura = 1,  // 桜式通貨（基準通貨）
-    Aren = 2,    // アレン式通貨
+    Sakura = 1, // 桜式通貨
+    Aren = 2,   // アレン式通貨
 }
 ```
 
-#### Wallet
+##### Wallet (Wallet.cs)
 ```csharp
-public record Wallet
+// 実装済み：ウォレットクラス
+public class Wallet : IWallet
 {
-    private readonly ImmutableDictionary<CurrencyType, Currency> currencies;
+    private Dictionary<CurrencyType, Currency> Money;
     
-    public Wallet() : this(ImmutableDictionary<CurrencyType, Currency>.Empty) { }
+    public Wallet();
+    public Wallet(IReadOnlyCollection<Currency> money);
     
-    public Wallet(ImmutableDictionary<CurrencyType, Currency> currencies)
-    {
-        this.currencies = currencies;
-    }
-    
-    public int GetCurrencyAmount(CurrencyType type)
-    {
-        return currencies.TryGetValue(type, out var currency) ? currency.Value : 0;
-    }
-    
-    public bool CanAfford(CurrencyType type, int amount)
-    {
-        return GetCurrencyAmount(type) >= amount;
-    }
-    
-    public Wallet AddCurrency(Currency currency)
-    {
-        var currentAmount = GetCurrencyAmount(currency.Type);
-        var newCurrency = new Currency(currency.Type, currentAmount + currency.Value);
-        
-        return this with { currencies = currencies.SetItem(currency.Type, newCurrency) };
-    }
-    
-    public Wallet SubtractCurrency(CurrencyType type, int amount)
-    {
-        if (!CanAfford(type, amount))
-            throw new InvalidOperationException("Insufficient funds");
-        
-        var current = GetCurrencyAmount(type);
-        var newCurrency = new Currency(type, current - amount);
-        
-        return this with { currencies = currencies.SetItem(type, newCurrency) };
-    }
+    public void AdditionMoney(Currency money);
+    public void SubtractMoney(Currency money);
+    public IReadOnlyCollection<Currency> GetMoney();
+    public Currency GetMoney(CurrencyType type);
+    public bool ContainsType(CurrencyType type);
 }
 ```
+
+#### 未実装エンティティ
+
+**注意**：ドキュメントに記載されていた以下のクラスは実装されていません：
+- `BaseInventory` - 基底クラス（インターフェースベース設計のため不要）
+- `LimitedInventory` - 容量制限インベントリ
+- `WeightLimitedInventory` - 重量制限インベントリ
 
 ## ビジネスルール
 
-### 容量制限
+### 実装済みルール
 
-#### 装備インベントリ制限
-- **各装備種別**: 1つまで固定
-- **装備変更**: 同種別の装備は自動的に置き換え
-
-#### 無制限インベントリ制限
-- **スタック制限**: アイテム種別により異なる
-  - 素材アイテム: 999個まで
-  - 装備アイテム: 1個まで
-  - その他アイテム: 99個まで
-
-### アイテム移動制限
-
-#### 移動可能条件
+#### InfiniteSlotInventoryの制限
 ```csharp
-public static bool CanMoveItem(IItem item, BaseInventory from, BaseInventory to, int quantity)
+// InfiniteSlotInventory.cs の実装済み機能
+internal class InfiniteSlotInventory : IInventoryService
 {
-    // 移動元チェック
-    if (from.GetItemQuantity(item) < quantity)
-        return false;
+    // アイテム追加制限
+    public bool IsAddable(IItem item, int count = 1)
+    {
+        if (item is null) return false;
+        return true; // 現在は容量制限なし
+    }
     
-    // 移動先チェック
-    if (!to.CanAddItem(item, quantity))
-        return false;
-    
-    return true;
+    // 基本的な追加・削除
+    public IItem AddItem(IItem item, int count = 1!);
+    public IItem RemoveItem(IItem item, int count = 1!);
 }
 ```
 
-### 通貨両替制限
+#### EquipmentInventoryの制限
+```csharp
+// EquipmentInventory.cs の実装済み機能
+internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
+{
+    // 装備制限：各装備タイプ1つまで
+    public bool IsAddable(EquippableItem item)
+    {
+        if (item is null) return false;
+        return !IsOccupiedType(item.EquipType); // 同タイプが装備されていないかチェック
+    }
+    
+    // 装備タイプ別管理
+    private readonly Dictionary<EquipmentType, EquippableItem> Equipments;
+}
+```
 
-#### 両替レート
-- **桜式通貨 → アレン式通貨**: 0.8倍
-- **アレン式通貨 → 桜式通貨**: 1.25倍
-- **同一通貨**: 1.0倍（変換なし）
+#### 通貨システムの制限
+```csharp
+// Currency.cs の実装済み機能
+public record Currency
+{
+    // 通貨値検証
+    private record CurrencyValue
+    {
+        public static bool IsValidValue(int value)
+        {
+            return value >= 0; // 負の値は無効
+        }
+    }
+    
+    // 同種通貨のみ計算可能
+    internal Currency Add(Currency other)
+    {
+        if (!Type.Equals(other.Type))
+            throw new ArgumentException("通貨単位が一致していません");
+        // ...
+    }
+}
 
-#### 両替手数料
-現在の実装では手数料なし（将来拡張可能）
+// Wallet.cs の実装済み機能
+public class Wallet : IWallet
+{
+    // 通貨タイプ別管理
+    private Dictionary<CurrencyType, Currency> Money;
+    
+    // 残高不足チェック
+    public void SubtractMoney(Currency money)
+    {
+        if (!ContainsType(money.Type))
+            throw new ArgumentException("指定型のお金を所持していません");
+        // 減算処理でCurrency内部で残高チェック
+    }
+}
+```
+
+#### ItemSlotの制限
+```csharp
+// ItemSlot.cs の実装済み機能
+internal class ItemCountNumber
+{
+    internal ItemCountNumber(int value)
+    {
+        if (value < 0)
+            throw new ArgumentOutOfRangeException(nameof(value)); // 負の値は無効
+    }
+    
+    internal ItemCountNumber Subtract(ItemCountNumber count)
+    {
+        var result = Value - count.Value;
+        if (result < 0)
+            throw new Exception("計算後の値が規定値を超えました。"); // 負の結果は無効
+    }
+}
+
+internal class ItemHoldableCapacity
+{
+    private const int MAXIMUM_CAPACITY = 64; // 最大容量制限
+}
+```
+
+### 未実装ルール
+
+**注意**：以下のビジネスルールはドキュメントに記載されていますが、現在未実装です：
+
+#### スタック制限
+- **アイテム種別による制限**: 素材999個、装備1個、その他99個
+- **現在の実装**: 制限なし（InfiniteSlotInventoryは無制限）
+
+#### インベントリ間アイテム移動
+- **アイテム移動システム**: 異なるインベントリ間での移動機能
+- **移動可能条件チェック**: 移動元・移動先の容量チェック
+
+#### 通貨両替システム
+- **両替レート管理**: 現在はenumの値を直接使用（問題のある実装）
+- **両替手数料**: 未実装
 
 ## ゲームロジック
 
-### インベントリ操作
+### 実装済み機能
 
+#### インベントリ作成
 ```csharp
-// アイテム追加
-public static InfiniteSlotInventory AddItemSafely(
-    InfiniteSlotInventory inventory, 
-    IItem item, 
-    int quantity)
+// InventoryFactory.cs の実装済み機能
+public class InventoryFactory
 {
-    if (!inventory.CanAddItem(item, quantity))
-        throw new InvalidOperationException($"Cannot add {quantity} of {item.ItemName}");
-    
-    return inventory.AddItem(item, quantity);
-}
-
-// アイテム移動
-public static (BaseInventory updatedFrom, BaseInventory updatedTo) MoveItem(
-    BaseInventory from, 
-    BaseInventory to, 
-    IItem item, 
-    int quantity)
-{
-    if (!CanMoveItem(item, from, to, quantity))
-        throw new InvalidOperationException("Cannot move item");
-    
-    var newFrom = from.RemoveItem(item, quantity);
-    var newTo = to.AddItem(item, quantity);
-    
-    return (newFrom, newTo);
-}
-```
-
-### 装備管理
-
-```csharp
-// 装備変更（自動的に前の装備を外す）
-public static (EquipmentInventory equipment, InfiniteSlotInventory general) 
-    ChangeEquipment(
-        EquipmentInventory equipmentInventory,
-        InfiniteSlotInventory generalInventory,
-        EquippableItem newEquipment)
-{
-    var equipmentType = newEquipment.EquipmentType;
-    
-    // 既存装備を一般インベントリに移動
-    var currentEquipment = equipmentType switch
+    // 一般インベントリ作成
+    public IInventoryService Create()
     {
-        EquipmentType.Weapon => equipmentInventory.WeaponSlot,
-        EquipmentType.Armor => equipmentInventory.ArmorSlot,
-        EquipmentType.Accessary => equipmentInventory.AccessarySlot,
-        _ => null
-    };
-    
-    var updatedGeneral = generalInventory;
-    if (currentEquipment != null)
-    {
-        updatedGeneral = updatedGeneral.AddItem(currentEquipment, 1);
+        InventoryID id = new InventoryID();
+        var inventory = new InfiniteSlotInventory(id);
+        return inventory;
     }
     
-    // 新装備を一般インベントリから削除
-    updatedGeneral = updatedGeneral.RemoveItem(newEquipment, 1);
-    
-    // 新装備を装備
-    var updatedEquipment = equipmentInventory.EquipItem(newEquipment);
-    
-    return (updatedEquipment, updatedGeneral);
+    // 装備インベントリ作成
+    public IOneByInventoryService<EquippableItem> CreateEquipInventory()
+    {
+        InventoryID id = new InventoryID();
+        var inventory = new EquipmentInventory(id);
+        return inventory;
+    }
 }
 ```
 
-### 通貨管理
-
+#### アイテム操作
 ```csharp
-// 購入処理
-public static Wallet ProcessPurchase(Wallet wallet, CurrencyType currencyType, int price)
-{
-    if (!wallet.CanAfford(currencyType, price))
-        throw new InvalidOperationException("Insufficient funds");
-    
-    return wallet.SubtractCurrency(currencyType, price);
-}
+// InfiniteSlotInventory.cs の実装済み機能
+var factory = new InventoryFactory();
+var inventory = factory.Create();
 
-// 売却処理
-public static Wallet ProcessSale(Wallet wallet, CurrencyType currencyType, int revenue)
-{
-    var currency = new Currency(currencyType, revenue);
-    return wallet.AddCurrency(currency);
-}
+// アイテム追加
+IItem addedItem = inventory.AddItem(item, 5);
+
+// アイテム削除
+IItem removedItem = inventory.RemoveItem(item, 2);
+
+// アイテム存在確認
+bool hasItem = inventory.Contains(item);
+
+// 追加可能チェック
+bool canAdd = inventory.IsAddable(item, 3);
+
+// 所持数確認
+int count = inventory.GetContainItemCount(item);
+```
+
+#### 装備管理
+```csharp
+// EquipmentInventory.cs の実装済み機能
+var factory = new InventoryFactory();
+var equipInventory = factory.CreateEquipInventory();
+
+// 装備追加
+EquippableItem equipped = equipInventory.AddItem(weapon);
+
+// 装備削除
+EquippableItem unequipped = equipInventory.RemoveItem(weapon);
+
+// 装備可能チェック
+bool canEquip = equipInventory.IsAddable(armor);
+
+// 装備確認
+bool isEquipped = equipInventory.Contains(weapon);
+```
+
+#### 通貨管理
+```csharp
+// Wallet.cs の実装済み機能
+var wallet = new Wallet();
+var sakuraCurrency = new Currency(CurrencyType.Sakura, 1000);
+
+// 通貨追加
+wallet.AdditionMoney(sakuraCurrency);
+
+// 通貨使用
+wallet.SubtractMoney(new Currency(CurrencyType.Sakura, 500));
+
+// 残高確認
+Currency balance = wallet.GetMoney(CurrencyType.Sakura);
+bool hasEnough = wallet.ContainsType(CurrencyType.Sakura);
 
 // 通貨両替
-public static Wallet ExchangeCurrency(Wallet wallet, CurrencyType from, CurrencyType to, int amount)
-{
-    if (!wallet.CanAfford(from, amount))
-        throw new InvalidOperationException("Insufficient funds for exchange");
-    
-    var sourceCurrency = new Currency(from, amount);
-    var targetCurrency = sourceCurrency.Exchange(to);
-    
-    return wallet
-        .SubtractCurrency(from, amount)
-        .AddCurrency(targetCurrency);
-}
+Currency exchanged = sakuraCurrency.Exchange(CurrencyType.Aren);
 ```
 
-## 他ドメインとの連携
+### 未実装機能
 
-### Item ドメインとの連携
-- **アイテム管理**: 全てのアイテムの所有・保存
-- **装備効果**: 装備中のアイテム効果の適用
-- 詳細: [Item.md](./Item.md)
+**注意**：以下の機能はドキュメントに記載されていますが、現在未実装です：
 
-### Character ドメインとの連携
-- **装備システム**: 戦闘パラメータへの装備効果反映
-- **レベル制限**: 装備可能条件チェック（将来拡張）
-- 詳細: [EquipmentSystem.md](../systems/EquipmentSystem.md)
+#### インベントリ間アイテム移動
+- **アイテム移動システム**: 異なるインベントリ間での移動機能
+- **移動可能条件チェック**: 移動元・移動先の容量チェック
+- **統合された装備変更**: 装備・一般インベントリ間の自動移動
 
-### Skill ドメインとの連携
-- **クラフト素材**: 生産スキル使用時の素材管理
-- **スキル制限**: 特定アイテム使用のスキル要件（将来拡張）
-- 詳細: [CraftingSystem.md](../systems/CraftingSystem.md)
+#### 高度な通貨操作
+- **購入処理システム**: アイテム購入時の通貨処理
+- **売却処理システム**: アイテム売却時の通貨処理
+- **通貨両替手数料**: 両替時の手数料計算
+
+#### アイテムスタック制限
+- **種別別制限**: 素材999個、装備1個、その他99個の制限機能
+
 
 ## 拡張ポイント
 
-### インベントリ容量制限
+### 実装可能な拡張
+
+#### 容量制限システム
 ```csharp
-// 将来的な拡張例：容量制限システム
-public record LimitedInventory : BaseInventory
+// 将来実装可能：容量制限付きインベントリ
+public class LimitedInventory : IInventoryService
 {
-    public int MaxSlots { get; }
-    public int CurrentSlots => slots.Length;
+    private readonly int maxSlots;
+    private readonly Dictionary<IItem, ItemSlot> ItemSlots;
     
-    public override bool CanAddItem(IItem item, int quantity)
+    public bool CanAddItem(IItem item, int count = 1)
     {
-        if (FindItemSlot(item) != null)
+        if (ItemSlots.ContainsKey(item))
             return true; // 既存スロットに追加
         
-        return CurrentSlots < MaxSlots; // 新規スロット作成可能
+        return ItemSlots.Count < maxSlots; // 新規スロット作成可能
     }
 }
 ```
 
-### アイテム重量システム
+#### アイテム重量システム  
 ```csharp
-// 重量制限システム
-public record Weight
+// 将来実装可能：重量制限システム
+public interface IWeightedItem : IItem
 {
-    public float Value { get; }
+    float Weight { get; }
 }
 
-public interface IItem
+public class WeightLimitedInventory : IInventoryService
 {
-    string ItemName { get; }
-    Weight Weight { get; } // 追加
-}
-
-public record WeightLimitedInventory : BaseInventory
-{
-    public Weight MaxWeight { get; }
-    public Weight CurrentWeight => CalculateCurrentWeight();
+    private readonly float maxWeight;
+    
+    public bool CanAddItem(IItem item, int count = 1)
+    {
+        if (item is IWeightedItem weighted)
+        {
+            var currentWeight = CalculateCurrentWeight();
+            return currentWeight + (weighted.Weight * count) <= maxWeight;
+        }
+        return true;
+    }
 }
 ```
 
-### 取引履歴システム
+#### アイテムスタック制限システム
 ```csharp
-// 取引履歴の記録
+// 将来実装可能：アイテム種別によるスタック制限
+public interface IStackableItem : IItem
+{
+    int MaxStackSize { get; }
+}
+
+public class StackLimitedInventory : IInventoryService
+{
+    public bool CanAddItem(IItem item, int count = 1)
+    {
+        if (item is IStackableItem stackable && Contains(item))
+        {
+            var currentCount = GetContainItemCount(item);
+            return currentCount + count <= stackable.MaxStackSize;
+        }
+        return true;
+    }
+}
+```
+
+#### 取引履歴システム
+```csharp
+// 将来実装可能：取引履歴記録システム
 public record TradeHistory
 {
     public DateTime Timestamp { get; }
     public TradeType Type { get; }
     public IItem Item { get; }
     public int Quantity { get; }
-    public Currency Price { get; }
+    public Currency? Price { get; }
 }
 
 public enum TradeType
 {
-    Purchase,
-    Sale,
-    Craft,
-    Drop
+    Add,      // アイテム取得
+    Remove,   // アイテム使用/削除
+    Purchase, // 購入
+    Sale,     // 売却
+    Craft,    // クラフト
+    Drop      // ドロップ
+}
+
+public class TrackableInventory : IInventoryService
+{
+    private readonly List<TradeHistory> history = new();
+    
+    public IItem AddItem(IItem item, int count = 1)
+    {
+        var result = baseInventory.AddItem(item, count);
+        history.Add(new TradeHistory 
+        { 
+            Timestamp = DateTime.Now, 
+            Type = TradeType.Add, 
+            Item = item, 
+            Quantity = count 
+        });
+        return result;
+    }
 }
 ```
 
-Inventory ドメインは、プレイヤーの所有アイテムとリソースを一元管理する重要なドメインです。  
-他のドメインと密接に連携し、ゲームの経済システムを支えています。
+### 設計基盤の特徴
+
+現在の実装は将来の拡張に対応できる柔軟な設計基盤を提供：
+
+- **インターフェースベース設計**: 新しいインベントリタイプの追加が容易
+- **ファクトリーパターン**: インベントリ作成ロジックの一元化
+- **値オブジェクト**: ItemSlot、ItemCountNumberによる安全な数量管理
+- **型安全性**: ジェネリクスによるコンパイル時型チェック

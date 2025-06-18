@@ -2,605 +2,156 @@
 
 ## 概要
 
-クラフトシステムは、Item、Inventory、Skill の3つのドメインを統合し、アイテムの作成・精錬・修理を管理するシステムです。\
-素材の管理、スキル要件のチェック、成功率の計算、結果物の生成を統合的に処理します。
+クラフトシステムは、Item、Inventory、Skill の3つのドメインを統合し、アイテムの作成・精錬・修理に関するドメインサービスを提供します。\
+クラフトレシピ管理、素材消費処理、成果物生成、スキル連携の各ドメインサービスにより、\
+ライブラリ利用者はクラフトロジックを構築できます。
 
-## システム構成
+## ドメイン問題の定義
 
-### 関連ドメイン
+### クラフトドメインが扱う問題領域
+- **クラフトレシピ管理**: 素材と成果物の組み合わせ定義
+- **素材消費処理**: インベントリからの素材適切な消費
+- **成果物生成**: クラフト結果の適切なインベントリ追加
+- **スキル連携**: 生産スキルとクラフト処理の統合
+- **作成者管理**: クラフトアイテムの作成者記録
 
-- **[Item](../domains/Item.md)**: クラフトレシピ、素材、成果物
-- **[Inventory](../domains/Inventory.md)**: 素材管理、結果物格納
-- **[Skill](../domains/Skill.md)**: 生産スキル、熟練度、成功率
+### ドメイン間の関係性
+- **Item**: クラフトレシピ、素材アイテム、成果アイテムの定義
+- **Inventory**: 素材の所有確認と消費、成果物の格納
+- **Skill**: 生産スキルの熟練度とアクション連携
 
-### 統合フロー
+## ドメインサービス API
 
-```mermaid
-graph TD
-    A[クラフト要求] --> B[レシピ検証]
-    B --> C[素材チェック]
-    C --> D[スキル要件チェック]
-    D --> E[成功率計算]
-    E --> F[クラフト実行]
-    F --> G[素材消費]
-    G --> H[結果物生成]
-    H --> I[スキル経験値獲得]
-```
-
-## クラフト統合サービス
-
-### CraftingIntegrationService
-複数ドメインを統合したクラフト処理の中核サービス。
-
+### クラフト実行サービス
 ```csharp
-public class CraftingIntegrationService
+// クラフト処理の統合サービス
+public class ItemCraftUsecase
 {
-    public CraftingResult ExecuteCrafting(
-        PlayerCommonEntity player,
-        InfiniteSlotInventory inventory,
-        ICraftableItem targetItem)
-    {
-        // 1. レシピ検証
-        var recipe = targetItem.Recipe;
-        if (!ValidateRecipe(recipe))
-        {
-            return CraftingResult.Failed("Invalid recipe");
-        }
-        
-        // 2. 素材チェック（Inventory ドメイン）
-        if (!CanCraft(recipe, inventory))
-        {
-            return CraftingResult.Failed("Insufficient materials");
-        }
-        
-        // 3. スキル要件チェック（Skill ドメイン）
-        var requiredSkillType = DetermineRequiredSkillType(targetItem);
-        var craftingSkill = GetCraftingSkill(player, requiredSkillType);
-        
-        if (craftingSkill == null)
-        {
-            return CraftingResult.Failed($"Required skill: {requiredSkillType}");
-        }
-        
-        // 4. 成功率計算
-        var successRate = CalculateSuccessRate(craftingSkill.Proficiency, targetItem);
-        
-        // 5. クラフト実行
-        var isSuccess = DetermineSuccess(successRate);
-        
-        // 6. 結果処理
-        var result = ProcessCraftingResult(
-            player, inventory, recipe, targetItem, isSuccess, craftingSkill);
-        
-        return result;
-    }
+    internal async UniTask Craft(CraftCommand command);
+    internal bool IsCraftable(CraftCommand command);
     
-    private bool ValidateRecipe(CraftingRecipe recipe)
-    {
-        return recipe.RequiredMaterials.Any() && recipe.Products.Any();
-    }
-    
-    private bool CanCraft(CraftingRecipe recipe, InfiniteSlotInventory inventory)
-    {
-        // Item ドメインのルールを適用
-        foreach (var required in recipe.RequiredMaterials)
-        {
-            var availableQuantity = inventory.GetItemQuantity(required.Item);
-            if (availableQuantity < required.Quantity)
-                return false;
-        }
-        
-        return true;
-    }
-    
-    private ProductionType DetermineRequiredSkillType(ICraftableItem item)
-    {
-        // アイテム種別に基づく生産スキル判定
-        return item switch
-        {
-            EquippableItem => ProductionType.Creation,
-            ICraftMaterialItem => ProductionType.Refining,
-            _ => ProductionType.Creation
-        };
-    }
-    
-    private SkillAndProficiency? GetCraftingSkill(PlayerCommonEntity player, ProductionType skillType)
-    {
-        return player.Skills.FirstOrDefault(s => 
-            s.Skill is ProductionSkill ps && ps.ProductionType == skillType);
-    }
-    
-    private float CalculateSuccessRate(SkillProficiency proficiency, ICraftableItem item)
-    {
-        // Skill ドメインのルールを適用
-        return ProductionSkillService.CalculateCraftSuccessRate(proficiency, item);
-    }
-    
-    private bool DetermineSuccess(float successRate)
-    {
-        return new Random().NextDouble() < successRate;
-    }
-    
-    private CraftingResult ProcessCraftingResult(
-        PlayerCommonEntity player,
-        InfiniteSlotInventory inventory,
-        CraftingRecipe recipe,
-        ICraftableItem targetItem,
-        bool isSuccess,
-        SkillAndProficiency craftingSkill)
-    {
-        // 素材消費（必ず実行）
-        var updatedInventory = ConsumeMaterials(inventory, recipe.RequiredMaterials);
-        
-        // 成功時の処理
-        if (isSuccess)
-        {
-            // 結果物追加
-            foreach (var product in recipe.Products)
-            {
-                updatedInventory = updatedInventory.AddItem(product.Item, product.Quantity);
-            }
-        }
-        
-        // スキル経験値獲得
-        var experienceGain = ProductionSkillService.CalculateCraftExperience(targetItem, isSuccess);
-        var updatedPlayer = SkillLearningService.ImproveSkill(
-            player, craftingSkill.Skill.Name, experienceGain);
-        
-        return new CraftingResult(
-            isSuccess,
-            isSuccess ? "Crafting successful!" : "Crafting failed...",
-            updatedPlayer,
-            updatedInventory,
-            isSuccess ? recipe.Products : ImmutableArray<ItemAndQuantity>.Empty
-        );
-    }
-    
-    private InfiniteSlotInventory ConsumeMaterials(
-        InfiniteSlotInventory inventory,
-        ImmutableArray<ItemAndQuantity> materials)
-    {
-        var result = inventory;
-        foreach (var material in materials)
-        {
-            result = result.RemoveItem(material.Item, material.Quantity);
-        }
-        return result;
-    }
+    // クラフトコマンドパターン
+    internal record CraftCommand(
+        InventoryID FromInventoryId,    // 素材元インベントリ
+        InventoryID ToInventoryId,      // 成果物格納先インベントリ
+        IReadOnlyCollection<IItem> Materials,  // 必要素材
+        IItem ResultItem                // 期待する成果物
+    );
 }
 ```
 
-## クラフト成功率システム
-
-### 熟練度ベース成功率
-
+### クラフトレシピ管理
 ```csharp
-public static class CraftingSuccessCalculator
+// レシピ情報のイミュータブル管理
+public class CraftingRecipe
 {
-    public static float CalculateBaseSuccessRate(SkillProficiency proficiency)
-    {
-        // 熟練度による基本成功率
-        return proficiency.Value switch
-        {
-            >= 1 and <= 100 => 0.3f,      // 初心者: 30%
-            >= 101 and <= 300 => 0.5f,    // 中級者: 50%
-            >= 301 and <= 600 => 0.7f,    // 上級者: 70%
-            >= 601 and <= 900 => 0.85f,   // 熟練者: 85%
-            >= 901 and <= 1000 => 0.95f,  // 達人: 95%
-            _ => 0.1f
-        };
-    }
+    public IReadOnlyCollection<ICraftMaterialItem> RequiredMaterials { get; }
+    public ICraftableItem ResultItem { get; }
     
-    public static float ApplyItemComplexityModifier(float baseRate, ICraftableItem item)
-    {
-        // アイテムの複雑度による補正
-        var complexity = DetermineItemComplexity(item);
-        var modifier = complexity switch
-        {
-            ItemComplexity.Simple => 1.2f,    // +20%
-            ItemComplexity.Normal => 1.0f,    // 変化なし
-            ItemComplexity.Complex => 0.8f,   // -20%
-            ItemComplexity.Expert => 0.6f,    // -40%
-            ItemComplexity.Master => 0.4f,    // -60%
-            _ => 1.0f
-        };
-        
-        return Math.Max(0.05f, Math.Min(0.95f, baseRate * modifier));
-    }
-    
-    public static float ApplyEnvironmentModifier(float baseRate, FieldID? currentField)
-    {
-        // 環境による補正（将来拡張）
-        // 例: 特定の作業場での成功率向上
-        return baseRate;
-    }
-    
-    public static float ApplyEquipmentModifier(float baseRate, EquipmentInventory equipment)
-    {
-        // 装備による補正（将来拡張）
-        // 例: 専用ツールによる成功率向上
-        return baseRate;
-    }
-    
-    private static ItemComplexity DetermineItemComplexity(ICraftableItem item)
-    {
-        // アイテム種別と必要素材数による複雑度判定
-        var materialCount = item.Recipe.RequiredMaterials.Length;
-        
-        return (item, materialCount) switch
-        {
-            (EquippableItem equip, _) when equip.Enhancement.GetTotalEnhancement() > 50 => ItemComplexity.Master,
-            (EquippableItem equip, _) when equip.Enhancement.GetTotalEnhancement() > 30 => ItemComplexity.Expert,
-            (EquippableItem, _) when materialCount > 5 => ItemComplexity.Complex,
-            (EquippableItem, _) when materialCount > 3 => ItemComplexity.Normal,
-            (_, _) when materialCount > 3 => ItemComplexity.Complex,
-            (_, _) when materialCount > 1 => ItemComplexity.Normal,
-            _ => ItemComplexity.Simple
-        };
-    }
-    
-    public enum ItemComplexity
-    {
-        Simple,   // シンプル
-        Normal,   // 普通
-        Complex,  // 複雑
-        Expert,   // 専門的
-        Master    // 達人級
-    }
+    internal CraftingRecipe(
+        IReadOnlyCollection<ICraftMaterialItem> requiredMaterials,
+        ICraftableItem resultItem);
 }
 ```
 
-## 特殊クラフトシステム
-
-### 強化クラフト
-
+### アイテムインターフェース
 ```csharp
-public class EnhancementCraftingService
+// クラフト可能アイテム
+public interface ICraftableItem : IItem
 {
-    public EnhancementResult EnhanceEquipment(
-        EquippableItem baseEquipment,
-        IEnumerable<ICraftMaterialItem> enhancementMaterials,
-        SkillAndProficiency craftingSkill)
-    {
-        // 強化材料の検証
-        if (!ValidateEnhancementMaterials(enhancementMaterials))
-        {
-            return EnhancementResult.Failed("Invalid enhancement materials");
-        }
-        
-        // 強化効果計算
-        var enhancement = CalculateEnhancementBonus(enhancementMaterials);
-        
-        // 成功率計算
-        var successRate = CalculateEnhancementSuccessRate(
-            baseEquipment, enhancement, craftingSkill.Proficiency);
-        
-        // 強化実行
-        var isSuccess = new Random().NextDouble() < successRate;
-        
-        if (isSuccess)
-        {
-            var enhancedEquipment = ApplyEnhancement(baseEquipment, enhancement);
-            return EnhancementResult.Success(enhancedEquipment);
-        }
-        else
-        {
-            // 失敗時のペナルティ（将来拡張）
-            return EnhancementResult.Failed("Enhancement failed");
-        }
-    }
-    
-    private bool ValidateEnhancementMaterials(IEnumerable<ICraftMaterialItem> materials)
-    {
-        // 強化材料の種類・数量制限チェック
-        return materials.Any() && materials.Count() <= 5;
-    }
-    
-    private EnhancementBonus CalculateEnhancementBonus(IEnumerable<ICraftMaterialItem> materials)
-    {
-        // 材料に基づく強化ボーナス計算
-        var totalBonus = materials.Aggregate(
-            new EnhancementBonus(0, 0, 0, 0, 0),
-            (acc, material) => acc + GetMaterialBonus(material)
-        );
-        
-        return totalBonus;
-    }
-    
-    private EnhancementBonus GetMaterialBonus(ICraftMaterialItem material)
-    {
-        // 材料種別による強化ボーナス（実装例）
-        return material.ItemName switch
-        {
-            "鉄鉱石" => new EnhancementBonus(2, 1, 0, 1, 2),
-            "魔法結晶" => new EnhancementBonus(1, 2, 3, 0, 1),
-            "龍の鱗" => new EnhancementBonus(3, 1, 1, 1, 3),
-            _ => new EnhancementBonus(1, 1, 1, 1, 1)
-        };
-    }
-    
-    private float CalculateEnhancementSuccessRate(
-        EquippableItem equipment,
-        EnhancementBonus bonus,
-        SkillProficiency proficiency)
-    {
-        var baseRate = CraftingSuccessCalculator.CalculateBaseSuccessRate(proficiency);
-        
-        // 現在の強化レベルによる難易度上昇
-        var currentEnhancement = equipment.Enhancement.GetTotalEnhancement();
-        var difficultyPenalty = Math.Max(0.1f, 1.0f - (currentEnhancement * 0.01f));
-        
-        // 強化幅による難易度調整
-        var bonusIntensity = bonus.GetTotalBonus();
-        var intensityPenalty = Math.Max(0.5f, 1.0f - (bonusIntensity * 0.02f));
-        
-        return Math.Max(0.05f, baseRate * difficultyPenalty * intensityPenalty);
-    }
-    
-    private EquippableItem ApplyEnhancement(EquippableItem equipment, EnhancementBonus bonus)
-    {
-        var currentEnhancement = equipment.Enhancement;
-        var newEnhancement = new EnhancementParameter(
-            currentEnhancement.Sharpness + bonus.Sharpness,
-            currentEnhancement.Speed + bonus.Speed,
-            currentEnhancement.Accuracy + bonus.Accuracy,
-            currentEnhancement.Weight + bonus.Weight,
-            currentEnhancement.Durability + bonus.Durability
-        );
-        
-        return equipment with { Enhancement = newEnhancement };
-    }
+    CharacterID CreatedBy { get; }  // 作成者記録
+    IReadOnlyCollection<ICraftMaterialItem> GetRequireMaterials();
 }
 
-public record EnhancementBonus(int Sharpness, int Speed, int Accuracy, int Weight, int Durability)
+// 素材アイテムマーカー
+public interface ICraftMaterialItem : IItem
 {
-    public int GetTotalBonus() => Sharpness + Speed + Accuracy + Weight + Durability;
-    
-    public static EnhancementBonus operator +(EnhancementBonus a, EnhancementBonus b) =>
-        new(a.Sharpness + b.Sharpness, a.Speed + b.Speed, a.Accuracy + b.Accuracy,
-            a.Weight + b.Weight, a.Durability + b.Durability);
-}
-
-public record EnhancementResult
-{
-    public bool IsSuccess { get; }
-    public string Message { get; }
-    public EquippableItem? EnhancedItem { get; }
-    
-    private EnhancementResult(bool isSuccess, string message, EquippableItem? item = null)
-    {
-        IsSuccess = isSuccess;
-        Message = message;
-        EnhancedItem = item;
-    }
-    
-    public static EnhancementResult Success(EquippableItem item) =>
-        new(true, "Enhancement successful!", item);
-    
-    public static EnhancementResult Failed(string reason) =>
-        new(false, reason);
+    // マーカーインターフェース
 }
 ```
 
-## 修理システム
+### 基本的な利用パターン
+1. **レシピ確認**: `CraftingRecipe` で必要素材と成果物を確認
+2. **作成可能性判定**: `IsCraftable()` で素材所有状況をチェック
+3. **クラフト実行**: `Craft()` で素材消費と成果物生成をアトミック実行
+4. **結果確認**: 成果物に作成者IDが記録されることを確認
 
-### 装備修理（将来拡張）
+### ドメインサービスの特徴
+- **UniTask対応**: クラフト処理の非同期実行
+- **アトミック操作**: 素材消費と成果物生成の原子性保証
+- **コマンドパターン**: クラフト操作の結果予測可能性
+- **ドメイン連携**: Inventory、Skillドメインとのシームレスな統合
 
-```csharp
-public class RepairCraftingService
-{
-    public RepairResult RepairEquipment(
-        EquippableItem damagedEquipment,
-        IEnumerable<ICraftMaterialItem> repairMaterials,
-        SkillAndProficiency repairSkill)
-    {
-        // 耐久度システムが実装された際の修理処理
-        // 現在は将来拡張として定義のみ
-        
-        throw new NotImplementedException("Repair system will be implemented when durability system is added");
-    }
-}
-```
+## 提供するドメインサービス
 
-## 量産システム
+### クラフト実行サービス
+素材消費と成果物生成のアトミックな処理を提供します。
 
-### バッチクラフト
+**提供する操作:**
+- クラフトコマンドによるアイテム制作
+- 素材のインベントリからの消費
+- 成果物のターゲットインベントリへの追加
+- 作成可能性の事前判定
 
-```csharp
-public class BatchCraftingService
-{
-    public BatchCraftingResult ExecuteBatchCrafting(
-        PlayerCommonEntity player,
-        InfiniteSlotInventory inventory,
-        ICraftableItem targetItem,
-        int quantity)
-    {
-        if (quantity <= 0)
-            throw new ArgumentException("Quantity must be positive");
-        
-        var results = new List<CraftingResult>();
-        var currentPlayer = player;
-        var currentInventory = inventory;
-        
-        for (int i = 0; i < quantity; i++)
-        {
-            // 素材チェック
-            if (!CanCraft(targetItem.Recipe, currentInventory))
-            {
-                break; // 素材不足で終了
-            }
-            
-            // 個別クラフト実行
-            var craftingService = new CraftingIntegrationService();
-            var result = craftingService.ExecuteCrafting(currentPlayer, currentInventory, targetItem);
-            
-            results.Add(result);
-            
-            // 結果反映
-            if (result.IsSuccess)
-            {
-                currentPlayer = result.UpdatedPlayer;
-                currentInventory = result.UpdatedInventory;
-            }
-            else
-            {
-                // 失敗時も素材は消費される
-                currentInventory = ConsumeMaterials(currentInventory, targetItem.Recipe.RequiredMaterials);
-            }
-        }
-        
-        return new BatchCraftingResult(
-            results,
-            currentPlayer,
-            currentInventory,
-            results.Count(r => r.IsSuccess),
-            results.Count
-        );
-    }
-    
-    private bool CanCraft(CraftingRecipe recipe, InfiniteSlotInventory inventory)
-    {
-        foreach (var required in recipe.RequiredMaterials)
-        {
-            if (inventory.GetItemQuantity(required.Item) < required.Quantity)
-                return false;
-        }
-        return true;
-    }
-    
-    private InfiniteSlotInventory ConsumeMaterials(
-        InfiniteSlotInventory inventory,
-        ImmutableArray<ItemAndQuantity> materials)
-    {
-        var result = inventory;
-        foreach (var material in materials)
-        {
-            result = result.RemoveItem(material.Item, material.Quantity);
-        }
-        return result;
-    }
-}
+**ドメインルール:**
+- 素材と成果物のインベントリ操作はアトミックに実行
+- 素材不足時はクラフト実行を中止
+- 成果物に作成者IDを自動記録
 
-public record BatchCraftingResult
-{
-    public IReadOnlyList<CraftingResult> IndividualResults { get; }
-    public PlayerCommonEntity FinalPlayer { get; }
-    public InfiniteSlotInventory FinalInventory { get; }
-    public int SuccessCount { get; }
-    public int TotalAttempts { get; }
-    
-    public BatchCraftingResult(
-        IReadOnlyList<CraftingResult> results,
-        PlayerCommonEntity finalPlayer,
-        InfiniteSlotInventory finalInventory,
-        int successCount,
-        int totalAttempts)
-    {
-        IndividualResults = results;
-        FinalPlayer = finalPlayer;
-        FinalInventory = finalInventory;
-        SuccessCount = successCount;
-        TotalAttempts = totalAttempts;
-    }
-    
-    public float SuccessRate => TotalAttempts > 0 ? (float)SuccessCount / TotalAttempts : 0f;
-}
-```
+### クラフトレシピ管理
+素材と成果物の組み合わせ定義を提供します。
 
-## 結果処理
+**提供する機能:**
+- 必要素材リストの定義
+- 成果アイテムの特定
+- レシピ情報のイミュータブル管理
 
-### CraftingResult
+### スキル連携サービス
+生産スキルとクラフト処理の統合を提供します。
 
-```csharp
-public record CraftingResult
-{
-    public bool IsSuccess { get; }
-    public string Message { get; }
-    public PlayerCommonEntity UpdatedPlayer { get; }
-    public InfiniteSlotInventory UpdatedInventory { get; }
-    public ImmutableArray<ItemAndQuantity> CreatedItems { get; }
-    
-    public CraftingResult(
-        bool isSuccess,
-        string message,
-        PlayerCommonEntity updatedPlayer,
-        InfiniteSlotInventory updatedInventory,
-        ImmutableArray<ItemAndQuantity> createdItems)
-    {
-        IsSuccess = isSuccess;
-        Message = message;
-        UpdatedPlayer = updatedPlayer;
-        UpdatedInventory = updatedInventory;
-        CreatedItems = createdItems;
-    }
-    
-    public static CraftingResult Failed(string reason) =>
-        new CraftingResult(false, reason, null!, null!, ImmutableArray<ItemAndQuantity>.Empty);
-}
-```
+**提供する連携:**
+- 生産スキルアクションの定義（Create/Refine/Repair）
+- スキルレベルとクラフト品質の連携
+- クラフト実行時のスキル経験値獲得
 
-## レシピ管理
+## ビジネスルール・制約
 
-### レシピ発見システム（将来拡張）
+### クラフト実行制約
+- **素材有無制約**: 必要素材が不足している場合はクラフト実行不可
+- **インベントリ容量制約**: 成果物格納先インベントリに容量が必要
+- **アトミック操作**: 素材消費と成果物生成は一体で実行
 
-```csharp
-public interface IRecipeDiscoveryService
-{
-    IEnumerable<CraftingRecipe> GetAvailableRecipes(PlayerCommonEntity player);
-    bool TryLearnRecipe(PlayerCommonEntity player, CraftingRecipe recipe);
-}
+### アイテム種別制約
+- **ICraftMaterialItem**: 素材として使用可能なアイテムのみ
+- **ICraftableItem**: クラフト結果として生成されたアイテムのみ
+- **作成者記録**: 全てのICraftableItemに作成者IDが記録される
 
-public class SkillBasedRecipeDiscovery : IRecipeDiscoveryService
-{
-    public IEnumerable<CraftingRecipe> GetAvailableRecipes(PlayerCommonEntity player)
-    {
-        // スキルレベルに基づくレシピ開放
-        var productionSkills = player.Skills
-            .Where(s => s.Skill.Type == SkillType.Production)
-            .ToList();
-        
-        // 実装は将来拡張
-        return Enumerable.Empty<CraftingRecipe>();
-    }
-    
-    public bool TryLearnRecipe(PlayerCommonEntity player, CraftingRecipe recipe)
-    {
-        // レシピ学習条件チェック
-        return false; // 将来実装
-    }
-}
-```
+### ドメイン整合性
+- **インベントリ同期**: 素材消費と成果物追加の原子性保証
+- **スキル連携**: クラフト実行時のスキル状態反映
+- **レシピ整合性**: CraftingRecipeと実際のクラフト結果の一致
 
-## 拡張ポイント
+## 実装状況
 
-### 自動クラフトシステム
-```csharp
-public class AutoCraftingService
-{
-    public void SetupAutoCrafting(
-        PlayerCommonEntity player,
-        ICraftableItem targetItem,
-        int targetQuantity,
-        TimeSpan interval)
-    {
-        // 定期的な自動クラフト実行
-    }
-}
-```
+### Domain層実装
+- ✅ **ICraftableItemインターフェース**: クラフト可能アイテムの定義
+- ✅ **ICraftMaterialItemインターフェース**: 素材アイテムのマーカー
+- ✅ **CraftingRecipeクラス**: レシピ情報のイミュータブル管理
+- ✅ **IProductionSkillインターフェース**: 生産スキルのアクション定義
 
-### クラフト品質システム
-```csharp
-public enum CraftQuality
-{
-    Poor, Normal, Good, Excellent, Perfect
-}
+### Usecase層実装
+- ✅ **ItemCraftUsecase**: クラフト実行と判定ロジック
+- ✅ **CraftCommand**: クラフト処理のコマンドパターン
+- ✅ **インベントリ連携**: 素材消費と成果物格納の統合処理
 
-public record QualifiedCraftingResult : CraftingResult
-{
-    public CraftQuality Quality { get; }
-    public float QualityMultiplier { get; }
-}
-```
+### スキル連携実装
+- ✅ **CreateSkillAction**: アイテム作成アクション
+- ✅ **RefineSkillAction**: アイテム精錬アクション
+- ✅ **RepairSkillAction**: アイテム修理アクション
 
-クラフトシステムは、アイテム作成を通じてプレイヤーの成長と経済活動を促進する重要なシステムです。\
-複数ドメインの連携により、深いゲームプレイ体験を提供します。
+## 関連ドキュメント
+
+- [Item.md](../domains/Item.md) - クラフト関連実装詳細
+- [Inventory.md](../domains/Inventory.md) - 素材・制作品管理
+- [Skill.md](../domains/Skill.md) - 生産スキルシステム
+- [InventoryManagementSystem.md](./InventoryManagementSystem.md) - アイテム管理システム

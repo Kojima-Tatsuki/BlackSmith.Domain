@@ -2,867 +2,216 @@
 
 ## 概要
 
-レベリングシステムは、Character、Skill、PassiveEffect の3つのドメインを統合し、プレイヤーの成長と進歩を管理するシステムです。\
-経験値獲得、レベルアップ、ステータス振り分け、スキル経験値、効果による成長補正を統合的に処理します。
+レベリングシステムは、Character、Skill、PassiveEffect の3つのドメインを統合し、キャラクター成長・熟練度管理に関するドメインサービスを提供します。\
+キャラクター成長管理、スキル熟練度管理、成長効果適用、プレイヤーエンティティ管理の各ドメインサービスにより、\
+ライブラリ利用者は成長ロジックを構築できます。
 
-## システム構成
+## ドメイン問題の定義
 
-### 関連ドメイン
+### レベリングドメインが扱う問題領域
+- **キャラクター成長状態管理**: 経験値蓄積とレベル変換の管理
+- **レベル依存制約管理**: レベルに基づくスキル数制限等の制約
+- **スキル熟練度管理**: スキル個別の経験値と熟練度計算
+- **成長効果適用**: PassiveEffectによる成長促進効果の管理
+- **プレイヤーエンティティ管理**: キャラクターのライフサイクル管理
 
-- **[Character](../domains/Character.md)**: 経験値、レベル、ステータスポイント
-- **[Skill](../domains/Skill.md)**: スキル経験値、熟練度向上
-- **[PassiveEffect](../domains/PassiveEffect.md)**: 経験値倍率効果
+### ドメイン間の関係性
+- **Character**: 基本経験値・レベル・ステータス管理の定義
+- **Skill**: スキル経験値・熟練度計算ロジックの定義
+- **PassiveEffect**: 成長促進効果の定義と適用
 
-### 統合フロー
+## 提供するドメインサービス
 
-```mermaid
-graph TD
-    A[経験値獲得] --> B[効果による倍率適用]
-    B --> C[レベルアップ判定]
-    C --> D[ステータスポイント付与]
-    D --> E[スキル経験値分配]
-    E --> F[熟練度更新]
-    F --> G[新スキル習得可能性チェック]
-```
+### キャラクター成長管理サービス
+経験値蓄積とレベル管理のドメインサービスを提供します。
 
-## レベリング統合サービス
+**提供する操作:**
+- 経験値の蓄積と累積管理
+- 累積経験値からの現在レベル算出
+- レベルアップ処理とレベル依存制約更新
+- レベルに基づくスキル数制限の適用
 
-### LevelingIntegrationService
-複数ドメインを統合した成長管理の中核サービス。
+**ドメインルール:**
+- 経験値は累積加算方式で管理
+- レベルは累積経験値に基づき自動決定
+- レベルアップ時はスキル数制限を更新
+- 経験値の減算は不可
 
+### スキル熟練度管理サービス
+個別スキルの経験値と熟練度計算を提供します。
+
+**提供する機能:**
+- スキル個別の経験値蓄積
+- 熟練度1-1000の段階的成長
+- 経験値要求量の指数関数的増加
+- 熟練度レベルに応じた次レベル必要経験値計算
+
+**熟練度ルール:**
+- 初期必要経験値100、必要回数15から開始
+- レベル差倍率1.1による指数関数的増加
+- 熟練度1-1000の範囲で管理
+- 累積経験値からの熟練度自動算出
+
+### 成長効果適用サービス
+PassiveEffectとの連携による成長促進効果を提供します。
+
+**提供する効果管理:**
+- ステータス効果の追加・削除
+- 経験値倍率効果の適用（基盤準備済み）
+- 成長効果の重複管理
+- 効果適用状態の管理
+
+**効果適用ルール:**
+- 同種効果の重複は上書き
+- 効果削除時は元の状態に復元
+- 効果適用は成長計算に即座反映
+
+### プレイヤーエンティティ管理サービス
+キャラクターエンティティのライフサイクル管理を提供します。
+
+**提供する操作:**
+- 新規プレイヤーエンティティの作成
+- プレイヤーエンティティの復元・再構築
+- プレイヤー情報の取得・更新・削除
+- プレイヤー名の変更と妥当性検証
+
+**エンティティ管理ルール:**
+- CharacterIDによる一意識別
+- エンティティ作成時の初期値設定
+- 復元時の整合性保証
+- 名前変更時の妥当性チェック
+
+## ビジネスルール・制約
+
+### 経験値・レベル制約
+- **非負制約**: 経験値は0以上のみ有効
+- **累積制約**: 経験値は累積加算のみ可能（減算不可）
+- **レベル算出**: 累積経験値からレベルを自動決定
+- **スキル数制限**: レベルに応じたスキル数上限を適用
+
+### スキル熟練度制約
+- **熟練度範囲**: 1-1000の範囲で熟練度を管理
+- **指数関数成長**: レベル差倍率1.1による要求経験値増加
+- **累積経験値管理**: スキル個別の累積経験値を永続管理
+- **熟練度算出**: 累積経験値から熟練度を自動算出
+
+### 成長効果制約
+- **効果重複**: 同種BattleStatusEffectは上書き適用
+- **効果期間**: 基盤は整備済み、具体的期間管理は未実装
+- **効果適用**: 成長計算への即座反映
+
+### ドメイン整合性
+- **エンティティ同期**: 基本エンティティと戦闘エンティティの整合性
+- **レベル連動**: レベル変更時の制約・能力の自動更新
+- **熟練度整合性**: スキル熟練度と効果・成功率の連動
+
+## 実装状況
+
+### Domain層実装
+- ✅ **Experienceクラス**: 経験値の累積管理
+- ✅ **PlayerLevelレコード**: レベル管理とスキル数制限
+- ✅ **SkillProficiencyクラス**: スキル熟練度管理
+- ✅ **SkillExpCalculatorクラス**: 熟練度経験値計算ロジック
+- ✅ **BattleStatusEffectModuleレコード**: ステータス効果管理
+
+### Usecase層実装
+- ✅ **AdjustPlayerCommonEntityUsecase**: プレイヤーエンティティ管理
+- ✅ **RewritePlayerCommonEntityStatusUsecase**: プレイヤー情報変更
+- ✅ **PlayerCommonEntityProvideUsecase**: エンティティ提供サービス
+
+### リポジトリインターフェース
+- ✅ **IPlayerCommonEntityRepository**: エンティティ永続化の抽象化
+
+## ドメインサービス API
+
+### キャラクター成長管理サービス
 ```csharp
-public class LevelingIntegrationService
+// 経験値管理
+public class Experience
 {
-    public LevelingResult ProcessExperienceGain(
-        PlayerCommonEntity player,
-        EffectCollection effects,
-        int baseExperience,
-        ExperienceSource source)
-    {
-        // 1. 効果による経験値倍率適用（PassiveEffect ドメイン）
-        var multiplier = CalculateExperienceMultiplier(effects);
-        var finalExperience = (int)(baseExperience * multiplier);
-        
-        // 2. キャラクター経験値更新（Character ドメイン）
-        var characterResult = ProcessCharacterExperience(player, finalExperience);
-        
-        // 3. スキル経験値処理（Skill ドメイン）
-        var skillResult = ProcessSkillExperience(
-            characterResult.UpdatedPlayer, source, finalExperience);
-        
-        // 4. レベルアップ効果適用
-        var levelUpEffects = ApplyLevelUpEffects(
-            player, characterResult.UpdatedPlayer, effects);
-        
-        return new LevelingResult(
-            skillResult.UpdatedPlayer,
-            levelUpEffects,
-            characterResult.LevelUpsGained,
-            characterResult.ExperienceGained,
-            skillResult.SkillImprovements,
-            GetLevelingMessage(characterResult, skillResult)
-        );
-    }
+    public int Value { get; }
     
-    public StatusAllocationResult AllocateStatusPoints(
-        PlayerCommonEntity player,
-        int strengthIncrease,
-        int agilityIncrease)
-    {
-        try
-        {
-            // Character ドメインのステータス配分ルール適用
-            var updatedPlayer = player.AllocateStatus(strengthIncrease, agilityIncrease);
-            
-            // 配分後の新スキル習得可能性チェック
-            var newLearnableSkills = CheckNewLearnableSkills(player, updatedPlayer);
-            
-            return StatusAllocationResult.Success(
-                updatedPlayer,
-                newLearnableSkills,
-                $"Successfully allocated {strengthIncrease + agilityIncrease} status points"
-            );
-        }
-        catch (InvalidOperationException ex)
-        {
-            return StatusAllocationResult.Failed(ex.Message);
-        }
-    }
+    internal Experience Add(Experience experience);              // 経験値追加
+    internal static PlayerLevel CurrentLevel(Experience cumulativeExp); // レベル算出
+}
+
+// レベル管理
+public record PlayerLevel
+{
+    public int Value { get; }
     
-    private float CalculateExperienceMultiplier(EffectCollection effects)
-    {
-        // PassiveEffect ドメインの経験値倍率効果統合
-        var combinedEffect = effects.GetCombinedEffect();
-        return Math.Max(0.1f, combinedEffect.ExperienceMultiplier);
-    }
-    
-    private CharacterExperienceResult ProcessCharacterExperience(
-        PlayerCommonEntity player,
-        int experience)
-    {
-        var originalLevel = player.Level.Value;
-        var updatedPlayer = player.ProcessLevelUp(experience);
-        var levelUpsGained = updatedPlayer.Level.Value - originalLevel;
-        
-        return new CharacterExperienceResult(
-            updatedPlayer,
-            experience,
-            levelUpsGained
-        );
-    }
-    
-    private SkillExperienceResult ProcessSkillExperience(
-        PlayerCommonEntity player,
-        ExperienceSource source,
-        int totalExperience)
-    {
-        var improvements = new List<SkillImprovement>();
-        var updatedPlayer = player;
-        
-        // 経験値源に応じたスキル経験値分配
-        var skillDistribution = CalculateSkillExperienceDistribution(source, totalExperience);
-        
-        foreach (var (skillType, experience) in skillDistribution)
-        {
-            var relevantSkills = GetRelevantSkills(player, skillType);
-            
-            foreach (var skill in relevantSkills)
-            {
-                var improvement = ProcessSingleSkillImprovement(
-                    updatedPlayer, skill.Skill.Name, experience);
-                
-                if (improvement.ProficiencyGained > 0)
-                {
-                    improvements.Add(improvement);
-                    updatedPlayer = improvement.UpdatedPlayer;
-                }
-            }
-        }
-        
-        return new SkillExperienceResult(updatedPlayer, improvements);
-    }
-    
-    private Dictionary<SkillType, int> CalculateSkillExperienceDistribution(
-        ExperienceSource source,
-        int totalExperience)
-    {
-        return source switch
-        {
-            ExperienceSource.Combat => new Dictionary<SkillType, int>
-            {
-                { SkillType.Battle, (int)(totalExperience * 0.8f) }
-            },
-            ExperienceSource.Crafting => new Dictionary<SkillType, int>
-            {
-                { SkillType.Production, (int)(totalExperience * 0.6f) }
-            },
-            ExperienceSource.Quest => new Dictionary<SkillType, int>
-            {
-                { SkillType.Battle, (int)(totalExperience * 0.3f) },
-                { SkillType.Production, (int)(totalExperience * 0.2f) }
-            },
-            _ => new Dictionary<SkillType, int>()
-        };
-    }
-    
-    private IEnumerable<SkillAndProficiency> GetRelevantSkills(
-        PlayerCommonEntity player,
-        SkillType skillType)
-    {
-        return player.Skills.Where(s => s.Skill.Type == skillType);
-    }
-    
-    private SkillImprovement ProcessSingleSkillImprovement(
-        PlayerCommonEntity player,
-        SkillName skillName,
-        int experience)
-    {
-        try
-        {
-            var originalSkill = player.Skills.First(s => s.Skill.Name.Value == skillName.Value);
-            var originalProficiency = originalSkill.Proficiency.Value;
-            
-            var updatedPlayer = SkillLearningService.ImproveSkill(player, skillName, experience);
-            var updatedSkill = updatedPlayer.Skills.First(s => s.Skill.Name.Value == skillName.Value);
-            var newProficiency = updatedSkill.Proficiency.Value;
-            
-            return new SkillImprovement(
-                updatedPlayer,
-                originalSkill.Skill,
-                originalProficiency,
-                newProficiency,
-                newProficiency - originalProficiency,
-                experience
-            );
-        }
-        catch (InvalidOperationException)
-        {
-            return new SkillImprovement(
-                player,
-                null,
-                0,
-                0,
-                0,
-                0
-            );
-        }
-    }
-    
-    private EffectCollection ApplyLevelUpEffects(
-        PlayerCommonEntity originalPlayer,
-        PlayerCommonEntity updatedPlayer,
-        EffectCollection currentEffects)
-    {
-        var levelUpsGained = updatedPlayer.Level.Value - originalPlayer.Level.Value;
-        
-        if (levelUpsGained <= 0)
-            return currentEffects;
-        
-        // レベルアップボーナス効果（一時的なバフ）
-        var levelUpBuff = EffectFactory.CreateExperienceBoost(1.2f, 10); // 10ターンの間20%経験値ボーナス
-        
-        return currentEffects.AddEffect(levelUpBuff);
-    }
-    
-    private IEnumerable<Skill> CheckNewLearnableSkills(
-        PlayerCommonEntity originalPlayer,
-        PlayerCommonEntity updatedPlayer)
-    {
-        // ステータス変更により新たに習得可能になったスキルを検出
-        // 実装は将来拡張（全スキルデータベースが必要）
-        return Enumerable.Empty<Skill>();
-    }
-    
-    private string GetLevelingMessage(
-        CharacterExperienceResult characterResult,
-        SkillExperienceResult skillResult)
-    {
-        var messages = new List<string>();
-        
-        if (characterResult.LevelUpsGained > 0)
-        {
-            messages.Add($"Level up! (Level {characterResult.UpdatedPlayer.Level.Value})");
-            messages.Add($"Gained {characterResult.LevelUpsGained * 3} status points");
-        }
-        
-        var significantSkillUps = skillResult.SkillImprovements
-            .Where(s => s.ProficiencyGained >= 10);
-        
-        foreach (var skillUp in significantSkillUps)
-        {
-            if (skillUp.Skill != null)
-            {
-                messages.Add($"{skillUp.Skill.Name.Value} improved to {skillUp.NewProficiency}");
-            }
-        }
-        
-        return string.Join(" | ", messages);
-    }
+    internal int GetNumberOfSkillsAvailable();                   // スキル数制限取得
+    internal PlayerLevel LevelUp();                             // レベルアップ
 }
 ```
 
-## 経験値計算システム
-
-### ExperienceCalculationService
-様々な活動による経験値計算を統合管理。
-
+### スキル熟練度管理サービス
 ```csharp
-public class ExperienceCalculationService
+// スキル熟練度管理
+public class SkillProficiency
 {
-    public int CalculateCombatExperience(
-        PlayerCommonEntity player,
-        int enemyLevel,
-        bool isVictory,
-        CombatContext context)
-    {
-        // 基本戦闘経験値
-        var baseExperience = isVictory ? 100 : 25; // 勝利時は100、敗北時は25
-        
-        // レベル差補正（Character ドメインのルール）
-        var levelDifferenceMultiplier = CalculateExperienceMultiplier(player.Level.Value, enemyLevel);
-        
-        // 戦闘効率補正
-        var efficiencyMultiplier = CalculateCombatEfficiency(context);
-        
-        return (int)(baseExperience * levelDifferenceMultiplier * efficiencyMultiplier);
-    }
+    public int Value { get; }                                    // 熟練度1-1000
+    public SkillExperience CumulativeExp { get; }               // 累積経験値
     
-    public int CalculateCraftingExperience(
-        ICraftableItem craftedItem,
-        bool wasSuccessful,
-        SkillProficiency craftingProficiency)
-    {
-        // Skill ドメインのクラフト経験値ルール適用
-        return ProductionSkillService.CalculateCraftExperience(craftedItem, wasSuccessful);
-    }
-    
-    public int CalculateQuestExperience(
-        QuestModel completedQuest,
-        PlayerCommonEntity player)
-    {
-        var baseExperience = completedQuest.Difficulty switch
-        {
-            QuestDifficulty.Easy => 50,
-            QuestDifficulty.Normal => 100,
-            QuestDifficulty.Hard => 200,
-            QuestDifficulty.Expert => 400,
-            QuestDifficulty.Master => 800,
-            _ => 50
-        };
-        
-        // 完了時間ボーナス
-        var timeBonus = CalculateQuestTimeBonus(completedQuest);
-        
-        return (int)(baseExperience * timeBonus);
-    }
-    
-    public int CalculateExplorationExperience(
-        FieldID discoveredField,
-        PlayerCommonEntity player)
-    {
-        // 新エリア発見による経験値
-        var baseExperience = 30;
-        
-        // プレイヤーレベルによるスケーリング
-        var levelScaling = Math.Max(0.5f, 1.0f - (player.Level.Value - 1) * 0.02f);
-        
-        return (int)(baseExperience * levelScaling);
-    }
-    
-    private float CalculateExperienceMultiplier(int playerLevel, int enemyLevel)
-    {
-        // Character ドメインの敵レベル差経験値倍率ルール
-        var levelDifference = enemyLevel - playerLevel;
-        
-        if (levelDifference > 0)
-        {
-            return Math.Min(2.0f, 1.0f + (levelDifference * 0.1f)); // 最大200%
-        }
-        else if (levelDifference < 0)
-        {
-            return Math.Max(0.1f, 1.0f + (levelDifference * 0.05f)); // 最低10%
-        }
-        
-        return 1.0f;
-    }
-    
-    private float CalculateCombatEfficiency(CombatContext context)
-    {
-        var efficiency = 1.0f;
-        
-        // 戦闘時間による補正
-        if (context.CombatDuration < TimeSpan.FromSeconds(30))
-            efficiency *= 1.2f; // 素早い勝利にボーナス
-        
-        // ダメージ効率による補正
-        if (context.DamageDealtRatio > 0.8f)
-            efficiency *= 1.1f; // 効率的な戦闘にボーナス
-        
-        return efficiency;
-    }
-    
-    private float CalculateQuestTimeBonus(QuestModel quest)
-    {
-        if (quest.Deadline == null || quest.CompletedAt == null)
-            return 1.0f;
-        
-        var timeUsed = quest.CompletedAt.Value - (quest.AcceptedAt ?? quest.CreatedAt);
-        var timeAllowed = quest.Deadline.Value - quest.CreatedAt;
-        
-        var efficiency = 1.0 - (timeUsed.TotalMinutes / timeAllowed.TotalMinutes);
-        
-        return efficiency switch
-        {
-            > 0.8 => 1.5f,  // 素早い完了
-            > 0.6 => 1.2f,  // 効率的な完了
-            > 0.4 => 1.0f,  // 標準的な完了
-            _ => 0.8f       // 遅い完了
-        };
-    }
+    internal SkillProficiency AddExp(SkillExperience exp);      // 経験値追加
 }
 
-public record CombatContext
+// スキル経験値計算
+internal class SkillExpCalculator
 {
-    public TimeSpan CombatDuration { get; }
-    public float DamageDealtRatio { get; }
-    public bool UsedSkills { get; }
-    public int ComboCount { get; }
-    
-    public CombatContext(
-        TimeSpan duration,
-        float damageRatio,
-        bool usedSkills = false,
-        int comboCount = 0)
-    {
-        CombatDuration = duration;
-        DamageDealtRatio = Math.Clamp(damageRatio, 0f, 1f);
-        UsedSkills = usedSkills;
-        ComboCount = comboCount;
-    }
-}
-
-public enum ExperienceSource
-{
-    Combat,      // 戦闘
-    Crafting,    // クラフト
-    Quest,       // クエスト
-    Exploration, // 探索
-    Event        // イベント
+    internal SkillExperience NeedToNextLevel(int level);        // 次レベル必要経験値
+    internal SkillExperience ReceveExp(int level);              // 受取経験値計算
+    internal int CurrentProficiency(SkillExperience cumExp);    // 現在熟練度算出
 }
 ```
 
-## 成長予測システム
-
-### GrowthProjectionService
-プレイヤーの成長予測と最適化提案。
-
+### プレイヤーエンティティ管理サービス
 ```csharp
-public class GrowthProjectionService
+// プレイヤーエンティティ管理
+public class AdjustPlayerCommonEntityUsecase
 {
-    public GrowthProjection ProjectNextLevel(PlayerCommonEntity player)
-    {
-        var currentExperience = player.Experience.Value;
-        var currentLevel = player.Level.Value;
-        var nextLevelExperience = CalculateRequiredExperience(currentLevel + 1);
-        var experienceNeeded = nextLevelExperience - currentExperience;
-        
-        // 現在の経験値獲得率から推定
-        var projectedTime = EstimateTimeToNextLevel(player, experienceNeeded);
-        
-        return new GrowthProjection(
-            currentLevel + 1,
-            experienceNeeded,
-            projectedTime,
-            GetOptimalActivities(player, experienceNeeded)
-        );
-    }
-    
-    public StatusGrowthAnalysis AnalyzeStatusGrowth(PlayerCommonEntity player)
-    {
-        var currentPoints = player.StatusPoint.Value;
-        var strengthGrowthOptions = GenerateStatusOptions(player, true, currentPoints);
-        var agilityGrowthOptions = GenerateStatusOptions(player, false, currentPoints);
-        var balancedGrowthOptions = GenerateBalancedOptions(player, currentPoints);
-        
-        return new StatusGrowthAnalysis(
-            strengthGrowthOptions,
-            agilityGrowthOptions,
-            balancedGrowthOptions,
-            GetRecommendedAllocation(player)
-        );
-    }
-    
-    public SkillGrowthProjection ProjectSkillGrowth(
-        PlayerCommonEntity player,
-        SkillName targetSkill,
-        int targetProficiency)
-    {
-        var currentSkill = player.Skills.FirstOrDefault(s => 
-            s.Skill.Name.Value == targetSkill.Value);
-        
-        if (currentSkill == null)
-            throw new ArgumentException("Skill not found");
-        
-        var currentProficiency = currentSkill.Proficiency.Value;
-        var proficiencyNeeded = targetProficiency - currentProficiency;
-        
-        if (proficiencyNeeded <= 0)
-            return SkillGrowthProjection.AlreadyAchieved(currentSkill);
-        
-        // スキル経験値要件計算（100経験値 = 1熟練度）
-        var experienceNeeded = proficiencyNeeded * 100;
-        
-        // 推定活動回数
-        var estimatedActivities = EstimateActivitiesForSkillGrowth(
-            currentSkill.Skill, experienceNeeded);
-        
-        return new SkillGrowthProjection(
-            targetSkill,
-            currentProficiency,
-            targetProficiency,
-            experienceNeeded,
-            estimatedActivities
-        );
-    }
-    
-    private int CalculateRequiredExperience(int level)
-    {
-        // Character ドメインの経験値計算式を使用
-        if (level <= 1) return 0;
-        
-        const int initExpRequirement = 100;
-        const float multiplier = 1.25f;
-        
-        var numerator = initExpRequirement * (1 - Math.Pow(multiplier, level - 1));
-        var denominator = 1 - multiplier;
-        
-        return (int)(numerator / denominator);
-    }
-    
-    private TimeSpan EstimateTimeToNextLevel(PlayerCommonEntity player, int experienceNeeded)
-    {
-        // プレイヤーの平均経験値獲得率を基に推定
-        var averageExpPerHour = EstimateExperienceRate(player);
-        var hoursNeeded = experienceNeeded / (float)averageExpPerHour;
-        
-        return TimeSpan.FromHours(hoursNeeded);
-    }
-    
-    private int EstimateExperienceRate(PlayerCommonEntity player)
-    {
-        // プレイヤーレベルと活動パターンに基づく推定
-        return player.Level.Value switch
-        {
-            <= 5 => 200,    // 初心者: 200exp/時
-            <= 15 => 300,   // 中級者: 300exp/時
-            <= 30 => 400,   // 上級者: 400exp/時
-            _ => 500        // 熟練者: 500exp/時
-        };
-    }
-    
-    private IEnumerable<OptimalActivity> GetOptimalActivities(
-        PlayerCommonEntity player,
-        int experienceNeeded)
-    {
-        var activities = new List<OptimalActivity>();
-        
-        // 戦闘活動
-        activities.Add(new OptimalActivity(
-            "Combat Training",
-            "同レベル敵との戦闘",
-            100, // 1回あたり経験値
-            experienceNeeded / 100 // 必要回数
-        ));
-        
-        // クラフト活動
-        var productionSkills = player.Skills.Where(s => s.Skill.Type == SkillType.Production);
-        if (productionSkills.Any())
-        {
-            activities.Add(new OptimalActivity(
-                "Crafting Practice",
-                "アイテム作成練習",
-                50,
-                experienceNeeded / 50
-            ));
-        }
-        
-        // クエスト活動
-        activities.Add(new OptimalActivity(
-            "Quest Completion",
-            "Normal難易度クエスト",
-            100,
-            experienceNeeded / 100
-        ));
-        
-        return activities.OrderBy(a => a.EstimatedSessions);
-    }
-    
-    private IEnumerable<StatusAllocation> GenerateStatusOptions(
-        PlayerCommonEntity player,
-        bool prioritizeStrength,
-        int availablePoints)
-    {
-        var options = new List<StatusAllocation>();
-        
-        for (int i = 0; i <= availablePoints; i++)
-        {
-            var strAllocation = prioritizeStrength ? availablePoints - i : i;
-            var agiAllocation = prioritizeStrength ? i : availablePoints - i;
-            
-            var projectedStr = player.Strength.Value + strAllocation;
-            var projectedAgi = player.Agility.Value + agiAllocation;
-            var projectedAttack = (projectedStr + projectedAgi) * 2;
-            
-            options.Add(new StatusAllocation(
-                strAllocation,
-                agiAllocation,
-                projectedAttack,
-                EstimateStatusEffectiveness(projectedStr, projectedAgi)
-            ));
-        }
-        
-        return options.OrderByDescending(o => o.Effectiveness);
-    }
-    
-    private IEnumerable<StatusAllocation> GenerateBalancedOptions(
-        PlayerCommonEntity player,
-        int availablePoints)
-    {
-        var options = new List<StatusAllocation>();
-        
-        // バランス重視の配分パターン
-        var patterns = new[]
-        {
-            (availablePoints / 2, availablePoints - availablePoints / 2),
-            (availablePoints / 3, availablePoints - availablePoints / 3),
-            (availablePoints * 2 / 3, availablePoints - availablePoints * 2 / 3)
-        };
-        
-        foreach (var (str, agi) in patterns)
-        {
-            var projectedStr = player.Strength.Value + str;
-            var projectedAgi = player.Agility.Value + agi;
-            var projectedAttack = (projectedStr + projectedAgi) * 2;
-            
-            options.Add(new StatusAllocation(
-                str,
-                agi,
-                projectedAttack,
-                EstimateStatusEffectiveness(projectedStr, projectedAgi)
-            ));
-        }
-        
-        return options.OrderByDescending(o => o.Effectiveness);
-    }
-    
-    private StatusAllocation GetRecommendedAllocation(PlayerCommonEntity player)
-    {
-        // プレイヤーの現在のバランスに基づく推奨配分
-        var strAgiRatio = (float)player.Strength.Value / player.Agility.Value;
-        
-        var availablePoints = player.StatusPoint.Value;
-        
-        if (strAgiRatio < 0.8f)
-        {
-            // STR重視
-            return new StatusAllocation(
-                availablePoints * 2 / 3,
-                availablePoints / 3,
-                0,
-                1.0f
-            );
-        }
-        else if (strAgiRatio > 1.2f)
-        {
-            // AGI重視
-            return new StatusAllocation(
-                availablePoints / 3,
-                availablePoints * 2 / 3,
-                0,
-                1.0f
-            );
-        }
-        else
-        {
-            // バランス重視
-            return new StatusAllocation(
-                availablePoints / 2,
-                availablePoints - availablePoints / 2,
-                0,
-                1.0f
-            );
-        }
-    }
-    
-    private float EstimateStatusEffectiveness(int strength, int agility)
-    {
-        // バランスと総合力を考慮した効果度
-        var total = strength + agility;
-        var balance = 1.0f - Math.Abs(strength - agility) / (float)total;
-        
-        return total * balance;
-    }
-    
-    private Dictionary<string, int> EstimateActivitiesForSkillGrowth(
-        Skill skill,
-        int experienceNeeded)
-    {
-        return skill.Type switch
-        {
-            SkillType.Battle => new Dictionary<string, int>
-            {
-                {"戦闘回数", experienceNeeded / 50},
-                {"強敵戦闘", experienceNeeded / 100}
-            },
-            SkillType.Production => new Dictionary<string, int>
-            {
-                {"アイテム作成", experienceNeeded / 30},
-                {"高難易度クラフト", experienceNeeded / 60}
-            },
-            _ => new Dictionary<string, int>()
-        };
-    }
+    internal async UniTask<PlayerCommonEntity> CreateCharacter(string playerName);     // 新規作成
+    internal async UniTask<PlayerCommonEntity> ReconstructPlayer(PlayerCommonReconstructCommand command); // 復元
+    internal async UniTask<PlayerCommonEntity> GetCharacter(CharacterID id);          // 取得
+    internal async UniTask DeletePlayer(CharacterID id);                              // 削除
+}
+
+// プレイヤー情報変更
+public class RewritePlayerCommonEntityStatusUsecase
+{
+    internal async UniTask RenamePlayer(CharacterID id, string newName);  // 名前変更
+    internal bool IsValidPlayerName(string name);                         // 名前妥当性検証
 }
 ```
 
-## 結果処理
-
-### LevelingResult & 関連クラス
-
+### 成長効果管理サービス
 ```csharp
-public record LevelingResult
+// 成長効果の管理
+public record BattleStatusEffectModule
 {
-    public PlayerCommonEntity UpdatedPlayer { get; }
-    public EffectCollection UpdatedEffects { get; }
-    public int LevelUpsGained { get; }
-    public int ExperienceGained { get; }
-    public IReadOnlyList<SkillImprovement> SkillImprovements { get; }
-    public string Message { get; }
+    public IReadOnlyCollection<BattleStatusEffect> StatusEffects { get; }
     
-    public LevelingResult(
-        PlayerCommonEntity updatedPlayer,
-        EffectCollection updatedEffects,
-        int levelUpsGained,
-        int experienceGained,
-        IReadOnlyList<SkillImprovement> skillImprovements,
-        string message)
-    {
-        UpdatedPlayer = updatedPlayer;
-        UpdatedEffects = updatedEffects;
-        LevelUpsGained = levelUpsGained;
-        ExperienceGained = experienceGained;
-        SkillImprovements = skillImprovements;
-        Message = message;
-    }
-    
-    public bool HasLevelUp => LevelUpsGained > 0;
-    public bool HasSkillImprovements => SkillImprovements.Any();
-}
-
-public record StatusAllocationResult
-{
-    public bool IsSuccess { get; }
-    public string Message { get; }
-    public PlayerCommonEntity? UpdatedPlayer { get; }
-    public IEnumerable<Skill>? NewLearnableSkills { get; }
-    
-    private StatusAllocationResult(
-        bool isSuccess,
-        string message,
-        PlayerCommonEntity? updatedPlayer = null,
-        IEnumerable<Skill>? newLearnableSkills = null)
-    {
-        IsSuccess = isSuccess;
-        Message = message;
-        UpdatedPlayer = updatedPlayer;
-        NewLearnableSkills = newLearnableSkills ?? Enumerable.Empty<Skill>();
-    }
-    
-    public static StatusAllocationResult Success(
-        PlayerCommonEntity player,
-        IEnumerable<Skill> newSkills,
-        string message) =>
-        new(true, message, player, newSkills);
-    
-    public static StatusAllocationResult Failed(string reason) =>
-        new(false, reason);
-}
-
-public record SkillImprovement
-{
-    public PlayerCommonEntity UpdatedPlayer { get; }
-    public Skill? Skill { get; }
-    public int OriginalProficiency { get; }
-    public int NewProficiency { get; }
-    public int ProficiencyGained { get; }
-    public int ExperienceUsed { get; }
-    
-    public SkillImprovement(
-        PlayerCommonEntity updatedPlayer,
-        Skill? skill,
-        int originalProficiency,
-        int newProficiency,
-        int proficiencyGained,
-        int experienceUsed)
-    {
-        UpdatedPlayer = updatedPlayer;
-        Skill = skill;
-        OriginalProficiency = originalProficiency;
-        NewProficiency = newProficiency;
-        ProficiencyGained = proficiencyGained;
-        ExperienceUsed = experienceUsed;
-    }
-}
-
-public record GrowthProjection
-{
-    public int TargetLevel { get; }
-    public int ExperienceNeeded { get; }
-    public TimeSpan EstimatedTime { get; }
-    public IEnumerable<OptimalActivity> RecommendedActivities { get; }
-    
-    public GrowthProjection(
-        int targetLevel,
-        int experienceNeeded,
-        TimeSpan estimatedTime,
-        IEnumerable<OptimalActivity> recommendedActivities)
-    {
-        TargetLevel = targetLevel;
-        ExperienceNeeded = experienceNeeded;
-        EstimatedTime = estimatedTime;
-        RecommendedActivities = recommendedActivities;
-    }
-}
-
-public record OptimalActivity
-{
-    public string ActivityName { get; }
-    public string Description { get; }
-    public int ExperiencePerSession { get; }
-    public int EstimatedSessions { get; }
-    
-    public OptimalActivity(
-        string activityName,
-        string description,
-        int experiencePerSession,
-        int estimatedSessions)
-    {
-        ActivityName = activityName;
-        Description = description;
-        ExperiencePerSession = experiencePerSession;
-        EstimatedSessions = estimatedSessions;
-    }
-}
-
-public record StatusAllocation
-{
-    public int StrengthIncrease { get; }
-    public int AgilityIncrease { get; }
-    public int ProjectedAttackPower { get; }
-    public float Effectiveness { get; }
-    
-    public StatusAllocation(
-        int strengthIncrease,
-        int agilityIncrease,
-        int projectedAttackPower,
-        float effectiveness)
-    {
-        StrengthIncrease = strengthIncrease;
-        AgilityIncrease = agilityIncrease;
-        ProjectedAttackPower = projectedAttackPower;
-        Effectiveness = effectiveness;
-    }
+    internal BattleStatusEffectModule AddStatusEffect(BattleStatusEffect statusEffect);      // 効果追加
+    internal BattleStatusEffectModule RemoveStatusEffect(BattleStatusEffect statusEffect);   // 効果削除
 }
 ```
 
-## 拡張ポイント
+### 基本的な利用パターン
+1. **キャラクター作成**: `CreateCharacter()` で新規プレイヤーエンティティを作成
+2. **経験値管理**: `Experience.Add()` で経験値を蓄積し、`CurrentLevel()` でレベル取得
+3. **スキル成長**: `SkillProficiency.AddExp()` でスキル経験値を追加
+4. **効果適用**: `BattleStatusEffectModule` で成長促進効果を管理
 
-### 才能システム
-```csharp
-public enum Talent
-{
-    Warrior,    // 戦士の才能（STR成長ボーナス）
-    Rogue,      // 盗賊の才能（AGI成長ボーナス）
-    Balanced    // バランス型（全体的な成長）
-}
+### ドメインサービスの特徴
+- **UniTask対応**: 非同期でのエンティティ管理処理
+- **イミュータブル設計**: 経験値・レベル・熟練度の不変性保証
+- **自動計算**: 累積値からの現在値自動算出
+- **型安全性**: 強型付きによる計算ミス防止
 
-public record TalentModifier
-{
-    public float StrengthMultiplier { get; }
-    public float AgilityMultiplier { get; }
-    public float ExperienceMultiplier { get; }
-}
-```
+## 関連ドキュメント
 
-### 上限突破システム
-```csharp
-public record LevelCapBreakthrough
-{
-    public int NewLevelCap { get; }
-    public ImmutableArray<QuestID> RequiredQuests { get; }
-    public ImmutableArray<ItemAndQuantity> RequiredItems { get; }
-}
-```
-
-レベリングシステムは、プレイヤーの継続的な成長と目標設定を支援する重要なシステムです。\
-複数ドメインの連携により、深いプレイヤー成長体験を提供します。
+- [Character.md](../domains/Character.md) - 経験値・レベル実装詳細
+- [Skill.md](../domains/Skill.md) - スキル経験値・熟練度詳細
+- [PassiveEffect.md](../domains/PassiveEffect.md) - ステータス効果管理
+- [BattleSystem.md](./BattleSystem.md) - 戦闘による成長連携
+- [CraftingSystem.md](./CraftingSystem.md) - 制作による成長連携
