@@ -12,7 +12,7 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        public static PlayerCommonEntity BuildCommonEntity(PlayerCommonReconstructCommand command)
+        public static CommonCharacterEntity BuildCommonEntity(CommonCharacterReconstructCommand command)
         {
             return PlayerFactory.Reconstruct(command);
         }

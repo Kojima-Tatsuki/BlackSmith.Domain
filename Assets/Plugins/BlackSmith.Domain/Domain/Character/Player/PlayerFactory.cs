@@ -2,9 +2,9 @@
 
 namespace BlackSmith.Domain.Character.Player
 {
-    // プレイヤー含むキャラクターとして振る舞わせるなら、名前は変えるべき
+    // キャラクターとして振る舞わせるなら、名前は変えるべき
     /// <summary>
-    /// プレイヤーエンティティの再構築を行うオブジェクト
+    /// キャラクターエンティティの再構築を行うオブジェクト
     /// </summary>
     internal class PlayerFactory
     {
@@ -13,25 +13,25 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <param name="command">使用するコマンド</param>
         /// <returns>再構築したエンティティ</returns>
-        internal static PlayerCommonEntity Reconstruct(PlayerCommonReconstructCommand command)
+        internal static CommonCharacterEntity Reconstruct(CommonCharacterReconstructCommand command)
         {
             if (command is null)
                 throw new ArgumentNullException(nameof(command));
 
-            return new PlayerCommonEntity(command);
+            return new CommonCharacterEntity(command);
         }
 
         /// <summary>
-        /// 新たにプレイヤーエンティティを作成する
+        /// 新たにキャラクターエンティティを作成する
         /// </summary>
-        /// <param name="name">作成するプレイヤーの名前</param>
+        /// <param name="name">作成するキャラクターの名前</param>
         /// <returns>作成したエンティティ</returns>
-        internal static PlayerCommonEntity Create(PlayerName name)
+        internal static CommonCharacterEntity Create(CharacterName name)
         {
             var id = new CharacterID();
-            var level = new PlayerLevel();
+            var level = new CharacterLevel();
 
-            var command = new PlayerCommonReconstructCommand(id, name, level);
+            var command = new CommonCharacterReconstructCommand(id, name, level);
 
             return Reconstruct(command);
         }

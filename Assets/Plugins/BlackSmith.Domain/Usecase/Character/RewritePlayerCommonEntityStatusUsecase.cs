@@ -8,36 +8,36 @@ using System;
 namespace BlackSmith.Usecase.Character
 {
     /// <summary>
-    /// プレイヤーのステータスに変更を与える際に用いるユースケース
+    /// キャラクターのステータスに変更を与える際に用いるユースケース
     /// </summary>
     public class RewritePlayerCommonEntityStatusUsecase
     {
-        private readonly IPlayerCommonEntityRepository repository;
+        private readonly ICharacterCommonEntityRepository repository;
 
-        public RewritePlayerCommonEntityStatusUsecase(IPlayerCommonEntityRepository playerRepository)
+        public RewritePlayerCommonEntityStatusUsecase(ICharacterCommonEntityRepository playerRepository)
         {
             repository = playerRepository;
         }
 
         /// <summary>
-        /// プレイヤーの名前を書き換える
+        /// キャラクターの名前を書き換える
         /// </summary>
-        /// <param name="id">書き換えるプレイヤーのID</param>
+        /// <param name="id">書き換えるキャラクターのID</param>
         /// <param name="newName">書き換え先の名前</param>
         public async UniTask RenamePlayer(CharacterID id, string newName)
         {
-            var name = new PlayerName(newName);
+            var name = new CharacterName(newName);
 
             var entity = (await repository.FindByID(id)) as ICharacterEntity ?? throw new ArgumentException($"指定したidのキャラクターは存在しません, {id}");
 
             entity.ChangeName(name);
 
-            await repository.UpdateCharacter((entity as PlayerCommonEntity) ?? throw new InvalidOperationException(nameof(entity)));
+            await repository.UpdateCharacter((entity as CommonCharacterEntity) ?? throw new InvalidOperationException(nameof(entity)));
         }
 
         public static bool IsValidPlayerName(string name)
         {
-            return PlayerName.IsValid(name);
+            return CharacterName.IsValid(name);
         }
     }
 }

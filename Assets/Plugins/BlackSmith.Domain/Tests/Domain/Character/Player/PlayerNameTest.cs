@@ -8,10 +8,10 @@ namespace BlackSmith.Domain.Character.Player
         [Test(Description = "PlayerNameのシリアライズ・デシリアライズテスト")]
         public void PlayerNameSerializeTestPasses()
         {
-            var playerName = new PlayerName("TestPlayerName");
+            var playerName = new CharacterName("TestPlayerName");
 
             var serialized = JsonConvert.SerializeObject(playerName);
-            var deserialized = JsonConvert.DeserializeObject<PlayerName>(serialized);
+            var deserialized = JsonConvert.DeserializeObject<CharacterName>(serialized);
 
             Assert.That(playerName, Is.EqualTo(deserialized));
         }

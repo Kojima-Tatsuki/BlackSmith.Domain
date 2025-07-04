@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace BlackSmith.Domain.Character.Player
+namespace BlackSmith.Domain.Character
 {
     /// <summary>
     /// 経験値量
@@ -50,7 +50,7 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <param name="level">敵のレベル</param>
         /// <returns>取得経験値量</returns>
-        internal static Experience ReceveExp(int level)
+        internal static Experience ReceiveExp(int level)
         {
             // 次のレベルまでに必要な経験値量 / 倒す必要のある敵数
             return new Experience((int)Math.Round((InitExpRequirement * Math.Pow(LevelDifferenceMultiplier, level - 1)) / InitKillRequirement));
@@ -64,6 +64,9 @@ namespace BlackSmith.Domain.Character.Player
         /// <returns></returns>
         internal static Experience RequiredCumulativeExp(int level)
         {
+            if (level <= 0 || level > 100)
+                throw new ArgumentOutOfRangeException("レベルは1～100の範囲で入力してください。");
+
             // I : InitExpRequirement
             // A : LevelDifferenceMultiplier
             // I * (1 - a^(level - 1)) / (1 - a)

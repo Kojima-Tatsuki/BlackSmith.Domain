@@ -8,12 +8,12 @@ namespace BlackSmith.Domain.Character.Player
 {
     internal class PlayerLevelTest
     {
-        internal static PlayerLevel[] GetPlayserLevelMock()
+        internal static CharacterLevel[] GetPlayserLevelMock()
         {
-            return new PlayerLevel[]
+            return new CharacterLevel[]
             {
-                new PlayerLevel(), // 経験値を与えない場合(レベル1)
-                new PlayerLevel(Experience.RequiredCumulativeExp(100)), // 最大レベル
+                new CharacterLevel(), // 経験値を与えない場合(レベル1)
+                new CharacterLevel(Experience.RequiredCumulativeExp(100)), // 最大レベル
             };
         }
 
@@ -22,9 +22,9 @@ namespace BlackSmith.Domain.Character.Player
         public void PlayerLevelInstancePasses(Experience? exp, Experience? resultExp, Type? exception)
         {
             if (exception is null)
-                Assert.That(new PlayerLevel(exp ?? new Experience()), Is.EqualTo(new PlayerLevel(resultExp ?? new Experience())));
+                Assert.That(new CharacterLevel(exp ?? new Experience()), Is.EqualTo(new CharacterLevel(resultExp ?? new Experience())));
             else
-                Assert.Throws(exception, () => new PlayerLevel(exp ?? new Experience()));
+                Assert.Throws(exception, () => new CharacterLevel(exp ?? new Experience()));
         }
 
         [Test(Description = "ステータス上昇ポイントの残り数テスト")]
@@ -46,10 +46,10 @@ namespace BlackSmith.Domain.Character.Player
         [Test(Description = "PlayerLevelのシリアライズ・デシリアライズテスト")]
         public void PlayerLevelSerializeTestPasses()
         {
-            var playerLevel = new PlayerLevel(Experience.RequiredCumulativeExp(10));
+            var playerLevel = new CharacterLevel(Experience.RequiredCumulativeExp(10));
 
             var serialized = JsonConvert.SerializeObject(playerLevel);
-            var deserialized = JsonConvert.DeserializeObject<PlayerLevel>(serialized);
+            var deserialized = JsonConvert.DeserializeObject<CharacterLevel>(serialized);
 
             Assert.That(playerLevel, Is.EqualTo(deserialized));
         }

@@ -12,9 +12,9 @@ namespace BlackSmith.Domain.Character.Player
     public record LevelDependentParameters
     {
         /// <summary>
-        /// 現在のプレイヤーのレベル
+        /// 現在のキャラクターのレベル
         /// </summary>
-        public PlayerLevel Level { get; }
+        public CharacterLevel Level { get; }
 
         public Strength STR { get; }
 
@@ -30,7 +30,7 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         internal LevelDependentParameters()
         {
-            Level = new PlayerLevel();
+            Level = new CharacterLevel();
             STR = new Strength(1);
             AGI = new Agility(1);
         }
@@ -42,7 +42,7 @@ namespace BlackSmith.Domain.Character.Player
         /// <param name="str"></param>
         /// <param name="agi"></param>
         [JsonConstructor]
-        internal LevelDependentParameters(PlayerLevel level, Strength str, Agility agi)
+        internal LevelDependentParameters(CharacterLevel level, Strength str, Agility agi)
         {
             Level = level;
             if (GetLevelDependParamPoint(level) < str.Value + agi.Value)
@@ -85,7 +85,7 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <param name="level"></param>
         /// <returns></returns>
-        internal static int GetLevelDependParamPoint(PlayerLevel level)
+        internal static int GetLevelDependParamPoint(CharacterLevel level)
         {
             if (level is null)
                 throw new ArgumentNullException(nameof(level));

@@ -4,7 +4,7 @@ using System;
 
 namespace BlackSmith.Domain.Character.Battle
 {
-    public class PlayerBattleEntity : IBattleCharacter, IEquatable<PlayerBattleEntity>
+    public class BattleCharacterEntity : IBattleCharacter, IEquatable<BattleCharacterEntity>
     {
         public CharacterID ID { get; }
 
@@ -16,7 +16,7 @@ namespace BlackSmith.Domain.Character.Battle
         public AttackValue Attack => BattleModule.GetAttack();
         public DefenseValue Defense => BattleModule.GetDefense();
 
-        internal PlayerBattleEntity(PlayerBattleReconstructCommand command)
+        internal BattleCharacterEntity(PlayerBattleReconstructCommand command)
         {
             ID = command.Id;
             BattleModule = command.Module;
@@ -49,7 +49,7 @@ namespace BlackSmith.Domain.Character.Battle
                 _ => throw new ArgumentException($"Unexpected type of equipment. {item.EquipType} (SaIz8NCE)")
             };
 
-            BattleModule = BattleModule.ChangeBattleEquipment(item, item.EquipType).Modeule;
+            BattleModule = BattleModule.ChangeBattleEquipment(item, item.EquipType).Module;
 
             return new ChangeBattleEquipmentResult(item, prev);
         }
@@ -63,14 +63,14 @@ namespace BlackSmith.Domain.Character.Battle
                 _ => throw new ArgumentException($"Unexpected type of equipment. {removeType} (oOySNBXC2)")
             };
 
-            BattleModule = BattleModule.ChangeBattleEquipment(null, removeType).Modeule;
+            BattleModule = BattleModule.ChangeBattleEquipment(null, removeType).Module;
 
             return new ChangeBattleEquipmentResult(null, prev);
         }
 
-        public PlayerBattleReconstructCommand GetReconstractCommand() => new(ID, BattleModule);
+        public PlayerBattleReconstructCommand GetReconstructCommand() => new(ID, BattleModule);
 
-        public bool Equals(PlayerBattleEntity other)
+        public bool Equals(BattleCharacterEntity other)
         {
             if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;

@@ -1,8 +1,11 @@
-﻿using BlackSmith.Domain.Character.Battle;
+﻿using BlackSmith.Domain.Character;
+using BlackSmith.Domain.Character.Battle;
 using BlackSmith.Domain.Character.Player;
 using NUnit.Framework;
 using System;
 using System.Collections;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Battle
 {
@@ -10,7 +13,7 @@ namespace BlackSmith.Domain.Battle
     {
         private static IEnumerable InstanceTestCases()
         {
-            var ldp = new LevelDependentParameters(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(2), new Agility(1));
+            var ldp = new LevelDependentParameters(new CharacterLevel(Experience.RequiredCumulativeExp(1)), new Strength(2), new Agility(1));
 
             // BattleModuleを使用しない場合
             yield return new TestCaseData(ldp, null, null, null).SetCategory("正常系");

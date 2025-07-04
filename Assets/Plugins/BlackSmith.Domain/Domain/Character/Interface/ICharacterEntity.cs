@@ -5,10 +5,11 @@ namespace BlackSmith.Domain.Character.Interface
     internal interface ICharacterEntity
     {
         CharacterID ID { get; }
+
         CharacterLevel Level { get; }
 
-        PlayerName Name { get; }
+        CharacterName Name { get; }
 
-        void ChangeName(PlayerName name);
+        void ChangeName(CharacterName name);
     }
 }

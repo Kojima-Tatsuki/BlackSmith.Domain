@@ -1,17 +1,18 @@
-﻿using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character;
+using BlackSmith.Domain.Character.Player;
 using Newtonsoft.Json;
 using System;
 
 namespace BlackSmith.Domain.Item.Equipment
 {
-    public interface IEquipableItem : IItem
+    public interface IEquippableItem : IItem
     {
-        IEquipableItem Enchant(EnhancementParameter parameter);
+        IEquippableItem Enchant(EnhancementParameter parameter);
 
-        IEquipableItem Repair();
+        IEquippableItem Repair();
     }
 
-    public record EquippableItem : Item, IEquipableItem
+    public record EquippableItem : Item, IEquippableItem
     {
         public EquipmentType EquipType { get; }
 
@@ -54,7 +55,7 @@ namespace BlackSmith.Domain.Item.Equipment
             RequireParameter = requireParameter;
         }
 
-        IEquipableItem IEquipableItem.Enchant(EnhancementParameter parameter) => Enchant(parameter);
+        IEquippableItem IEquippableItem.Enchant(EnhancementParameter parameter) => Enchant(parameter);
         internal EquippableItem Enchant(EnhancementParameter parameter)
         {
             return new EquippableItem(
@@ -69,8 +70,8 @@ namespace BlackSmith.Domain.Item.Equipment
                     ));
         }
 
-        IEquipableItem IEquipableItem.Repair() => Repair();
-        internal IEquipableItem Repair()
+        IEquippableItem IEquippableItem.Repair() => Repair();
+        internal IEquippableItem Repair()
         {
             throw new NotImplementedException();
         }
@@ -121,7 +122,7 @@ namespace BlackSmith.Domain.Item.Equipment
         Body        = 0x08,
         Hand        = 0x10,
         Leg         = 0x20,
-        Shoose      = 0x40,
+        Shoos       = 0x40,
         */
     }
 
@@ -177,9 +178,9 @@ namespace BlackSmith.Domain.Item.Equipment
             Durability = durability;
         }
 
-        public int GetEnchancedCount => Sharpness + Quickness + Accuracy + Heaviness + Durability;
+        public int GetEnhancedCount => Sharpness + Quickness + Accuracy + Heaviness + Durability;
 
-        // ここのswitch 処理は簡略化可能な気がする
+        // ここの switch 処理は簡略化可能な気がする
         /// <summary>
         /// 強化を行う. 強化は必ず成功する.
         /// </summary>
@@ -239,13 +240,13 @@ namespace BlackSmith.Domain.Item.Equipment
     /// <summary>装備を行う際に要求されるパラメータ</summary>
     public record RequireParameter
     {
-        public PlayerLevel Level { get; }
+        public CharacterLevel Level { get; }
 
         public Strength Strength { get; }
         public Agility Agility { get; }
 
         [JsonConstructor]
-        internal RequireParameter(PlayerLevel level, Strength strength, Agility agility)
+        internal RequireParameter(CharacterLevel level, Strength strength, Agility agility)
         {
             Level = level;
             Strength = strength;
