@@ -5,7 +5,7 @@ namespace BlackSmith.Usecase.Character
     /// <summary>
     /// Presenter層にPlayerEntityDataを渡すクラス
     /// </summary>
-    public class PlayerCommonEntityProvideUsecase
+    public class CommonCharacterEntityProvideUsecase
     {
         /// <summary>
         /// Commandを用いて再構築を行う, リポジトリへの登録は行わない
@@ -14,7 +14,7 @@ namespace BlackSmith.Usecase.Character
         /// <returns></returns>
         public static CommonCharacterEntity BuildCommonEntity(CommonCharacterReconstructCommand command)
         {
-            return PlayerFactory.Reconstruct(command);
+            return CommonCharacterFactory.Reconstruct(command);
         }
     }
 }

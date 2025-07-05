@@ -9,11 +9,11 @@ using System;
 
 namespace BlackSmith.Usecase.Character.Battle
 {
-    public class AdjustPlayerBattleEntityUsecase
+    public class AdjustBattlePlayerEntityUsecase
     {
         private readonly IBattleCharacterEntityRepository repository;
 
-        public AdjustPlayerBattleEntityUsecase(IBattleCharacterEntityRepository playerRepository)
+        public AdjustBattlePlayerEntityUsecase(IBattleCharacterEntityRepository playerRepository)
         {
             repository = playerRepository;
         }

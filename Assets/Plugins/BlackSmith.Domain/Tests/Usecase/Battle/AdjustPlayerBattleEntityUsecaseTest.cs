@@ -19,9 +19,9 @@ namespace BlackSmith.Usecase.Character.Battle
         {
             var repository = new MockPlayerBattleEntityRepository();
             var commonEntityCommand = new CommonCharacterReconstructCommand(new CharacterID(), new CharacterName("TestCommonEntity"), new CharacterLevel(Experience.RequiredCumulativeExp(1)));
-            var commonEntity = PlayerFactory.Reconstruct(commonEntityCommand);
+            var commonEntity = CommonCharacterFactory.Reconstruct(commonEntityCommand);
 
-            var usecase = new AdjustPlayerBattleEntityUsecase(repository);
+            var usecase = new AdjustBattlePlayerEntityUsecase(repository);
 
             var character = await usecase.CreateCharacter(commonEntity);
 
@@ -37,7 +37,7 @@ namespace BlackSmith.Usecase.Character.Battle
         {
             var repository = new MockPlayerBattleEntityRepository();
             var commonEntityCommand = new CommonCharacterReconstructCommand(new CharacterID(), new CharacterName("TestCommonEntity"), new CharacterLevel(Experience.RequiredCumulativeExp(1)));
-            var commonEntity = PlayerFactory.Reconstruct(commonEntityCommand);
+            var commonEntity = CommonCharacterFactory.Reconstruct(commonEntityCommand);
             var command = new PlayerBattleReconstructCommand(commonEntity.ID, new CharacterBattleModule(new HealthPoint(commonEntity.Level), new LevelDependentParameters(commonEntity.Level, new Strength(1), new Agility(1)), new BattleEquipmentModule(null, null), new BattleStatusEffectModule(null)));
 
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
@@ -50,7 +50,7 @@ namespace BlackSmith.Usecase.Character.Battle
         [TestCaseSource(nameof(ReconstructCharacterTestCases))]
         public async Task ReconstructCharacterPasses(IBattleCharacterEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerBattleEntityUsecase(repository);
+            var usecase = new AdjustBattlePlayerEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -80,7 +80,7 @@ namespace BlackSmith.Usecase.Character.Battle
         {
             var repository = new MockPlayerBattleEntityRepository();
             var commonEntityCommand = new CommonCharacterReconstructCommand(new CharacterID(), new CharacterName("TestCommonEntity"), new CharacterLevel(Experience.RequiredCumulativeExp(1)));
-            var commonEntity = PlayerFactory.Reconstruct(commonEntityCommand);
+            var commonEntity = CommonCharacterFactory.Reconstruct(commonEntityCommand);
             var command = new PlayerBattleReconstructCommand(commonEntity.ID, new CharacterBattleModule(new HealthPoint(commonEntity.Level), new LevelDependentParameters(commonEntity.Level, new Strength(1), new Agility(1)), new BattleEquipmentModule(null, null), new BattleStatusEffectModule(null)));
 
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
@@ -93,7 +93,7 @@ namespace BlackSmith.Usecase.Character.Battle
         [TestCaseSource(nameof(DeleteCharacterTestCases))]
         public async Task DeleteCharacterPasses(IBattleCharacterEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerBattleEntityUsecase(repository);
+            var usecase = new AdjustBattlePlayerEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -122,7 +122,7 @@ namespace BlackSmith.Usecase.Character.Battle
         {
             var repository = new MockPlayerBattleEntityRepository();
             var commonEntityCommand = new CommonCharacterReconstructCommand(new CharacterID(), new CharacterName("TestCommonEntity"), new CharacterLevel(Experience.RequiredCumulativeExp(1)));
-            var commonEntity = PlayerFactory.Reconstruct(commonEntityCommand);
+            var commonEntity = CommonCharacterFactory.Reconstruct(commonEntityCommand);
             var command = new PlayerBattleReconstructCommand(commonEntity.ID, new CharacterBattleModule(new HealthPoint(commonEntity.Level), new LevelDependentParameters(commonEntity.Level, new Strength(1), new Agility(1)), new BattleEquipmentModule(null, null), new BattleStatusEffectModule(null)));
 
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
@@ -135,7 +135,7 @@ namespace BlackSmith.Usecase.Character.Battle
         [TestCaseSource(nameof(GetCharacterTestCases))]
         public async Task GetCharacterPasses(IBattleCharacterEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerBattleEntityUsecase(repository);
+            var usecase = new AdjustBattlePlayerEntityUsecase(repository);
 
             if (exception is null)
             {

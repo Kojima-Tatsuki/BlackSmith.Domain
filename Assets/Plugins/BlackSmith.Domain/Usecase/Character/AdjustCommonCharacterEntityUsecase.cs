@@ -11,13 +11,13 @@ namespace BlackSmith.Usecase.Character
     /// <summary>
     /// CharacterCommonEntityの作成、削除を行うユースケース
     /// </summary>
-    public class AdjustPlayerCommonEntityUsecase
+    public class AdjustCommonCharacterEntityUsecase
     {
         private readonly ICommonCharacterEntityRepository repository;
 
-        public AdjustPlayerCommonEntityUsecase(ICommonCharacterEntityRepository playerRepository)
+        public AdjustCommonCharacterEntityUsecase(ICommonCharacterEntityRepository repository)
         {
-            repository = playerRepository;
+            this.repository = repository;
         }
 
         // 外部にpublicで公開されているのは、各パラメータの値のみであるため、Entityを返却しても問題ない
@@ -26,11 +26,11 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="name">作成するキャラクターの名前</param>
         /// <returns>作成したキャラクターエンティティ</returns>
-        public async UniTask<CommonCharacterEntity> CreateCharacter(string playerName)
+        public async UniTask<CommonCharacterEntity> CreateCharacter(string characterName)
         {
-            var name = new CharacterName(playerName);
+            var name = new CharacterName(characterName);
 
-            var entity = PlayerFactory.Create(name);
+            var entity = CommonCharacterFactory.Create(name);
 
             await repository.Register(entity);
 
@@ -42,9 +42,9 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        public async UniTask<CommonCharacterEntity> ReconstructPlayer(CommonCharacterReconstructCommand command)
+        public async UniTask<CommonCharacterEntity> ReconstructCharacter(CommonCharacterReconstructCommand command)
         {
-            var entity = PlayerFactory.Reconstruct(command);
+            var entity = CommonCharacterFactory.Reconstruct(command);
 
             if (!await repository.IsExist(entity.ID))
                 await repository.Register(entity);
@@ -70,7 +70,7 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="id">削除するキャラクターのID</param>
         /// <exception cref="InvalidOperationException">指定したidのキャラクターは存在しない場合</exception>
-        public async UniTask DeletePlayer(CharacterID id)
+        public async UniTask DeleteCharacter(CharacterID id)
         {
             if (!await repository.IsExist(id))
                 throw new InvalidOperationException($"指定したidのキャラクターは存在しません {id}");

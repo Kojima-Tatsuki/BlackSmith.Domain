@@ -30,7 +30,7 @@ namespace BlackSmith.Usecase.Character
         [TestCaseSource(nameof(CreateCharacterTestCases))]
         public async Task CreateCharacterPasses(ICommonCharacterEntityRepository repository, string name, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -68,7 +68,7 @@ namespace BlackSmith.Usecase.Character
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
 
             // 既に同じIDのプレイヤーが存在する場合
-            var entity = PlayerFactory.Reconstruct(new CommonCharacterReconstructCommand(id, new CharacterName(name), level));
+            var entity = CommonCharacterFactory.Reconstruct(new CommonCharacterReconstructCommand(id, new CharacterName(name), level));
             var failRep = new MockCharacterCommonEntityRepository(new Dictionary<CharacterID, CommonCharacterEntity>() { { entity.ID, entity } });
             yield return new TestCaseData(failRep, command, typeof(InvalidOperationException)).SetCategory("異常系");
         }
@@ -77,11 +77,11 @@ namespace BlackSmith.Usecase.Character
         [TestCaseSource(nameof(ReconstructCharacterTestCases))]
         public async Task ReconstructCharacterPasses(ICommonCharacterEntityRepository repository, CommonCharacterReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
             if (exception is null)
             {
-                var character = await usecase.ReconstructPlayer(command);
+                var character = await usecase.ReconstructCharacter(command);
 
                 var entity = await repository.FindByID(character.ID);
 
@@ -94,7 +94,7 @@ namespace BlackSmith.Usecase.Character
             {
                 try
                 {
-                    await usecase.ReconstructPlayer(command);
+                    await usecase.ReconstructCharacter(command);
                 }
                 catch (Exception e)
                 {
@@ -109,7 +109,7 @@ namespace BlackSmith.Usecase.Character
             var id = new CharacterID();
             var level = new CharacterLevel();
 
-            var entity = PlayerFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
+            var entity = CommonCharacterFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
 
             var repository = new MockCharacterCommonEntityRepository(new Dictionary<CharacterID, CommonCharacterEntity>
             {
@@ -127,26 +127,26 @@ namespace BlackSmith.Usecase.Character
         [TestCaseSource(nameof(DeleteCharacterTestCases))]
         public async Task DeleteCharacterPasses(ICommonCharacterEntityRepository repository, CharacterID id, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
             if (exception is null)
             {
                 Assert.That(await repository.IsExist(id), Is.True);
 
-                await usecase.DeletePlayer(id);
+                await usecase.DeleteCharacter(id);
 
                 Assert.That(await repository.IsExist(id), Is.False);
 
-                await repository.Register(PlayerFactory.Reconstruct(new(id.Value, "TestPlayerName", 0))); // 消した後は追加して、元に戻す
+                await repository.Register(CommonCharacterFactory.Reconstruct(new(id.Value, "TestPlayerName", 0))); // 消した後は追加して、元に戻す
             }
             else
             {
                 try
                 {
-                    await usecase.DeletePlayer(id);
+                    await usecase.DeleteCharacter(id);
 
                     // この書き方だとThrowsAsyncで非同期処理が走ってくれない
-                    // await Assert.ThrowsAsync(exception, async () => await usecase.DeletePlayer(id).AsTask());
+                    // await Assert.ThrowsAsync(exception, async () => await usecase.DeleteCharacter(id).AsTask());
                 }
                 catch (Exception e)
                 {
@@ -163,7 +163,7 @@ namespace BlackSmith.Usecase.Character
             var id = new CharacterID();
             var level = new CharacterLevel();
 
-            var entity = PlayerFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
+            var entity = CommonCharacterFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
 
             repository.Register(entity).Forget();
 
@@ -178,7 +178,7 @@ namespace BlackSmith.Usecase.Character
         [TestCaseSource(nameof(GetCharacterTestCases))]
         public async Task GetCharacterPasses(ICommonCharacterEntityRepository repository, CharacterID id, CommonCharacterEntity? target, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
             if (exception is null)
             {

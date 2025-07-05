@@ -6,7 +6,7 @@ namespace BlackSmith.Domain.Character.Player
     /// <summary>
     /// キャラクターエンティティの再構築を行うオブジェクト
     /// </summary>
-    internal class PlayerFactory
+    internal class CommonCharacterFactory
     {
         /// <summary>
         /// コマンドを用いて再構築を行う

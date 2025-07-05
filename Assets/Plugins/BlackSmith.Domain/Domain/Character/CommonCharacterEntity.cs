@@ -1,10 +1,9 @@
-﻿using BlackSmith.Domain.Character.Interface;
-using System;
+﻿using System;
 
 namespace BlackSmith.Domain.Character.Player
 {
     // 名前やレベルなど、キャラクターの基本情報を保持する
-    public class CommonCharacterEntity : ICharacterEntity, IEquatable<CommonCharacterEntity>
+    public class CommonCharacterEntity : IEquatable<CommonCharacterEntity>
     {
         public CharacterID ID { get; }
         public CharacterName Name { get; private set; }
@@ -24,7 +23,7 @@ namespace BlackSmith.Domain.Character.Player
 
         /// <summary> 名前の変更を行う </summary>
         /// <param name="name">変更する名前</param>
-        void ICharacterEntity.ChangeName(CharacterName name)
+        public void ChangeName(CharacterName name)
         {
             Name = name ?? throw new ArgumentNullException("Not found CharacterName. (O94YoFRG)");
         }

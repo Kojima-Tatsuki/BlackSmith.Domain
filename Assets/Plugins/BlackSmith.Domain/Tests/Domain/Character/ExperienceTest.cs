@@ -56,7 +56,7 @@ namespace BlackSmith.Domain.Character
             var experience = new Experience(value);
 
             var serialized = JsonConvert.SerializeObject(experience);
-            var deserialized = JsonConvert.DeserializeObject<Experience>(serialized);
+            var deserialized = JsonConvert.DeserializeObject<Experience>(serialized) ?? throw new InvalidOperationException();
 
             Assert.That(experience, Is.EqualTo(deserialized));
             Assert.That(experience.Value, Is.EqualTo(deserialized.Value));

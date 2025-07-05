@@ -22,7 +22,7 @@ namespace BlackSmith.Usecase.Character.PlayerCommonEntityProvideUsecaseTest
         [TestCaseSource(nameof(BuildCommonEntityTestCases))]
         public void BuildCommonEntityPasses(CommonCharacterReconstructCommand command)
         {
-            var entity = PlayerCommonEntityProvideUsecase.BuildCommonEntity(command);
+            var entity = CommonCharacterEntityProvideUsecase.BuildCommonEntity(command);
 
             Assert.That(entity, Is.Not.Null); // エラーが出ずインスタンスが返ればOK
         }

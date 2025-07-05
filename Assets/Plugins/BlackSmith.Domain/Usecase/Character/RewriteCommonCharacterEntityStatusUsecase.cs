@@ -1,5 +1,4 @@
 ﻿using BlackSmith.Domain.Character;
-using BlackSmith.Domain.Character.Interface;
 using BlackSmith.Domain.Character.Player;
 using BlackSmith.Usecase.Interface;
 using Cysharp.Threading.Tasks;
@@ -10,13 +9,13 @@ namespace BlackSmith.Usecase.Character
     /// <summary>
     /// キャラクターのステータスに変更を与える際に用いるユースケース
     /// </summary>
-    public class RewritePlayerCommonEntityStatusUsecase
+    public class RewriteCommonCharacterEntityStatusUsecase
     {
         private readonly ICommonCharacterEntityRepository repository;
 
-        public RewritePlayerCommonEntityStatusUsecase(ICommonCharacterEntityRepository playerRepository)
+        public RewriteCommonCharacterEntityStatusUsecase(ICommonCharacterEntityRepository repository)
         {
-            repository = playerRepository;
+            this.repository = repository;
         }
 
         /// <summary>
@@ -24,11 +23,11 @@ namespace BlackSmith.Usecase.Character
         /// </summary>
         /// <param name="id">書き換えるキャラクターのID</param>
         /// <param name="newName">書き換え先の名前</param>
-        public async UniTask RenamePlayer(CharacterID id, string newName)
+        public async UniTask Rename(CharacterID id, string newName)
         {
             var name = new CharacterName(newName);
 
-            var entity = (await repository.FindByID(id)) as ICharacterEntity ?? throw new ArgumentException($"指定したidのキャラクターは存在しません, {id}");
+            var entity = (await repository.FindByID(id)) ?? throw new ArgumentException($"指定したidのキャラクターは存在しません, {id}");
 
             entity.ChangeName(name);
 
