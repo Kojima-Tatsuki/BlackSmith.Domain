@@ -12,9 +12,9 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class RewritePlayerCommonEntityStatusUsecase
     {
-        private readonly ICharacterCommonEntityRepository repository;
+        private readonly ICommonCharacterEntityRepository repository;
 
-        public RewritePlayerCommonEntityStatusUsecase(ICharacterCommonEntityRepository playerRepository)
+        public RewritePlayerCommonEntityStatusUsecase(ICommonCharacterEntityRepository playerRepository)
         {
             repository = playerRepository;
         }

@@ -13,9 +13,9 @@ namespace BlackSmith.Usecase.Character
     /// </summary>
     public class AdjustPlayerCommonEntityUsecase
     {
-        private readonly ICharacterCommonEntityRepository repository;
+        private readonly ICommonCharacterEntityRepository repository;
 
-        public AdjustPlayerCommonEntityUsecase(ICharacterCommonEntityRepository playerRepository)
+        public AdjustPlayerCommonEntityUsecase(ICommonCharacterEntityRepository playerRepository)
         {
             repository = playerRepository;
         }

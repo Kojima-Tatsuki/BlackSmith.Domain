@@ -28,7 +28,7 @@ namespace BlackSmith.Usecase.Character
 
         [Test(Description = "CreateCharacterのテスト")]
         [TestCaseSource(nameof(CreateCharacterTestCases))]
-        public async Task CreateCharacterPasses(ICharacterCommonEntityRepository repository, string name, Type? exception)
+        public async Task CreateCharacterPasses(ICommonCharacterEntityRepository repository, string name, Type? exception)
         {
             var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
@@ -75,7 +75,7 @@ namespace BlackSmith.Usecase.Character
 
         [Test(Description = "ReconstructCharacterのテスト")]
         [TestCaseSource(nameof(ReconstructCharacterTestCases))]
-        public async Task ReconstructCharacterPasses(ICharacterCommonEntityRepository repository, CommonCharacterReconstructCommand command, Type? exception)
+        public async Task ReconstructCharacterPasses(ICommonCharacterEntityRepository repository, CommonCharacterReconstructCommand command, Type? exception)
         {
             var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
@@ -125,7 +125,7 @@ namespace BlackSmith.Usecase.Character
 
         [Test(Description = "DeletePlayerのテスト")]
         [TestCaseSource(nameof(DeleteCharacterTestCases))]
-        public async Task DeleteCharacterPasses(ICharacterCommonEntityRepository repository, CharacterID id, Type? exception)
+        public async Task DeleteCharacterPasses(ICommonCharacterEntityRepository repository, CharacterID id, Type? exception)
         {
             var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
@@ -176,7 +176,7 @@ namespace BlackSmith.Usecase.Character
 
         [Test(Description = "GetPlayerDataのテスト")]
         [TestCaseSource(nameof(GetCharacterTestCases))]
-        public async Task GetCharacterPasses(ICharacterCommonEntityRepository repository, CharacterID id, CommonCharacterEntity? target, Type? exception)
+        public async Task GetCharacterPasses(ICommonCharacterEntityRepository repository, CharacterID id, CommonCharacterEntity? target, Type? exception)
         {
             var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
@@ -200,7 +200,7 @@ namespace BlackSmith.Usecase.Character
         }
     }
 
-    internal class MockCharacterCommonEntityRepository : ICharacterCommonEntityRepository
+    internal class MockCharacterCommonEntityRepository : ICommonCharacterEntityRepository
     {
         private Dictionary<CharacterID, CommonCharacterEntity> players;
 
