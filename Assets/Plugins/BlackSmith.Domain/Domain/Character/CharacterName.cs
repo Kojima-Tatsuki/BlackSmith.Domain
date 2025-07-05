@@ -2,13 +2,13 @@
 
 #nullable enable
 
-namespace BlackSmith.Domain.Character.Player
+namespace BlackSmith.Domain.Character
 {
-    public record PlayerName
+    public record CharacterName
     {
         public string Value { get; }
 
-        public PlayerName(string value)
+        public CharacterName(string value)
         {
             if (!IsValid(value))
                 throw new ArgumentException("名前は1文字以上でなければなりません");

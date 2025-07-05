@@ -9,17 +9,17 @@ using System;
 
 namespace BlackSmith.Usecase.Character.Battle
 {
-    public class AdjustPlayerBattleEntityUsecase
+    public class AdjustBattlePlayerEntityUsecase
     {
-        private readonly IPlayerBattleEntityRepository repository;
+        private readonly IBattleCharacterEntityRepository repository;
 
-        public AdjustPlayerBattleEntityUsecase(IPlayerBattleEntityRepository playerRepository)
+        public AdjustBattlePlayerEntityUsecase(IBattleCharacterEntityRepository playerRepository)
         {
             repository = playerRepository;
         }
 
 
-        public async UniTask<PlayerBattleEntity> CreateCharacter(PlayerCommonEntity entity)
+        public async UniTask<BattleCharacterEntity> CreateCharacter(CommonCharacterEntity entity)
         {
             if (await repository.IsExist(entity.ID))
                 throw new ArgumentException($"指定したidのキャラクターは既に存在しています {entity.ID}");
@@ -32,16 +32,16 @@ namespace BlackSmith.Usecase.Character.Battle
             var battleModule = new CharacterBattleModule(health, levelDependParams, equimentModule, statusModule);
             var command = new PlayerBattleReconstructCommand(entity.ID, battleModule);
 
-            var battleEntity = new PlayerBattleEntity(command);
+            var battleEntity = new BattleCharacterEntity(command);
 
             await repository.Register(battleEntity);
 
             return battleEntity;
         }
 
-        public async UniTask<PlayerBattleEntity> ReconstructPlayer(PlayerBattleReconstructCommand command)
+        public async UniTask<BattleCharacterEntity> ReconstructPlayer(PlayerBattleReconstructCommand command)
         {
-            var entity = new PlayerBattleEntity(command);
+            var entity = new BattleCharacterEntity(command);
 
             if (!await repository.IsExist(entity.ID))
                 await repository.Register(entity);
@@ -49,7 +49,7 @@ namespace BlackSmith.Usecase.Character.Battle
             return entity;
         }
 
-        public async UniTask<PlayerBattleEntity?> GetCharacter(CharacterID id)
+        public async UniTask<BattleCharacterEntity?> GetCharacter(CharacterID id)
         {
             if (!await repository.IsExist(id))
                 return null;

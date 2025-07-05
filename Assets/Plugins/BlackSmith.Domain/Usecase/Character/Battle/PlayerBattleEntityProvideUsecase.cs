@@ -11,12 +11,12 @@ namespace BlackSmith.Usecase.Character.Battle
         /// <param name="command"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static PlayerBattleEntity BuildBattleEntity(PlayerBattleReconstructCommand command)
+        public static BattleCharacterEntity BuildBattleEntity(PlayerBattleReconstructCommand command)
         {
             if (command is null) 
                 throw new ArgumentNullException(nameof(command));
 
-            return new PlayerBattleEntity(command);
+            return new BattleCharacterEntity(command);
         }
     }
 }

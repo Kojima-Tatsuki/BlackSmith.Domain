@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace BlackSmith.Domain.Character.Player
+namespace BlackSmith.Domain.Character
 {
     /// <summary>
     /// 経験値量
@@ -12,16 +12,19 @@ namespace BlackSmith.Domain.Character.Player
         private static readonly int InitKillRequirement = 5;
 
         // 1Lv -> 2Lv になる為に必要な経験値量
-        private static readonly int InitExpRequirement = 100;
+        private static readonly int InitExpRequirement = 10;
 
         // 1レベル上の敵を倒した時に貰える経験値の倍率
-        private static readonly float LevelDifferenceMultiplier = 1.25f;
+        private static readonly float LevelDifferenceMultiplier = 1.1f;
 
         public int Value { get; }
 
         [JsonConstructor]
         internal Experience(int value = 0)
         {
+            if (!IsValid(value))
+                throw new ArgumentOutOfRangeException("経験値として適さない値が投入されました。");
+
             Value = value;
         }
 
@@ -50,10 +53,10 @@ namespace BlackSmith.Domain.Character.Player
         /// </summary>
         /// <param name="level">敵のレベル</param>
         /// <returns>取得経験値量</returns>
-        internal static Experience ReceveExp(int level)
+        internal static Experience ReceiveExp(int level)
         {
             // 次のレベルまでに必要な経験値量 / 倒す必要のある敵数
-            return new Experience((int)Math.Round((InitExpRequirement * Math.Pow(LevelDifferenceMultiplier, level - 1)) / InitKillRequirement));
+            return new Experience((int)(InitExpRequirement * Math.Pow(LevelDifferenceMultiplier, level - 1) / InitKillRequirement));
         }
 
         /// <summary>
@@ -64,9 +67,12 @@ namespace BlackSmith.Domain.Character.Player
         /// <returns></returns>
         internal static Experience RequiredCumulativeExp(int level)
         {
+            if (level <= 0 || level > 100)
+                throw new ArgumentOutOfRangeException("レベルは1～100の範囲で入力してください。");
+
             // I : InitExpRequirement
             // A : LevelDifferenceMultiplier
-            // I * (1 - a^(level - 1)) / (1 - a)
+            // I * (1 - A ^ (level - 1)) / (1 - A)
             return new Experience((int)(InitExpRequirement * (1 - Math.Pow(LevelDifferenceMultiplier, level - 1)) / (1 - LevelDifferenceMultiplier)));
         }
 
@@ -79,7 +85,7 @@ namespace BlackSmith.Domain.Character.Player
         {
             // I : InitExpRequirement
             // A : LevelDifferenceMultiplier
-            // log_A ((1 - exp / I * (1 - A)) + 1
+            // log_A (1 - (exp / I * (1 - A)) + 1
 
             // 丸め誤差の関係で正確な値が出ない
             var result = (int)Math.Log(1 - (cumExp.Value * (1 - (double)LevelDifferenceMultiplier) / InitExpRequirement), LevelDifferenceMultiplier) + 1;
@@ -92,6 +98,13 @@ namespace BlackSmith.Domain.Character.Player
         internal static double Cld(Experience cumExp)
         {
             return Math.Log(1 - (cumExp.Value * (1 - (double)LevelDifferenceMultiplier) / InitExpRequirement), LevelDifferenceMultiplier) + 1;
+        }
+
+        private bool IsValid(int value)
+        {
+            if (value < 0)
+                return false;
+            return true;
         }
     }
 }

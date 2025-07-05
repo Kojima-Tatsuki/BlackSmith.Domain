@@ -66,12 +66,12 @@ namespace BlackSmith.Domain.Character.Battle
 
         internal record ChangeEquipmentResult
         {
-            public CharacterBattleModule Modeule { get; }
+            public CharacterBattleModule Module { get; }
             public EquippableItem? RemovedItem { get; }
 
             internal ChangeEquipmentResult(CharacterBattleModule module, EquippableItem? item)
             {
-                Modeule = module;
+                Module = module;
                 RemovedItem = item;
             }
         }

@@ -8,28 +8,28 @@ using System;
 namespace BlackSmith.Usecase.Interface
 {
     /// <summary>
-    /// すべてのプレイヤーエンティティを保管するリポジトリ
+    /// すべてのキャラクターエンティティを保管するリポジトリ
     /// </summary>
-    public interface IPlayerCommonEntityRepository
+    public interface ICommonCharacterEntityRepository
     {
         /// <summary>
         /// キャラクターの新規登録を行う
         /// </summary>
         /// <param name="character">登録を行うキャラクター</param>
         /// <exception cref="InvalidOperationException">既にキャラクターが登録されている場合</exception>
-        UniTask Register(PlayerCommonEntity character);
+        UniTask Register(CommonCharacterEntity character);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="character"></param>
         /// <exception cref="InvalidOperationException">変更を行うキャラクターが存在しない場合</exception>
-        UniTask UpdateCharacter(PlayerCommonEntity character);
+        UniTask UpdateCharacter(CommonCharacterEntity character);
 
-        UniTask<PlayerCommonEntity?> FindByID(CharacterID id);
+        UniTask<CommonCharacterEntity?> FindByID(CharacterID id);
 
-        // データベースからすべてのPlauerを取得することになるため、使用不可とする
-        // IReadOnlyCollection<PlayerCommonEntity> GetAllPlayers();
+        // データベースからすべてのキャラクターを取得することになるため、使用不可とする
+        // IReadOnlyCollection<CommonCharacterEntity> GetAllCharacters();
 
         UniTask<bool> IsExist(CharacterID id);
 

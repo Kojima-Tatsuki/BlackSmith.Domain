@@ -57,22 +57,22 @@ namespace BlackSmith.Domain.Battle
         }
 
         // CaracterLevelクラスを使用したHealthPointのインスタンス化テスト
-        [Test(Description = "HelthPointインスタンス化テスト")]
+        [Test(Description = "HealthPointインスタンス化テスト")]
         [TestCase(10, null, Category = "正常系")]
-        [TestCase(0, typeof(ArgumentException), Category = "異常系")]
-        [TestCase(-1, typeof(ArgumentException), Category = "異常系")]
+        [TestCase(0, typeof(ArgumentOutOfRangeException), Category = "異常系")]
+        [TestCase(-1, typeof(ArgumentOutOfRangeException), Category = "異常系")]
         [TestCase(null, typeof(ArgumentNullException), Category = "異常系")]
         public void HealthPointInstanceFromCharacterLevelPasses(int? level, Type? exception = null)
         {
             if (exception is null)
-                Assert.That(new HealthPoint(new CharacterLevel(level ?? 0)),
-                                   Is.EqualTo(new HealthPoint(new CharacterLevel(level ?? 1))));
+                Assert.That(new HealthPoint(new CharacterLevel(Experience.RequiredCumulativeExp(level ?? 0))),
+                                   Is.EqualTo(new HealthPoint(new CharacterLevel(Experience.RequiredCumulativeExp(level ?? 1)))));
             else
             {
                 if (level == null)
                     Assert.Throws(exception, () => new HealthPoint(level: null!));
                 else
-                    Assert.Throws(exception, () => new HealthPoint(new CharacterLevel(level ?? 1)));
+                    Assert.Throws(exception, () => new HealthPoint(new CharacterLevel(Experience.RequiredCumulativeExp(level ?? 1))));
             }
         }
 

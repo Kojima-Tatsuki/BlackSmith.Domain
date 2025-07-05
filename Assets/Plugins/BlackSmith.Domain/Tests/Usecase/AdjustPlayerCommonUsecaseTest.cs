@@ -17,7 +17,7 @@ namespace BlackSmith.Usecase.Character
     {
         private static IEnumerable CreateCharacterTestCases()
         {
-            var repository = new MockPlayerCommonEntityRepository();
+            var repository = new MockCharacterCommonEntityRepository();
             var name = "TestPlayerName";
 
             yield return new TestCaseData(repository, name, null).SetCategory("正常系");
@@ -28,9 +28,9 @@ namespace BlackSmith.Usecase.Character
 
         [Test(Description = "CreateCharacterのテスト")]
         [TestCaseSource(nameof(CreateCharacterTestCases))]
-        public async Task CreateCharacterPasses(IPlayerCommonEntityRepository repository, string name, Type? exception)
+        public async Task CreateCharacterPasses(ICommonCharacterEntityRepository repository, string name, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -58,30 +58,30 @@ namespace BlackSmith.Usecase.Character
 
         private static IEnumerable ReconstructCharacterTestCases()
         {
-            var repository = new MockPlayerCommonEntityRepository();
+            var repository = new MockCharacterCommonEntityRepository();
             var name = "TestPlayerName";
             var id = new CharacterID();
-            var level = new PlayerLevel();
+            var level = new CharacterLevel();
 
-            var command = new PlayerCommonReconstructCommand(id.Value, name, level.CumulativeExp.Value);
+            var command = new CommonCharacterReconstructCommand(id.Value, name, level.CumulativeExp.Value);
 
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
 
             // 既に同じIDのプレイヤーが存在する場合
-            var entity = PlayerFactory.Reconstruct(new PlayerCommonReconstructCommand(id, new PlayerName(name), level));
-            var failRep = new MockPlayerCommonEntityRepository(new Dictionary<CharacterID, PlayerCommonEntity>() { { entity.ID, entity } });
+            var entity = CommonCharacterFactory.Reconstruct(new CommonCharacterReconstructCommand(id, new CharacterName(name), level));
+            var failRep = new MockCharacterCommonEntityRepository(new Dictionary<CharacterID, CommonCharacterEntity>() { { entity.ID, entity } });
             yield return new TestCaseData(failRep, command, typeof(InvalidOperationException)).SetCategory("異常系");
         }
 
         [Test(Description = "ReconstructCharacterのテスト")]
         [TestCaseSource(nameof(ReconstructCharacterTestCases))]
-        public async Task ReconstructCharacterPasses(IPlayerCommonEntityRepository repository, PlayerCommonReconstructCommand command, Type? exception)
+        public async Task ReconstructCharacterPasses(ICommonCharacterEntityRepository repository, CommonCharacterReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
             if (exception is null)
             {
-                var character = await usecase.ReconstructPlayer(command);
+                var character = await usecase.ReconstructCharacter(command);
 
                 var entity = await repository.FindByID(character.ID);
 
@@ -94,7 +94,7 @@ namespace BlackSmith.Usecase.Character
             {
                 try
                 {
-                    await usecase.ReconstructPlayer(command);
+                    await usecase.ReconstructCharacter(command);
                 }
                 catch (Exception e)
                 {
@@ -107,46 +107,46 @@ namespace BlackSmith.Usecase.Character
         {
             var name = "TestPlayerName";
             var id = new CharacterID();
-            var level = new PlayerLevel();
+            var level = new CharacterLevel();
 
-            var entity = PlayerFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
+            var entity = CommonCharacterFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
 
-            var repository = new MockPlayerCommonEntityRepository(new Dictionary<CharacterID, PlayerCommonEntity>
+            var repository = new MockCharacterCommonEntityRepository(new Dictionary<CharacterID, CommonCharacterEntity>
             {
                 { entity.ID, entity }
             });
 
             yield return new TestCaseData(repository, id, null).SetCategory("正常系");
 
-            // 存在しないIDのプレイヤーを削除しようとした場合
+            // 存在しないIDのキャラクターを削除しようとした場合
             var characterId = new CharacterID();
             yield return new TestCaseData(repository, characterId, typeof(InvalidOperationException)).SetCategory("異常系");
         }
 
         [Test(Description = "DeletePlayerのテスト")]
         [TestCaseSource(nameof(DeleteCharacterTestCases))]
-        public async Task DeleteCharacterPasses(IPlayerCommonEntityRepository repository, CharacterID id, Type? exception)
+        public async Task DeleteCharacterPasses(ICommonCharacterEntityRepository repository, CharacterID id, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
             if (exception is null)
             {
                 Assert.That(await repository.IsExist(id), Is.True);
 
-                await usecase.DeletePlayer(id);
+                await usecase.DeleteCharacter(id);
 
                 Assert.That(await repository.IsExist(id), Is.False);
 
-                await repository.Register(PlayerFactory.Reconstruct(new(id.Value, "TestPlayerName", 0))); // 消した後は追加して、元に戻す
+                await repository.Register(CommonCharacterFactory.Reconstruct(new(id.Value, "TestPlayerName", 0))); // 消した後は追加して、元に戻す
             }
             else
             {
                 try
                 {
-                    await usecase.DeletePlayer(id);
+                    await usecase.DeleteCharacter(id);
 
                     // この書き方だとThrowsAsyncで非同期処理が走ってくれない
-                    // await Assert.ThrowsAsync(exception, async () => await usecase.DeletePlayer(id).AsTask());
+                    // await Assert.ThrowsAsync(exception, async () => await usecase.DeleteCharacter(id).AsTask());
                 }
                 catch (Exception e)
                 {
@@ -157,28 +157,28 @@ namespace BlackSmith.Usecase.Character
 
         private static IEnumerable GetCharacterTestCases()
         {
-            var repository = new MockPlayerCommonEntityRepository();
+            var repository = new MockCharacterCommonEntityRepository();
 
             var name = "TestPlayerName";
             var id = new CharacterID();
-            var level = new PlayerLevel();
+            var level = new CharacterLevel();
 
-            var entity = PlayerFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
+            var entity = CommonCharacterFactory.Reconstruct(new(id.Value, name, level.CumulativeExp.Value));
 
             repository.Register(entity).Forget();
 
             yield return new TestCaseData(repository, id, entity, null).SetCategory("正常系");
 
-            // 存在しないIDのプレイヤーを取得しようとした場合
+            // 存在しないIDのキャラクターを取得しようとした場合
             var donotExistId = new CharacterID();
             yield return new TestCaseData(repository, donotExistId, null, null).SetCategory("正常系");
         }
 
         [Test(Description = "GetPlayerDataのテスト")]
         [TestCaseSource(nameof(GetCharacterTestCases))]
-        public async Task GetCharacterPasses(IPlayerCommonEntityRepository repository, CharacterID id, PlayerCommonEntity? target, Type? exception)
+        public async Task GetCharacterPasses(ICommonCharacterEntityRepository repository, CharacterID id, CommonCharacterEntity? target, Type? exception)
         {
-            var usecase = new AdjustPlayerCommonEntityUsecase(repository);
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -200,16 +200,16 @@ namespace BlackSmith.Usecase.Character
         }
     }
 
-    internal class MockPlayerCommonEntityRepository : IPlayerCommonEntityRepository
+    internal class MockCharacterCommonEntityRepository : ICommonCharacterEntityRepository
     {
-        private Dictionary<CharacterID, PlayerCommonEntity> players;
+        private Dictionary<CharacterID, CommonCharacterEntity> players;
 
-        internal MockPlayerCommonEntityRepository()
+        internal MockCharacterCommonEntityRepository()
         {
-            players = new Dictionary<CharacterID, PlayerCommonEntity>();
+            players = new Dictionary<CharacterID, CommonCharacterEntity>();
         }
 
-        internal MockPlayerCommonEntityRepository(Dictionary<CharacterID, PlayerCommonEntity> players)
+        internal MockCharacterCommonEntityRepository(Dictionary<CharacterID, CommonCharacterEntity> players)
         {
             this.players = players;
         }
@@ -217,12 +217,12 @@ namespace BlackSmith.Usecase.Character
         public async UniTask Delete(CharacterID id)
         {
             if (!await IsExist(id))
-                throw new InvalidOperationException("削除対象のプレイヤーが存在しません");
+                throw new InvalidOperationException("削除対象のキャラクターが存在しません");
 
             var removed = players.Remove(id);
         }
 
-        public async UniTask<PlayerCommonEntity?> FindByID(CharacterID id)
+        public async UniTask<CommonCharacterEntity?> FindByID(CharacterID id)
         {
             await UniTask.CompletedTask;
             return players[id] ?? throw new InvalidOperationException();
@@ -235,15 +235,15 @@ namespace BlackSmith.Usecase.Character
             return result;
         }
 
-        public async UniTask Register(PlayerCommonEntity character)
+        public async UniTask Register(CommonCharacterEntity character)
         {
             if (await IsExist(character.ID))
-                throw new InvalidOperationException("既にプレイヤーが登録されています");
+                throw new InvalidOperationException("既にキャラクターが登録されています");
 
             players.Add(character.ID, character);
         }
 
-        public async UniTask UpdateCharacter(PlayerCommonEntity character)
+        public async UniTask UpdateCharacter(CommonCharacterEntity character)
         {
             await UniTask.CompletedTask;
             players[character.ID] = character;

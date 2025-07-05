@@ -1,4 +1,5 @@
-﻿using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character;
+using BlackSmith.Domain.Character.Player;
 using System;
 using System.Collections.Generic;
 
@@ -28,7 +29,7 @@ namespace BlackSmith.Domain.Skill
         }
 
         /// <summary>スキルが取得できるか</summary>
-        internal bool CanSkillAcquisition(SkillAcquisitionConditions requireParaeters) => AcquisitionConditions.CanSkillAcquisition(requireParaeters);
+        internal bool CanSkillAcquisition(SkillAcquisitionConditions requireParameters) => AcquisitionConditions.CanSkillAcquisition(requireParameters);
     }
 
     /// <summary>スキルのID</summary>
@@ -82,11 +83,11 @@ namespace BlackSmith.Domain.Skill
 
         internal SkillProficiency(SkillExperience exp = null!)
         {
-            var calclator = new SkillExpCalculator();
+            var calculator = new SkillExpCalculator();
 
             CumulativeExp = exp ?? new SkillExperience();
 
-            Value = calclator.CurrentProficiency(CumulativeExp);
+            Value = calculator.CurrentProficiency(CumulativeExp);
         }
 
         /// <summary>
@@ -117,12 +118,12 @@ namespace BlackSmith.Domain.Skill
     /// <summary>スキルの取得条件</summary>
     public class SkillAcquisitionConditions
     {
-        public PlayerLevel Level { get; }
+        public CharacterLevel Level { get; }
         public Strength Strength { get; }
         public Agility Agility { get; }
         public IReadOnlyCollection<SkillAndProficiency> RequiredSkills { get; }
 
-        internal SkillAcquisitionConditions(PlayerLevel level, Strength strength, Agility agility, IReadOnlyCollection<SkillAndProficiency>? requireSkills = null)
+        internal SkillAcquisitionConditions(CharacterLevel level, Strength strength, Agility agility, IReadOnlyCollection<SkillAndProficiency>? requireSkills = null)
         {
             Level = level;
             Strength = strength;
@@ -198,7 +199,7 @@ namespace BlackSmith.Domain.Skill
         /// </summary>
         /// <param name="level">現在のレベル</param>
         /// <returns>取得できる経験値</returns>
-        internal SkillExperience ReceveExp(int level)
+        internal SkillExperience ReceiveExp(int level)
         {
             return new SkillExperience((int)Math.Round(InitRequireExp / InitRequireCount * Math.Pow(LevelDifferenceMultiplier, level - 1)));
         }

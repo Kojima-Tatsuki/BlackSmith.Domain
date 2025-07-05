@@ -1,23 +1,33 @@
-﻿using Newtonsoft.Json;
+﻿using BlackSmith.Domain.Character.Player;
+using Newtonsoft.Json;
 using System;
+
+#nullable enable
 
 namespace BlackSmith.Domain.Character
 {
-    // Expを利用しないため、レベルに変動を起こさせない
+    /// <summary>
+    /// プレイヤーのレベル
+    /// </summary>
+    /// <remarks>Expでもってすべての計算を行っている</remarks>
     public record CharacterLevel
     {
-        public int Value { get; }
+        public const int MaxValue = 100;
+
+        /// <summary>
+        /// 累計獲得経験値
+        /// </summary>
+        public Experience CumulativeExp { get; }
 
         [JsonConstructor]
-        internal CharacterLevel(int value)
+        internal CharacterLevel(Experience? cumulativeExp = null) : base()
         {
-            if (!IsVaild(value))
-                throw new ArgumentException($"0以下の値はレベルとして扱えません, value : {value}. (cz7lNbVb)");
-
-            Value = value;
+            CumulativeExp = cumulativeExp ?? new Experience();
         }
 
-        private bool IsVaild(int value)
+        public int Value => Experience.CurrentLevel(CumulativeExp);
+
+        private protected bool IsValid(int value)
         {
             if (value <= 0)
                 return false;
@@ -25,6 +35,23 @@ namespace BlackSmith.Domain.Character
             return true;
         }
 
+        /// <summary>
+        /// 経験値を加える
+        /// </summary>
+        /// <param name="exp">加える経験値量</param>
+        /// <returns>加えたあとのレベル</returns>
+        internal CharacterLevel AddExp(Experience exp)
+        {
+            return new CharacterLevel(CumulativeExp.Add(exp));
+        }
+
+        /// <summary>
+        /// 最大レベルかどうかを返す
+        /// </summary>
+        /// <returns>最大レベルなら真を返す</returns>
+        internal bool IsMaxLevel() => Value == MaxValue;
+
+        // TODO: これはLevelのロジックではなく、Skillのロジックなので移動させる
         /// <summary>取得できるスキル数を返す</summary>
         /// <returns></returns>
         internal int GetNumberOfSkillsAvailable()

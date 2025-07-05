@@ -12,10 +12,10 @@ namespace BlackSmith.Usecase.Character.Battle
     // Usecase層内部のクラスの可能性あり
     internal class BattleEquipmentUsecase
     {
-        private IPlayerBattleEntityRepository PlayerRepository { get; }
+        private IBattleCharacterEntityRepository PlayerRepository { get; }
         private IInventoryRepository InventoryRepository { get; }
 
-        public BattleEquipmentUsecase(IPlayerBattleEntityRepository playerRepository, IInventoryRepository inventoryRepository)
+        public BattleEquipmentUsecase(IBattleCharacterEntityRepository playerRepository, IInventoryRepository inventoryRepository)
         {
             PlayerRepository = playerRepository;
             InventoryRepository = inventoryRepository;

@@ -7,13 +7,13 @@ using System;
 namespace BlackSmith.Usecase.Character.Battle
 {
     /// <summary>
-    /// プレイヤーにダメージを与えるユースケース
+    /// キャラクターにダメージを与えるユースケース
     /// </summary>
     public class CharacterDamageUsecase
     {
-        private IPlayerBattleEntityRepository PlayerRepository { get; }
+        private IBattleCharacterEntityRepository PlayerRepository { get; }
 
-        public CharacterDamageUsecase(IPlayerBattleEntityRepository playerRepository)
+        public CharacterDamageUsecase(IBattleCharacterEntityRepository playerRepository)
         {
             PlayerRepository = playerRepository;
         }
@@ -29,9 +29,9 @@ namespace BlackSmith.Usecase.Character.Battle
             var receiver = await PlayerRepository.FindByID(receiverId) as IBattleCharacter;
 
             if (attacker is null)
-                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {attackerId}. (bHB0WXxR)");
+                throw new ArgumentException($"そのようなIDのキャラクターは存在しません ID : {attackerId}. (bHB0WXxR)");
             if (receiver is null)
-                throw new ArgumentException($"そのようなIDのプレイヤーは存在しません ID : {receiverId}. (DxYWTkAg6)");
+                throw new ArgumentException($"そのようなIDのキャラクターは存在しません ID : {receiverId}. (DxYWTkAg6)");
 
             var levelGap = new LevelGapOfAttackerAndReceiver(receiver.Level, attacker.Level);
 
@@ -39,7 +39,7 @@ namespace BlackSmith.Usecase.Character.Battle
 
             receiver.TakeDamage(damage);
 
-            await PlayerRepository.UpdateCharacter((receiver as PlayerBattleEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、PlayerEntityではありません. (jAv4M0Pb)"));
+            await PlayerRepository.UpdateCharacter((receiver as BattleCharacterEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、CharacterEntityではありません. (jAv4M0Pb)"));
         }
     }
 }

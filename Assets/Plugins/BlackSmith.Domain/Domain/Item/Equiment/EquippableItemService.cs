@@ -1,4 +1,4 @@
-﻿using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character;
 using System;
 
 namespace BlackSmith.Domain.Item.Equipment
@@ -11,7 +11,7 @@ namespace BlackSmith.Domain.Item.Equipment
         /// </summary>
         /// <param name="item">強化対象のアイテム</param>
         /// <param name="enchanceType">追加付与を試みるパラメータ</param>
-        /// <param name="parameters">強化を試みるプレイヤーのステータス</param>
+        /// <param name="parameters">強化を試みるキャラクターのステータス</param>
         /// <returns>強化結果</returns>
         internal EnhancedResult Enhance(EquippableItem item, EnhancementParameter.EnhanceType enchanceType, DependentParametersForEnhancement parameters)
         {
@@ -42,9 +42,9 @@ namespace BlackSmith.Domain.Item.Equipment
         {
             var baseLevel = Math.Max(item.RequireParameter.Level.Value - 5, 0);
 
-            var diff = Math.Min(parameters.PlayerLevel.Value - baseLevel, 5);
+            var diff = Math.Min(parameters.CharacterLevel.Value - baseLevel, 5);
 
-            var result = MathF.Min(90 - 10 * item.EnhancementParameter.GetEnchancedCount + diff, 100) / 100;
+            var result = MathF.Min(90 - 10 * item.EnhancementParameter.GetEnhancedCount + diff, 100) / 100;
 
             return result;
         }
@@ -71,11 +71,11 @@ namespace BlackSmith.Domain.Item.Equipment
         /// <summary>強化の際に依存するアイテム以外のパラメータ</summary>
         public class DependentParametersForEnhancement
         {
-            public PlayerLevel PlayerLevel { get; }
+            public CharacterLevel CharacterLevel { get; }
 
-            internal DependentParametersForEnhancement(PlayerLevel playerLevel)
+            internal DependentParametersForEnhancement(CharacterLevel characterLevel)
             {
-                PlayerLevel = playerLevel;
+                CharacterLevel = characterLevel;
             }
         }
     }
