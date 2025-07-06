@@ -18,21 +18,21 @@ namespace BlackSmith.Usecase.Character.Battle
     {
         private static IEnumerable TakeDamagePlayerByPlayerTestCases()
         {
-            var attackerLevel = new PlayerLevel(Experience.RequiredCumulativeExp(10));
-            var attacker = new PlayerBattleEntity(
+            var attackerLevel = new CharacterLevel(Experience.RequiredCumulativeExp(10));
+            var attacker = new BattleCharacterEntity(
                 new PlayerBattleReconstructCommand(new CharacterID(),
                     new CharacterBattleModule(new HealthPoint(attackerLevel),
                         new LevelDependentParameters(attackerLevel, new Strength(10), new Agility(20)),
                         new BattleEquipmentModule(null, null),
                         new BattleStatusEffectModule())));
-            var recieverLevel = new PlayerLevel(Experience.RequiredCumulativeExp(10));
-            var reciever = new PlayerBattleEntity(
+            var recieverLevel = new CharacterLevel(Experience.RequiredCumulativeExp(10));
+            var reciever = new BattleCharacterEntity(
                 new PlayerBattleReconstructCommand(new CharacterID(),
                     new CharacterBattleModule(new HealthPoint(recieverLevel),
                         new LevelDependentParameters(recieverLevel, new Strength(10), new Agility(20)),
                         new BattleEquipmentModule(null, null),
                         new BattleStatusEffectModule())));
-            var repository = new MockPlayerBattleEntityRepository(new Dictionary<CharacterID, PlayerBattleEntity>
+            var repository = new MockPlayerBattleEntityRepository(new Dictionary<CharacterID, BattleCharacterEntity>
                 {
                     {attacker.ID, attacker},
                     {reciever.ID, reciever}
@@ -43,7 +43,7 @@ namespace BlackSmith.Usecase.Character.Battle
 
         [Test(Description = "TakeDamagePlayerByPlayerのテスト")]
         [TestCaseSource(nameof(TakeDamagePlayerByPlayerTestCases))]
-        public async Task TakeDamagePlayerByPlayerPasses(IPlayerBattleEntityRepository repository, CharacterID attackerId, CharacterID recieverId, Type? exception)
+        public async Task TakeDamagePlayerByPlayerPasses(IBattleCharacterEntityRepository repository, CharacterID attackerId, CharacterID recieverId, Type? exception)
         {
             var usecase = new CharacterDamageUsecase(repository);
 
@@ -76,21 +76,21 @@ namespace BlackSmith.Usecase.Character.Battle
         }
     }
 
-    internal class MockPlayerBattleEntityRepository : IPlayerBattleEntityRepository
+    internal class MockPlayerBattleEntityRepository : IBattleCharacterEntityRepository
     {
-        private Dictionary<CharacterID, PlayerBattleEntity> characters { get; }
+        private Dictionary<CharacterID, BattleCharacterEntity> characters { get; }
 
         public MockPlayerBattleEntityRepository()
         {
-            characters = new Dictionary<CharacterID, PlayerBattleEntity>();
+            characters = new Dictionary<CharacterID, BattleCharacterEntity>();
         }
 
-        public MockPlayerBattleEntityRepository(Dictionary<CharacterID, PlayerBattleEntity> characters)
+        public MockPlayerBattleEntityRepository(Dictionary<CharacterID, BattleCharacterEntity> characters)
         {
             this.characters = characters;
         }
 
-        public async UniTask Register(PlayerBattleEntity character)
+        public async UniTask Register(BattleCharacterEntity character)
         {
             await UniTask.CompletedTask;
 
@@ -99,7 +99,7 @@ namespace BlackSmith.Usecase.Character.Battle
             characters.Add(character.ID, character);
         }
 
-        public async UniTask<PlayerBattleEntity?> FindByID(CharacterID id)
+        public async UniTask<BattleCharacterEntity?> FindByID(CharacterID id)
         {
             await UniTask.CompletedTask;
 
@@ -115,7 +115,7 @@ namespace BlackSmith.Usecase.Character.Battle
             return characters.ContainsKey(id);
         }
 
-        public async UniTask UpdateCharacter(PlayerBattleEntity character)
+        public async UniTask UpdateCharacter(BattleCharacterEntity character)
         {
             await UniTask.CompletedTask;
 

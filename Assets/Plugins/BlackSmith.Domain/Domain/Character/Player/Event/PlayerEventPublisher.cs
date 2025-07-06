@@ -19,17 +19,17 @@ namespace BlackSmith.Domain.Character.Player.Event
 
     // ドメインサービスとして提供される
     // publicクラスとして定義する必要性があるかは疑問
-    /// <summary>プレイヤーエンティティのイベントを提供する</summary>
+    /// <summary>キャラクターエンティティのイベントを提供する</summary>
     public class PlayerEventPublisher : IHealthEventObservable, IHealthEventObserver
     {
         /// <summary>
-        /// プレイヤーの体力が変更された時に発行する
+        /// キャラクターの体力が変更された時に発行する
         /// </summary>
         public Observable<PlayerHealthChangedEvent> OnPlayerHealthChanged => onPlayerHealthChanged;
         private readonly Subject<PlayerHealthChangedEvent> onPlayerHealthChanged;
 
         /// <summary>
-        /// プレイヤーが死亡した時に発行する
+        /// キャラクターが死亡した時に発行する
         /// </summary>
         public Observable<PlayerOnDeadEvent> OnPlayerDead => onPlayerDeadSubject;
         private readonly Subject<PlayerOnDeadEvent> onPlayerDeadSubject;

@@ -1,4 +1,5 @@
-﻿using BlackSmith.Domain.Character.Player;
+﻿using BlackSmith.Domain.Character;
+using BlackSmith.Domain.Character.Player;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -11,7 +12,7 @@ namespace BlackSmith.Domain.Item.Equipment
         [Test(Description = "EquippableItemのシリアライズ・デシリアライズテスト")]
         public void EquippableItemSerializeTestPasses()
         {
-            var requireParams = new RequireParameter(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(1), new Agility(1));
+            var requireParams = new RequireParameter(new CharacterLevel(Experience.RequiredCumulativeExp(1)), new Strength(1), new Agility(1));
             var command = new EquippableItem.CreateCommand("TestName", EquipmentType.Weapon, new EquipmentAttack(10), new EquipmentDefense(5), new EnhancementParameter(), new AdditionalParameter(), requireParams);
             var item = new EquippableItem(command);
 
@@ -27,7 +28,7 @@ namespace BlackSmith.Domain.Item.Equipment
             [Test(Description = "EquippableItem.CreateCommandのシリアライズ・デシリアライズテスト")]
             public void CreateCommandSerializeTestPasses()
             {
-                var requireParams = new RequireParameter(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(1), new Agility(1));
+                var requireParams = new RequireParameter(new CharacterLevel(Experience.RequiredCumulativeExp(1)), new Strength(1), new Agility(1));
                 var command = new EquippableItem.CreateCommand("TestName", EquipmentType.Weapon, new EquipmentAttack(10), new EquipmentDefense(5), new EnhancementParameter(), new AdditionalParameter(), requireParams);
 
                 var serialized = JsonConvert.SerializeObject(command);
@@ -99,7 +100,7 @@ namespace BlackSmith.Domain.Item.Equipment
         [Test(Description = "RequireParameterのシリアライズ・デシリアライズテスト")]
         public void RequireParameterSerializeTestPasses()
         {
-            var requireParams = new RequireParameter(new PlayerLevel(Experience.RequiredCumulativeExp(1)), new Strength(1), new Agility(1));
+            var requireParams = new RequireParameter(new CharacterLevel(Experience.RequiredCumulativeExp(1)), new Strength(1), new Agility(1));
 
             var serialized = JsonConvert.SerializeObject(requireParams);
 

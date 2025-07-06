@@ -26,7 +26,7 @@ namespace BlackSmith.Domain.Character.Battle
                 defense: new EquipmentDefense(1),
                 enhancementParameter: new EnhancementParameter(),
                 additionalParameter: new AdditionalParameter(),
-                requireParameter: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
+                requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
             var armor = new EquippableItem(new(
                 itemName: "MockArmor",
@@ -35,7 +35,7 @@ namespace BlackSmith.Domain.Character.Battle
                 defense: new EquipmentDefense(1),
                 enhancementParameter: new EnhancementParameter(),
                 additionalParameter: new AdditionalParameter(),
-                requireParameter: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
+                requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
             return new EquippableItem?[][] {
             new EquippableItem?[] { null, null },
@@ -55,7 +55,7 @@ namespace BlackSmith.Domain.Character.Battle
                 defense: new EquipmentDefense(1),
                 enhancementParameter: new EnhancementParameter(),
                 additionalParameter: new AdditionalParameter(),
-                requireParameter: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
+                requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
             var inCorrectWeapon = new EquippableItem(new(
                 itemName: "MockWeapon",
@@ -64,7 +64,7 @@ namespace BlackSmith.Domain.Character.Battle
                 defense: new EquipmentDefense(1),
                 enhancementParameter: new EnhancementParameter(),
                 additionalParameter: new AdditionalParameter(),
-                requireParameter: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
+                requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
             var armor = new EquippableItem(new(
                 itemName: "MockArmor",
@@ -73,7 +73,7 @@ namespace BlackSmith.Domain.Character.Battle
                 defense: new EquipmentDefense(1),
                 enhancementParameter: new EnhancementParameter(),
                 additionalParameter: new AdditionalParameter(),
-                requireParameter: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
+                requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
             return new EquippableItem?[][] {
             new EquippableItem?[] { currectWeapon, currectWeapon },
@@ -116,7 +116,7 @@ namespace BlackSmith.Domain.Character.Battle
                 defense: new EquipmentDefense(1),
                 enhancementParameter: new EnhancementParameter(),
                 additionalParameter: new AdditionalParameter(),
-                requireParameter: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
+                requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
             var armor = new EquippableItem(new(
                 itemName: "MockArmor",
@@ -125,7 +125,7 @@ namespace BlackSmith.Domain.Character.Battle
                 defense: new EquipmentDefense(1),
                 enhancementParameter: new EnhancementParameter(),
                 additionalParameter: new AdditionalParameter(),
-                requireParameter: new RequireParameter(new PlayerLevel(), new Strength(1), new Agility(1))));
+                requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
             var module = new BattleEquipmentModule(weapon, armor);
 

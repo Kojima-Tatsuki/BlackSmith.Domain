@@ -13,8 +13,8 @@ namespace BlackSmith.Domain.Battle
     {
         private static IEnumerable TakeDamageTestCases()
         {
-            var level = new PlayerLevel(Experience.RequiredCumulativeExp(10));
-            var reciever = new PlayerBattleEntity(
+            var level = new CharacterLevel(Experience.RequiredCumulativeExp(10));
+            var reciever = new BattleCharacterEntity(
                 new PlayerBattleReconstructCommand(new CharacterID(), 
                     new CharacterBattleModule(new HealthPoint(level), 
                         new LevelDependentParameters(level, new Strength(10), new Agility(20)), 
@@ -30,8 +30,8 @@ namespace BlackSmith.Domain.Battle
 
         private static IEnumerable HealHealthTestCases()
         {
-            var level = new PlayerLevel(Experience.RequiredCumulativeExp(10));
-            var reciever = new PlayerBattleEntity(
+            var level = new CharacterLevel(Experience.RequiredCumulativeExp(10));
+            var reciever = new BattleCharacterEntity(
                 new PlayerBattleReconstructCommand(new CharacterID(), 
                     new CharacterBattleModule(new HealthPoint(level), 
                         new LevelDependentParameters(level, new Strength(10), new Agility(20)), 

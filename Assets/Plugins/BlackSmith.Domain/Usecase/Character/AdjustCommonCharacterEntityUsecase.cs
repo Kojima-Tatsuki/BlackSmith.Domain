@@ -9,28 +9,28 @@ using System;
 namespace BlackSmith.Usecase.Character
 {
     /// <summary>
-    /// CommonPlayerEntityの作成、削除を行うユースケース
+    /// CharacterCommonEntityの作成、削除を行うユースケース
     /// </summary>
-    public class AdjustPlayerCommonEntityUsecase
+    public class AdjustCommonCharacterEntityUsecase
     {
-        private readonly IPlayerCommonEntityRepository repository;
+        private readonly ICommonCharacterEntityRepository repository;
 
-        public AdjustPlayerCommonEntityUsecase(IPlayerCommonEntityRepository playerRepository)
+        public AdjustCommonCharacterEntityUsecase(ICommonCharacterEntityRepository repository)
         {
-            repository = playerRepository;
+            this.repository = repository;
         }
 
         // 外部にpublicで公開されているのは、各パラメータの値のみであるため、Entityを返却しても問題ない
         /// <summary>
-        /// プレイヤーデータの作成を行う
+        /// キャラクターデータの作成を行う
         /// </summary>
-        /// <param name="name">作成するプレイヤーの名前</param>
-        /// <returns>作成したプレイヤーエンティティ</returns>
-        public async UniTask<PlayerCommonEntity> CreateCharacter(string playerName)
+        /// <param name="name">作成するキャラクターの名前</param>
+        /// <returns>作成したキャラクターエンティティ</returns>
+        public async UniTask<CommonCharacterEntity> CreateCharacter(string characterName)
         {
-            var name = new PlayerName(playerName);
+            var name = new CharacterName(characterName);
 
-            var entity = PlayerFactory.Create(name);
+            var entity = CommonCharacterFactory.Create(name);
 
             await repository.Register(entity);
 
@@ -38,13 +38,13 @@ namespace BlackSmith.Usecase.Character
         }
 
         /// <summary>
-        /// CommonPlayerEntityの再構築を行い、Repositoryに登録する
+        /// CharacterCommonEntityの再構築を行い、Repositoryに登録する
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        public async UniTask<PlayerCommonEntity> ReconstructPlayer(PlayerCommonReconstructCommand command)
+        public async UniTask<CommonCharacterEntity> ReconstructCharacter(CommonCharacterReconstructCommand command)
         {
-            var entity = PlayerFactory.Reconstruct(command);
+            var entity = CommonCharacterFactory.Reconstruct(command);
 
             if (!await repository.IsExist(entity.ID))
                 await repository.Register(entity);
@@ -53,11 +53,11 @@ namespace BlackSmith.Usecase.Character
         }
 
         /// <summary>
-        /// プレイヤーデータの取得を行う
+        /// キャラクターデータの取得を行う
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async UniTask<PlayerCommonEntity?> GetCharacter(CharacterID id)
+        public async UniTask<CommonCharacterEntity?> GetCharacter(CharacterID id)
         {
             if (!await repository.IsExist(id))
                 return null;
@@ -66,11 +66,11 @@ namespace BlackSmith.Usecase.Character
         }
 
         /// <summary>
-        /// プレイヤーデータの削除を行う
+        /// キャラクターデータの削除を行う
         /// </summary>
-        /// <param name="id">削除するプレイヤーのID</param>
+        /// <param name="id">削除するキャラクターのID</param>
         /// <exception cref="InvalidOperationException">指定したidのキャラクターは存在しない場合</exception>
-        public async UniTask DeletePlayer(CharacterID id)
+        public async UniTask DeleteCharacter(CharacterID id)
         {
             if (!await repository.IsExist(id))
                 throw new InvalidOperationException($"指定したidのキャラクターは存在しません {id}");

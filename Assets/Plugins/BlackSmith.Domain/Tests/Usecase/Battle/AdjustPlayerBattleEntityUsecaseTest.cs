@@ -18,10 +18,10 @@ namespace BlackSmith.Usecase.Character.Battle
         public async Task CreateCharacterPasses()
         {
             var repository = new MockPlayerBattleEntityRepository();
-            var commonEntityCommand = new PlayerCommonReconstructCommand(new CharacterID(), new PlayerName("TestCommonEntity"), new PlayerLevel(Experience.RequiredCumulativeExp(1)));
-            var commonEntity = PlayerFactory.Reconstruct(commonEntityCommand);
+            var commonEntityCommand = new CommonCharacterReconstructCommand(new CharacterID(), new CharacterName("TestCommonEntity"), new CharacterLevel(Experience.RequiredCumulativeExp(1)));
+            var commonEntity = CommonCharacterFactory.Reconstruct(commonEntityCommand);
 
-            var usecase = new AdjustPlayerBattleEntityUsecase(repository);
+            var usecase = new AdjustBattlePlayerEntityUsecase(repository);
 
             var character = await usecase.CreateCharacter(commonEntity);
 
@@ -36,21 +36,21 @@ namespace BlackSmith.Usecase.Character.Battle
         private static IEnumerable ReconstructCharacterTestCases()
         {
             var repository = new MockPlayerBattleEntityRepository();
-            var commonEntityCommand = new PlayerCommonReconstructCommand(new CharacterID(), new PlayerName("TestCommonEntity"), new PlayerLevel(Experience.RequiredCumulativeExp(1)));
-            var commonEntity = PlayerFactory.Reconstruct(commonEntityCommand);
+            var commonEntityCommand = new CommonCharacterReconstructCommand(new CharacterID(), new CharacterName("TestCommonEntity"), new CharacterLevel(Experience.RequiredCumulativeExp(1)));
+            var commonEntity = CommonCharacterFactory.Reconstruct(commonEntityCommand);
             var command = new PlayerBattleReconstructCommand(commonEntity.ID, new CharacterBattleModule(new HealthPoint(commonEntity.Level), new LevelDependentParameters(commonEntity.Level, new Strength(1), new Agility(1)), new BattleEquipmentModule(null, null), new BattleStatusEffectModule(null)));
 
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
 
-            // 既に同じIDのプレイヤーが存在する場合
+            // 既に同じIDのキャラクターが存在する場合
             yield return new TestCaseData(repository, command, typeof(InvalidOperationException)).SetCategory("異常系");
         }
 
         [Test(Description = "ReconstructCharacterのテスト")]
         [TestCaseSource(nameof(ReconstructCharacterTestCases))]
-        public async Task ReconstructCharacterPasses(IPlayerBattleEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
+        public async Task ReconstructCharacterPasses(IBattleCharacterEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerBattleEntityUsecase(repository);
+            var usecase = new AdjustBattlePlayerEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -79,21 +79,21 @@ namespace BlackSmith.Usecase.Character.Battle
         private static IEnumerable DeleteCharacterTestCases()
         {
             var repository = new MockPlayerBattleEntityRepository();
-            var commonEntityCommand = new PlayerCommonReconstructCommand(new CharacterID(), new PlayerName("TestCommonEntity"), new PlayerLevel(Experience.RequiredCumulativeExp(1)));
-            var commonEntity = PlayerFactory.Reconstruct(commonEntityCommand);
+            var commonEntityCommand = new CommonCharacterReconstructCommand(new CharacterID(), new CharacterName("TestCommonEntity"), new CharacterLevel(Experience.RequiredCumulativeExp(1)));
+            var commonEntity = CommonCharacterFactory.Reconstruct(commonEntityCommand);
             var command = new PlayerBattleReconstructCommand(commonEntity.ID, new CharacterBattleModule(new HealthPoint(commonEntity.Level), new LevelDependentParameters(commonEntity.Level, new Strength(1), new Agility(1)), new BattleEquipmentModule(null, null), new BattleStatusEffectModule(null)));
 
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
 
-            // 存在しないIDのプレイヤーを削除しようとした場合
+            // 存在しないIDのキャラクターを削除しようとした場合
             yield return new TestCaseData(repository, command, typeof(InvalidOperationException)).SetCategory("異常系");
         }
 
         [Test(Description = "DeleteCharacterのテスト")]
         [TestCaseSource(nameof(DeleteCharacterTestCases))]
-        public async Task DeleteCharacterPasses(IPlayerBattleEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
+        public async Task DeleteCharacterPasses(IBattleCharacterEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerBattleEntityUsecase(repository);
+            var usecase = new AdjustBattlePlayerEntityUsecase(repository);
 
             if (exception is null)
             {
@@ -121,21 +121,21 @@ namespace BlackSmith.Usecase.Character.Battle
         private static IEnumerable GetCharacterTestCases()
         {
             var repository = new MockPlayerBattleEntityRepository();
-            var commonEntityCommand = new PlayerCommonReconstructCommand(new CharacterID(), new PlayerName("TestCommonEntity"), new PlayerLevel(Experience.RequiredCumulativeExp(1)));
-            var commonEntity = PlayerFactory.Reconstruct(commonEntityCommand);
+            var commonEntityCommand = new CommonCharacterReconstructCommand(new CharacterID(), new CharacterName("TestCommonEntity"), new CharacterLevel(Experience.RequiredCumulativeExp(1)));
+            var commonEntity = CommonCharacterFactory.Reconstruct(commonEntityCommand);
             var command = new PlayerBattleReconstructCommand(commonEntity.ID, new CharacterBattleModule(new HealthPoint(commonEntity.Level), new LevelDependentParameters(commonEntity.Level, new Strength(1), new Agility(1)), new BattleEquipmentModule(null, null), new BattleStatusEffectModule(null)));
 
             yield return new TestCaseData(repository, command, null).SetCategory("正常系");
 
-            // 存在しないIDのプレイヤーを取得しようとした場合
+            // 存在しないIDのキャラクターを取得しようとした場合
             yield return new TestCaseData(repository, command, typeof(InvalidOperationException)).SetCategory("異常系");
         }
 
         [Test(Description = "GetCharacterのテスト")]
         [TestCaseSource(nameof(GetCharacterTestCases))]
-        public async Task GetCharacterPasses(IPlayerBattleEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
+        public async Task GetCharacterPasses(IBattleCharacterEntityRepository repository, PlayerBattleReconstructCommand command, Type? exception)
         {
-            var usecase = new AdjustPlayerBattleEntityUsecase(repository);
+            var usecase = new AdjustBattlePlayerEntityUsecase(repository);
 
             if (exception is null)
             {
