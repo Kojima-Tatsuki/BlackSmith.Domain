@@ -22,15 +22,28 @@ namespace BlackSmith.Usecase.Character
 
         // 外部にpublicで公開されているのは、各パラメータの値のみであるため、Entityを返却しても問題ない
         /// <summary>
-        /// キャラクターデータの作成を行う
+        /// キャラクターデータの作成を行う（プレイヤー用）
         /// </summary>
-        /// <param name="name">作成するキャラクターの名前</param>
+        /// <param name="characterName">作成するキャラクターの名前</param>
         /// <returns>作成したキャラクターエンティティ</returns>
-        public async UniTask<CommonCharacterEntity> CreateCharacter(string characterName)
+        public async UniTask<CommonCharacterEntity> CreateCharacter(CharacterName characterName)
         {
-            var name = new CharacterName(characterName);
+            var entity = CommonCharacterFactory.Create(characterName);
 
-            var entity = CommonCharacterFactory.Create(name);
+            await repository.Register(entity);
+
+            return entity;
+        }
+
+        /// <summary>
+        /// キャラクターデータの作成を行う（NPC用）
+        /// </summary>
+        /// <param name="characterName">作成するキャラクターの名前</param>
+        /// <param name="level">作成するキャラクターのレベル</param>
+        /// <returns>作成したキャラクターエンティティ</returns>
+        public async UniTask<CommonCharacterEntity> CreateCharacter(CharacterName characterName, CharacterLevel level)
+        {
+            var entity = CommonCharacterFactory.CreateNpc(characterName, level);
 
             await repository.Register(entity);
 

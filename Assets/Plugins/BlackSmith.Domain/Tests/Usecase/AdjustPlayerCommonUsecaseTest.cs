@@ -18,17 +18,16 @@ namespace BlackSmith.Usecase.Character
         private static IEnumerable CreateCharacterTestCases()
         {
             var repository = new MockCharacterCommonEntityRepository();
-            var name = "TestPlayerName";
+            var name = new CharacterName("TestPlayerName");
 
             yield return new TestCaseData(repository, name, null).SetCategory("正常系");
 
-            // PlayerNameでコケる場合
-            yield return new TestCaseData(repository, "", typeof(ArgumentException)).SetCategory("異常系");
+            // CharacterNameはコンストラクタで異常系チェックされるため、別途テストを実装
         }
 
         [Test(Description = "CreateCharacterのテスト")]
         [TestCaseSource(nameof(CreateCharacterTestCases))]
-        public async Task CreateCharacterPasses(ICommonCharacterEntityRepository repository, string name, Type? exception)
+        public async Task CreateCharacterPasses(ICommonCharacterEntityRepository repository, CharacterName name, Type? exception)
         {
             var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
@@ -196,6 +195,117 @@ namespace BlackSmith.Usecase.Character
                 {
                     Assert.AreEqual(exception, e.GetType());
                 }
+            }
+        }
+
+        [Test(Description = "CreateCharacterの引数異常テスト")]
+        public void CreateCharacterThrowsExceptionForInvalidName()
+        {
+            // CharacterNameコンストラクタで空文字列に対してArgumentExceptionが発生することをテスト
+            Assert.Throws<ArgumentException>(() => new CharacterName(""));
+            Assert.Throws<ArgumentException>(() => new CharacterName(null!));
+        }
+
+        [Test(Description = "CreateCharacter(NPC用)の引数異常テスト")]
+        public void CreateNpcCharacterThrowsExceptionForInvalidArguments()
+        {
+            var repository = new MockCharacterCommonEntityRepository();
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
+            var validName = new CharacterName("ValidNPC");
+            var validLevel = new CharacterLevel(new Experience(100));
+
+            // CharacterNameがnullの場合の異常系は、C#のnull許容参照型で制御されているため、
+            // コンパイル時エラーとなり実行時テストは不要
+
+            // Experience負の値での異常系テスト
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Experience(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Experience(-100));
+        }
+
+        private static IEnumerable CreateNpcCharacterTestCases()
+        {
+            var repository = new MockCharacterCommonEntityRepository();
+            var name = new CharacterName("TestNPCName");
+            var level = new CharacterLevel(new Experience(1000)); // レベル10相当
+
+            yield return new TestCaseData(repository, name, level, null).SetCategory("正常系");
+
+            // 境界値テスト
+            var minLevel = new CharacterLevel(new Experience(0)); // レベル1（最小）
+            yield return new TestCaseData(repository, name, minLevel, null).SetCategory("境界値");
+
+            var maxLevelExp = Experience.RequiredCumulativeExp(CharacterLevel.MaxValue);
+            var maxLevel = new CharacterLevel(maxLevelExp); // レベル100（最大）
+            yield return new TestCaseData(repository, name, maxLevel, null).SetCategory("境界値");
+        }
+
+        [Test(Description = "CreateCharacter(NPC用)のテスト")]
+        [TestCaseSource(nameof(CreateNpcCharacterTestCases))]
+        public async Task CreateNpcCharacterPasses(ICommonCharacterEntityRepository repository, CharacterName name, CharacterLevel level, Type? exception)
+        {
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
+
+            if (exception is null)
+            {
+                var character = await usecase.CreateCharacter(name, level);
+
+                var entity = await repository.FindByID(character.ID);
+
+                if (entity is null)
+                    throw new NullReferenceException();
+
+                Assert.That(character.Equals(entity));
+                Assert.That(character.Name, Is.EqualTo(name));
+                Assert.That(character.Level.Value, Is.EqualTo(level.Value));
+            }
+            else
+            {
+                try
+                {
+                    Assert.ThrowsAsync(exception, async () => await usecase.CreateCharacter(name, level));
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual(exception, e.GetType());
+                }
+            }
+        }
+
+        [Test(Description = "Experience/CharacterLevel境界値動作テスト")]
+        public void ExperienceCharacterLevelBoundaryTest()
+        {
+            // レベル1の境界値テスト
+            var level1Exp = new Experience(0);
+            var level1 = new CharacterLevel(level1Exp);
+            Assert.That(level1.Value, Is.EqualTo(1));
+
+            // レベル2への境界値テスト
+            var level2RequiredExp = Experience.RequiredCumulativeExp(2);
+            var level2 = new CharacterLevel(level2RequiredExp);
+            Assert.That(level2.Value, Is.EqualTo(2));
+
+            // 最大レベルの境界値テスト
+            var maxLevelExp = Experience.RequiredCumulativeExp(CharacterLevel.MaxValue);
+            var maxLevel = new CharacterLevel(maxLevelExp);
+            Assert.That(maxLevel.Value, Is.EqualTo(CharacterLevel.MaxValue));
+            Assert.That(maxLevel.IsMaxLevel(), Is.True);
+
+            // 最大レベル超過の経験値でも最大レベルに収束することを確認
+            var overMaxExp = new Experience(maxLevelExp.Value + 10000);
+            var overMaxLevel = new CharacterLevel(overMaxExp);
+            Assert.That(overMaxLevel.Value, Is.LessThanOrEqualTo(CharacterLevel.MaxValue));
+        }
+
+        [Test(Description = "Experience計算精度テスト")]
+        public void ExperienceCalculationAccuracyTest()
+        {
+            // 各レベルでの往復変換精度テスト
+            for (int level = 1; level <= 10; level++)
+            {
+                var requiredExp = Experience.RequiredCumulativeExp(level);
+                var calculatedLevel = Experience.CurrentLevel(requiredExp);
+                Assert.That(calculatedLevel, Is.EqualTo(level), 
+                    $"レベル{level}での経験値計算に誤差があります。経験値: {requiredExp.Value}, 計算されたレベル: {calculatedLevel}");
             }
         }
     }

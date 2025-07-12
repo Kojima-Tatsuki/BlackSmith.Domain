@@ -170,7 +170,8 @@ internal class SkillExpCalculator
 // プレイヤーエンティティ管理
 public class AdjustPlayerCommonEntityUsecase
 {
-    internal async UniTask<PlayerCommonEntity> CreateCharacter(string playerName);     // 新規作成
+    internal async UniTask<PlayerCommonEntity> CreateCharacter(CharacterName characterName);           // プレイヤー新規作成
+    internal async UniTask<PlayerCommonEntity> CreateCharacter(CharacterName characterName, CharacterLevel level); // NPC新規作成
     internal async UniTask<PlayerCommonEntity> ReconstructPlayer(PlayerCommonReconstructCommand command); // 復元
     internal async UniTask<PlayerCommonEntity> GetCharacter(CharacterID id);          // 取得
     internal async UniTask DeletePlayer(CharacterID id);                              // 削除
