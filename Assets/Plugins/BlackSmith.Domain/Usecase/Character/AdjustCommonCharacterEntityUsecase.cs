@@ -43,9 +43,7 @@ namespace BlackSmith.Usecase.Character
         /// <returns>作成したキャラクターエンティティ</returns>
         public async UniTask<CommonCharacterEntity> CreateCharacter(CharacterName characterName, CharacterLevel level)
         {
-            var id = new CharacterID();
-            var command = new CommonCharacterReconstructCommand(id, characterName, level);
-            var entity = CommonCharacterFactory.Reconstruct(command);
+            var entity = CommonCharacterFactory.CreateNpc(characterName, level);
 
             await repository.Register(entity);
 

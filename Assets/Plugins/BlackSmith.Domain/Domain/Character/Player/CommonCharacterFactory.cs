@@ -22,7 +22,7 @@ namespace BlackSmith.Domain.Character.Player
         }
 
         /// <summary>
-        /// 新たにキャラクターエンティティを作成する
+        /// 新たにキャラクターエンティティを作成する（プレイヤー用）
         /// </summary>
         /// <param name="name">作成するキャラクターの名前</param>
         /// <returns>作成したエンティティ</returns>
@@ -31,6 +31,20 @@ namespace BlackSmith.Domain.Character.Player
             var id = new CharacterID();
             var level = new CharacterLevel();
 
+            var command = new CommonCharacterReconstructCommand(id, name, level);
+
+            return Reconstruct(command);
+        }
+
+        /// <summary>
+        /// 新たにキャラクターエンティティを作成する（NPC用）
+        /// </summary>
+        /// <param name="name">作成するキャラクターの名前</param>
+        /// <param name="level">作成するキャラクターのレベル</param>
+        /// <returns>作成したエンティティ</returns>
+        internal static CommonCharacterEntity CreateNpc(CharacterName name, CharacterLevel level)
+        {
+            var id = new CharacterID();
             var command = new CommonCharacterReconstructCommand(id, name, level);
 
             return Reconstruct(command);
