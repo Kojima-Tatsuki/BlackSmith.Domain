@@ -55,7 +55,7 @@ namespace BlackSmith.Domain.Networking.Auth
                 if (!IsValidPasswordCharacterTypeOfSpecial(password))
                     errors.Add(ValidationError.MissingSpecialCharacter);
                 if (!IsValidPasswordCharacterType(password))
-                    errors.Add(ValidationError.MissingSpecialCharacter);
+                    errors.Add(ValidationError.InvalidCharacter);
 
                 return errors;
             }
