@@ -27,8 +27,8 @@ namespace BlackSmith.Usecase.Networking.Auth
         /// <param name="userName">ユーザー名</param>
         /// <param name="password">パスワード</param>
         /// <returns>認証されたプレイヤーID</returns>
-        /// <exception cref="ArgumentException">入力値が無効な場合</exception>
-        /// <exception cref="InvalidOperationException">すでに認証済みの場合</exception>
+        /// <exception cref="ArgumentNullException">引数がnullの場合</exception>
+        /// <exception cref="InvalidOperationException">すでに認証済みの場合、またはサインアップに失敗した場合</exception>
         public async UniTask<AuthPlayerId> SignupAsync(UserName userName, Password password)
         {
             if (userName == null) throw new ArgumentNullException(nameof(userName));
@@ -46,7 +46,7 @@ namespace BlackSmith.Usecase.Networking.Auth
             }
             catch (Exception ex)
             {
-                throw new ArgumentException($"サインアップに失敗しました: {ex.Message}", ex);
+                throw new InvalidOperationException($"サインアップに失敗しました: {ex.Message}", ex);
             }
         }
 
@@ -56,8 +56,8 @@ namespace BlackSmith.Usecase.Networking.Auth
         /// <param name="userName">ユーザー名</param>
         /// <param name="password">パスワード</param>
         /// <returns>認証されたプレイヤーID</returns>
-        /// <exception cref="ArgumentException">入力値が無効な場合</exception>
-        /// <exception cref="InvalidOperationException">すでに認証済みの場合</exception>
+        /// <exception cref="ArgumentNullException">引数がnullの場合</exception>
+        /// <exception cref="InvalidOperationException">すでに認証済みの場合、またはサインインに失敗した場合</exception>
         public async UniTask<AuthPlayerId> SignInAsync(UserName userName, Password password)
         {
             if (userName == null) throw new ArgumentNullException(nameof(userName));
@@ -75,7 +75,7 @@ namespace BlackSmith.Usecase.Networking.Auth
             }
             catch (Exception ex)
             {
-                throw new ArgumentException($"サインインに失敗しました: {ex.Message}", ex);
+                throw new InvalidOperationException($"サインインに失敗しました: {ex.Message}", ex);
             }
         }
 
