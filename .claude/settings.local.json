@@ -8,7 +8,8 @@
       "Bash(rm:*)",
       "mcp__BlackSmith-Domain__read_console",
       "mcp__BlackSmith-Domain__execute_menu_item",
-      "mcp__BlackSmith-Domain__manage_editor"
+      "mcp__BlackSmith-Domain__manage_editor",
+      "Bash(git add:*)"
     ],
     "deny": []
   }

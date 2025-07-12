@@ -49,7 +49,15 @@ namespace BlackSmith.Domain.Networking.Auth
             public static IReadOnlyList<ValidationError> ValidateUserName(string name)
             {
                 var errors = new List<ValidationError>();
-                if (string.IsNullOrEmpty(name) || !IsValidUserNameOfCharacterLength(name))
+                
+                // Early return for null or empty name with only InvalidLength error
+                if (string.IsNullOrEmpty(name))
+                {
+                    errors.Add(ValidationError.InvalidLength);
+                    return errors;
+                }
+                
+                if (!IsValidUserNameOfCharacterLength(name))
                     errors.Add(ValidationError.InvalidLength);
                 if (!IsValidUserNameCharacterType(name))
                     errors.Add(ValidationError.InvalidCharacterType);

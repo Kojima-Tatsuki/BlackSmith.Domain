@@ -44,7 +44,15 @@ namespace BlackSmith.Domain.Networking.Auth
             public static IReadOnlyList<ValidationError> ValidatePassword(string password)
             {
                 var errors = new List<ValidationError>();
-                if (string.IsNullOrEmpty(password) || !IsValidPasswordOfCharacterLength(password))
+                
+                // Early return for null or empty password with only InvalidLength error
+                if (string.IsNullOrEmpty(password))
+                {
+                    errors.Add(ValidationError.InvalidLength);
+                    return errors;
+                }
+                
+                if (!IsValidPasswordOfCharacterLength(password))
                     errors.Add(ValidationError.InvalidLength);
                 if (!IsValidPasswordCharacterTypeOfLower(password))
                     errors.Add(ValidationError.MissingLowercase);

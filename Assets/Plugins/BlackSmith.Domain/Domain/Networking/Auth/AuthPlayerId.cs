@@ -20,7 +20,7 @@ namespace BlackSmith.Domain.Networking.Auth
         public string Value { get; }
 
         [JsonConstructor]
-        internal AuthPlayerId(string value)
+        public AuthPlayerId(string value)
         {
             if (!AuthPlayerIdValidator.IsValidate(value))
                 throw new ArgumentException($"Invalid PlayerId. {value}");
@@ -52,6 +52,9 @@ namespace BlackSmith.Domain.Networking.Auth
             /// <returns></returns>
             public static bool IsValidate(string playerId)
             {
+                if (string.IsNullOrEmpty(playerId))
+                    return false;
+                    
                 if (!IsValidatePlayerIdPrefix(playerId))
                     return false;
 
