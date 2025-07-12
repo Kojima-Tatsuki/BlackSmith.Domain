@@ -451,7 +451,13 @@ var repository = // IPlayerCommonEntityRepositoryの実装
 var usecase = new AdjustPlayerCommonEntityUsecase(repository);
 
 // プレイヤー作成（初期レベル1、経験値 0で作成）
-var player = await usecase.CreateCharacter("冒険者");
+var playerName = new CharacterName("冒険者");
+var player = await usecase.CreateCharacter(playerName);
+
+// NPC作成（名前とレベルを指定）
+var npcName = new CharacterName("商人");
+var npcLevel = new CharacterLevel(new Experience(5000)); // レベル15相当
+var npc = await usecase.CreateCharacter(npcName, npcLevel);
 ```
 
 #### 2. プレイヤー再構築

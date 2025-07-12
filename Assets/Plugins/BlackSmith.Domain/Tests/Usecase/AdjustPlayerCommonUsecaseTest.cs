@@ -18,17 +18,16 @@ namespace BlackSmith.Usecase.Character
         private static IEnumerable CreateCharacterTestCases()
         {
             var repository = new MockCharacterCommonEntityRepository();
-            var name = "TestPlayerName";
+            var name = new CharacterName("TestPlayerName");
 
             yield return new TestCaseData(repository, name, null).SetCategory("正常系");
 
-            // PlayerNameでコケる場合
-            yield return new TestCaseData(repository, "", typeof(ArgumentException)).SetCategory("異常系");
+            // CharacterNameはコンストラクタで異常系チェックされるため、別途テストを実装
         }
 
         [Test(Description = "CreateCharacterのテスト")]
         [TestCaseSource(nameof(CreateCharacterTestCases))]
-        public async Task CreateCharacterPasses(ICommonCharacterEntityRepository repository, string name, Type? exception)
+        public async Task CreateCharacterPasses(ICommonCharacterEntityRepository repository, CharacterName name, Type? exception)
         {
             var usecase = new AdjustCommonCharacterEntityUsecase(repository);
 
@@ -191,6 +190,55 @@ namespace BlackSmith.Usecase.Character
                 try
                 {
                     await usecase.GetCharacter(id);
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual(exception, e.GetType());
+                }
+            }
+        }
+
+        [Test(Description = "CreateCharacterの引数異常テスト")]
+        public void CreateCharacterThrowsExceptionForInvalidName()
+        {
+            // CharacterNameコンストラクタで空文字列に対してArgumentExceptionが発生することをテスト
+            Assert.Throws<ArgumentException>(() => new CharacterName(""));
+            Assert.Throws<ArgumentException>(() => new CharacterName(null!));
+        }
+
+        private static IEnumerable CreateNpcCharacterTestCases()
+        {
+            var repository = new MockCharacterCommonEntityRepository();
+            var name = new CharacterName("TestNPCName");
+            var level = new CharacterLevel(new Experience(1000)); // レベル10相当
+
+            yield return new TestCaseData(repository, name, level, null).SetCategory("正常系");
+        }
+
+        [Test(Description = "CreateCharacter(NPC用)のテスト")]
+        [TestCaseSource(nameof(CreateNpcCharacterTestCases))]
+        public async Task CreateNpcCharacterPasses(ICommonCharacterEntityRepository repository, CharacterName name, CharacterLevel level, Type? exception)
+        {
+            var usecase = new AdjustCommonCharacterEntityUsecase(repository);
+
+            if (exception is null)
+            {
+                var character = await usecase.CreateCharacter(name, level);
+
+                var entity = await repository.FindByID(character.ID);
+
+                if (entity is null)
+                    throw new NullReferenceException();
+
+                Assert.That(character.Equals(entity));
+                Assert.That(character.Name, Is.EqualTo(name));
+                Assert.That(character.Level.Value, Is.EqualTo(level.Value));
+            }
+            else
+            {
+                try
+                {
+                    Assert.ThrowsAsync(exception, async () => await usecase.CreateCharacter(name, level));
                 }
                 catch (Exception e)
                 {
