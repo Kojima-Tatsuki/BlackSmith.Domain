@@ -37,8 +37,8 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
     public record LobbyPlayer
     {
         public AuthPlayerId PlayerId { get; init; } = null!;
-        public CharacterID CharacterId { get; init; }
-        public CharacterName CharacterName { get; init; };
+        public CharacterID CharacterId { get; init; } = null!;
+        public CharacterName CharacterName { get; init; } = null!;
         public bool IsHost { get; init; }
     }
 
