@@ -90,7 +90,11 @@ namespace BlackSmith.Domain.Character
             // 丸め誤差の関係で正確な値が出ない
             var result = (int)Math.Log(1 - (cumExp.Value * (1 - (double)LevelDifferenceMultiplier) / InitExpRequirement), LevelDifferenceMultiplier) + 1;
 
-            if (RequiredCumulativeExp(result).Value < cumExp.Value && RequiredCumulativeExp(result + 1).Value <= cumExp.Value)
+            // 最大レベル制限
+            if (result >= 100) return 100;
+
+            // 境界値チェック（レベル101を参照しないよう修正）
+            if (result < 100 && RequiredCumulativeExp(result).Value < cumExp.Value && RequiredCumulativeExp(result + 1).Value <= cumExp.Value)
                 return ++result;
             return result;
         }
