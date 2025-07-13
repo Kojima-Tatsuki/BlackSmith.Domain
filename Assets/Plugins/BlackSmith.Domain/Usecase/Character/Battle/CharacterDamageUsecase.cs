@@ -39,7 +39,7 @@ namespace BlackSmith.Usecase.Character.Battle
 
             receiver.TakeDamage(damage);
 
-            await PlayerRepository.UpdateCharacter((receiver as BattleCharacterEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、CharacterEntityではありません. (jAv4M0Pb)"));
+            await PlayerRepository.Update((receiver as BattleCharacterEntity) ?? throw new InvalidCastException($"受け手のキャラクターは、CharacterEntityではありません. (jAv4M0Pb)"));
         }
     }
 }

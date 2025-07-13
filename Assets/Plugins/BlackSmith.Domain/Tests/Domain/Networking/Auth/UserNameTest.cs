@@ -83,7 +83,7 @@ namespace BlackSmith.Domain.Networking.Auth
             var userName = new UserName("testuser");
 
             // Act & Assert
-            Assert.That(userName.Equals(null), Is.False);
+            Assert.That(userName.Equals(null!), Is.False);
         }
 
         [Test]

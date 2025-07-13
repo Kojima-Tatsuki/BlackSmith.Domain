@@ -353,7 +353,7 @@ namespace BlackSmith.Usecase.Character
             players.Add(character.ID, character);
         }
 
-        public async UniTask UpdateCharacter(CommonCharacterEntity character)
+        public async UniTask Update(CommonCharacterEntity character)
         {
             await UniTask.CompletedTask;
             players[character.ID] = character;

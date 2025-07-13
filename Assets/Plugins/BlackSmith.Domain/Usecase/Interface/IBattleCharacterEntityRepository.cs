@@ -21,7 +21,7 @@ namespace BlackSmith.Usecase.Interface
         /// </summary>
         /// <param name="character"></param>
         /// <exception cref="InvalidOperationException">変更を行うキャラクターが存在しない場合</exception>
-        UniTask UpdateCharacter(BattleCharacterEntity character);
+        UniTask Update(BattleCharacterEntity character);
 
         /// <summary>
         /// 

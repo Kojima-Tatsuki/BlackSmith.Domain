@@ -115,7 +115,7 @@ namespace BlackSmith.Usecase.Character.Battle
             return characters.ContainsKey(id);
         }
 
-        public async UniTask UpdateCharacter(BattleCharacterEntity character)
+        public async UniTask Update(BattleCharacterEntity character)
         {
             await UniTask.CompletedTask;
 
