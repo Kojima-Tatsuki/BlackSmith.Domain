@@ -8,7 +8,7 @@ namespace BlackSmith.Usecase.Interface
     {
         void Register(InventoryID id, IInventoryService inventory);
 
-        void UpdateInventory(InventoryID id, IInventoryService inventory);
+        void Update(InventoryID id, IInventoryService inventory);
 
         IInventoryService? FindByID(InventoryID id);
 

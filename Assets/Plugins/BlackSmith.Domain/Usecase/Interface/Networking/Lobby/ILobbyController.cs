@@ -1,4 +1,4 @@
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Networking.Auth;
 using System;
