@@ -23,16 +23,14 @@ namespace BlackSmith.Usecase.Interface.Networking.CloudSave
         /// <summary>
         /// 位置情報を保存する
         /// </summary>
-        /// <param name="authPlayerId">認証されたプレイヤーID</param>
         /// <param name="position">保存する位置情報</param>
         /// <returns>保存処理のタスク</returns>
-        UniTask SavePositionAsync(AuthPlayerId authPlayerId, PositionModel position);
+        UniTask SaveAsync(PositionModel position);
 
         /// <summary>
         /// 保存されている位置情報を取得する
         /// </summary>
-        /// <param name="authPlayerId">認証されたプレイヤーID</param>
         /// <returns>保存されている位置情報（存在しない場合はnull）</returns>
-        UniTask<PositionModel?> LoadPositionAsync(AuthPlayerId authPlayerId);
+        UniTask<PositionModel?> LoadAsync();
     }
 }

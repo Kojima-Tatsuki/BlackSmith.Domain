@@ -15,23 +15,20 @@ namespace BlackSmith.Usecase.Interface.Networking.CloudSave
         /// <summary>
         /// キャラクターIDを保存する
         /// </summary>
-        /// <param name="authPlayerId">認証されたプレイヤーID</param>
         /// <param name="characterId">保存するキャラクターID</param>
         /// <returns>保存処理のタスク</returns>
-        UniTask SaveCharacterIdAsync(AuthPlayerId authPlayerId, CharacterID characterId);
+        UniTask SaveAsync(CharacterID characterId);
 
         /// <summary>
         /// 保存されているキャラクターIDを読み込む
         /// </summary>
-        /// <param name="authPlayerId">認証されたプレイヤーID</param>
         /// <returns>保存されているキャラクターID（存在しない場合はnull）</returns>
-        UniTask<CharacterID?> LoadCharacterIdAsync(AuthPlayerId authPlayerId);
+        UniTask<CharacterID?> LoadAsync();
 
         /// <summary>
         /// 保存されているキャラクターIDが存在するかを確認する
         /// </summary>
-        /// <param name="authPlayerId">認証されたプレイヤーID</param>
         /// <returns>存在する場合はtrue</returns>
-        UniTask<bool> ExistsCharacterIdAsync(AuthPlayerId authPlayerId);
+        UniTask<bool> IsExistsAsync();
     }
 }
