@@ -1,0 +1,19 @@
+name: Docs Link Check
+
+on:
+  push:
+    paths:
+      - 'Assets/Plugins/BlackSmith.Domain/docs/**'
+      - '.github/scripts/**'
+      - '.github/workflows/docs-link-check.yml'
+  workflow_dispatch:
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Markdown link checker
+        run: python3 .github/scripts/check_markdown_links.py Assets/Plugins/BlackSmith.Domain/docs
