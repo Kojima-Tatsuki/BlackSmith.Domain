@@ -9,10 +9,11 @@ from __future__ import annotations
 import argparse
 import concurrent.futures
 import html
+from bisect import bisect_right
 from pathlib import Path
 import re
 import sys
-from typing import Dict, Iterable, List, Optional, Set, Tuple
+from typing import Dict, Iterable, List, Optional, Sequence, Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -67,15 +68,35 @@ def gather_markdown_files(paths: Iterable[str]) -> List[Path]:
     return sorted(set(files))
 
 
-def extract_links(markdown_text: str) -> Set[str]:
+def extract_links(markdown_text: str) -> List[Tuple[str, str, int]]:
     """Markdown からリンク候補となる文字列を集める。"""
-    # インライン記法、参照記法、裸の URL いずれも対象とする。
-    links: Set[str] = set()
-    links.update(INLINE_LINK_RE.findall(markdown_text))
-    links.update(REFERENCE_DEF_RE.findall(markdown_text))
+    # インライン記法、参照記法、裸の URL いずれも対象とし、出現行も保持する。
+    newline_positions = _compute_newline_positions(markdown_text)
+    occurrences: List[Tuple[str, str, int]] = []
+
+    for match in INLINE_LINK_RE.finditer(markdown_text):
+        raw = match.group(1)
+        occurrences.append((raw, normalize_link(raw), _line_for_index(newline_positions, match.start(1))))
+
+    for match in REFERENCE_DEF_RE.finditer(markdown_text):
+        raw = match.group(1)
+        occurrences.append((raw, normalize_link(raw), _line_for_index(newline_positions, match.start(1))))
+
     for match in BARE_URL_RE.finditer(markdown_text):
-        links.add(match.group("url"))
-    return links
+        raw = match.group("url")
+        occurrences.append((raw, normalize_link(raw), _line_for_index(newline_positions, match.start("url"))))
+
+    return occurrences
+
+
+def _compute_newline_positions(text: str) -> List[int]:
+    """改行のインデックス一覧を構築し、行番号計算を高速化する。"""
+    return [index for index, char in enumerate(text) if char == "\n"]
+
+
+def _line_for_index(newlines: Sequence[int], index: int) -> int:
+    """文字インデックスから 1 始まりの行番号を求める。"""
+    return bisect_right(newlines, index) + 1
 
 
 def normalize_link(link: str) -> str:
@@ -183,11 +204,11 @@ def classify_link(link: str) -> str:
     return "local"
 
 
-def check_links(files: Iterable[Path], root: Path, timeout: float, max_workers: int) -> List[Tuple[Path, str, str]]:
-    """全リンクを走査し、問題があれば (ファイル, 元リンク, 理由) を返す。"""
+def check_links(files: Iterable[Path], root: Path, timeout: float, max_workers: int) -> List[Tuple[Path, str, str, int]]:
+    """全リンクを走査し、問題があれば (ファイル, 元リンク, 理由, 行) を返す。"""
     # HTTP リンクはまとめて並列処理し、ローカルリンクは逐次検証する。
-    broken: List[Tuple[Path, str, str]] = []
-    http_links: Dict[str, List[Tuple[Path, str]]] = {}
+    broken: List[Tuple[Path, str, str, int]] = []
+    http_links: Dict[str, List[Tuple[Path, str, int]]] = {}
 
     for file_path in files:
         try:
@@ -196,28 +217,27 @@ def check_links(files: Iterable[Path], root: Path, timeout: float, max_workers: 
             broken.append((file_path, "", f"unable to read file: {error}"))
             continue
 
-        for raw_link in extract_links(content):
-            link = normalize_link(raw_link)
+        for raw_link, link, line in extract_links(content):
             if is_ignored(link):
                 continue
             kind = classify_link(link)
             if kind == "http":
-                http_links.setdefault(link, []).append((file_path, raw_link))
+                http_links.setdefault(link, []).append((file_path, raw_link, line))
             elif kind == "local":
                 reason = check_local_link(file_path, root, link)
                 if reason:
-                    broken.append((file_path, raw_link, reason))
+                    broken.append((file_path, raw_link, reason, line))
             else:
-                broken.append((file_path, raw_link, f"unsupported scheme in link '{link}'"))
+                broken.append((file_path, raw_link, f"unsupported scheme in link '{link}'", line))
 
     broken.extend(check_http_links_concurrently(http_links, timeout, max_workers))
     return broken
 
 
-def check_http_links_concurrently(http_links: Dict[str, List[Tuple[Path, str]]], timeout: float, max_workers: int) -> List[Tuple[Path, str, str]]:
+def check_http_links_concurrently(http_links: Dict[str, List[Tuple[Path, str, int]]], timeout: float, max_workers: int) -> List[Tuple[Path, str, str, int]]:
     """HTTP リンクはスレッドプールで並列に検査する。"""
     # 同じ URL が複数回登場する場合は一度だけアクセスし、結果を全ての出現箇所へ反映する。
-    broken: List[Tuple[Path, str, str]] = []
+    broken: List[Tuple[Path, str, str, int]] = []
     results: Dict[str, Optional[str]] = {}
 
     def task(url: str) -> Tuple[str, Optional[str]]:
@@ -232,8 +252,8 @@ def check_http_links_concurrently(http_links: Dict[str, List[Tuple[Path, str]]],
     for url, locations in http_links.items():
         message = results.get(url)
         if message:
-            for file_path, raw_link in locations:
-                broken.append((file_path, raw_link, message))
+            for file_path, raw_link, line in locations:
+                broken.append((file_path, raw_link, message, line))
 
     return broken
 
@@ -249,9 +269,9 @@ def main() -> int:
     broken = check_links(files, root, args.timeout, args.max_workers)
     if broken:
         print("Broken links detected:")
-        for file_path, raw_link, reason in broken:
+        for file_path, raw_link, reason, line in broken:
             rel_path = file_path.resolve().relative_to(root)
-            print(f"- {rel_path}: '{raw_link}' -> {reason}")
+            print(f"- {rel_path}:{line}: '{raw_link}' -> {reason}")
         return 1
 
     print(f"Checked {len(files)} Markdown files; all links look good.")
