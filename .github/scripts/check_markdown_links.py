@@ -13,7 +13,7 @@ from bisect import bisect_right
 from pathlib import Path
 import re
 import sys
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, Iterable, List, NamedTuple, Optional, Sequence, Tuple
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -21,9 +21,18 @@ import urllib.request
 # HTTP レスポンスの成功範囲。
 HTTP_OK_RANGE = range(200, 400)
 # Markdown からリンク文字列を抽出するための正規表現群。
-INLINE_LINK_RE = re.compile(r"(?<!!)\[[^\]]+\]\(([^)\s]+)\)")
-REFERENCE_DEF_RE = re.compile(r"^\s*\[[^\]]+\]:\s*(\S+)", re.MULTILINE)
+INLINE_LINK_RE = re.compile(r"(?P<prefix>!?)\[(?P<label>[^\]]+)\]\((?P<dest>[^)]+)\)")
+REFERENCE_DEF_RE = re.compile(r"^\s*\[[^\]]+\]:\s*(.+)$", re.MULTILINE)
 BARE_URL_RE = re.compile(r"(?P<url>https?://[^\s)]+)")
+
+
+class LinkOccurrence(NamedTuple):
+    """リンクの出現情報を保持するコンテナ。"""
+
+    raw_target: str
+    normalized_target: str
+    line: int
+    display_text: Optional[str]
 
 
 def parse_args() -> argparse.Namespace:
@@ -68,23 +77,47 @@ def gather_markdown_files(paths: Iterable[str]) -> List[Path]:
     return sorted(set(files))
 
 
-def extract_links(markdown_text: str) -> List[Tuple[str, str, int]]:
+def extract_links(markdown_text: str) -> List[LinkOccurrence]:
     """Markdown からリンク候補となる文字列を集める。"""
     # インライン記法、参照記法、裸の URL いずれも対象とし、出現行も保持する。
     newline_positions = _compute_newline_positions(markdown_text)
-    occurrences: List[Tuple[str, str, int]] = []
+    occurrences: List[LinkOccurrence] = []
 
     for match in INLINE_LINK_RE.finditer(markdown_text):
-        raw = match.group(1)
-        occurrences.append((raw, normalize_link(raw), _line_for_index(newline_positions, match.start(1))))
+        if match.group("prefix") == "!":
+            continue
+        raw = match.group("dest")
+        label = match.group("label").strip()
+        occurrences.append(
+            LinkOccurrence(
+                raw.strip(),
+                normalize_link(_extract_destination(raw)),
+                _line_for_index(newline_positions, match.start("dest")),
+                label,
+            )
+        )
 
     for match in REFERENCE_DEF_RE.finditer(markdown_text):
         raw = match.group(1)
-        occurrences.append((raw, normalize_link(raw), _line_for_index(newline_positions, match.start(1))))
+        occurrences.append(
+            LinkOccurrence(
+                raw.strip(),
+                normalize_link(_extract_destination(raw)),
+                _line_for_index(newline_positions, match.start(1)),
+                None,
+            )
+        )
 
     for match in BARE_URL_RE.finditer(markdown_text):
         raw = match.group("url")
-        occurrences.append((raw, normalize_link(raw), _line_for_index(newline_positions, match.start("url"))))
+        occurrences.append(
+            LinkOccurrence(
+                raw,
+                normalize_link(raw),
+                _line_for_index(newline_positions, match.start("url")),
+                None,
+            )
+        )
 
     return occurrences
 
@@ -97,6 +130,31 @@ def _compute_newline_positions(text: str) -> List[int]:
 def _line_for_index(newlines: Sequence[int], index: int) -> int:
     """文字インデックスから 1 始まりの行番号を求める。"""
     return bisect_right(newlines, index) + 1
+
+
+def _extract_destination(fragment: str) -> str:
+    """リンク先部分からタイトルや角括弧を除去してパス/URL を取り出す。"""
+    destination = fragment.strip()
+    if not destination:
+        return destination
+
+    if destination.startswith("<"):
+        closing = destination.find(">")
+        if closing != -1:
+            return destination[1:closing].strip()
+        return destination[1:].strip()
+
+    for index, char in enumerate(destination):
+        if char in ('"', "'", '(', '['):
+            return destination[:index].rstrip()
+        if char.isspace():
+            remainder = destination[index:].lstrip()
+            if not remainder:
+                return destination[:index].rstrip()
+            if remainder[0] in ('"', "'", '('):
+                return destination[:index].rstrip()
+
+    return destination
 
 
 def normalize_link(link: str) -> str:
@@ -117,7 +175,7 @@ def is_ignored(link: str) -> bool:
     )
 
 
-def check_local_link(base_file: Path, root: Path, link: str) -> Optional[str]:
+def check_local_link(base_file: Path, root: Path, link: str, display: Optional[str]) -> Optional[str]:
     """ローカルファイルへのリンクとアンカーを検証する。"""
     # 相対パスは参照元ファイルから解決し、リポジトリ外への参照はエラーとする。
     target_part, _, anchor = link.partition("#")
@@ -134,6 +192,13 @@ def check_local_link(base_file: Path, root: Path, link: str) -> Optional[str]:
 
     if not resolved.exists():
         return f"missing file: {target_part or base_file.name}"
+
+    if display and resolved.suffix.lower() == ".md":
+        display_name = display.strip()
+        if not display_matches_target(display_name, resolved):
+            return (
+                f"display text '{display_name}' does not match target file name '{resolved.name}'"
+            )
 
     if anchor:
         if not anchor_exists(resolved, anchor):
@@ -160,6 +225,20 @@ def anchor_exists(path: Path, anchor: str) -> bool:
     except OSError:
         return False
     return False
+
+
+def display_matches_target(display: str, target: Path) -> bool:
+    """リンクの表示テキストがターゲットファイル名と整合するか判定する。"""
+    candidates = {display}
+    tail = re.split(r"[\\/]+", display)[-1]
+    candidates.add(tail)
+
+    extended = set(candidates)
+    for value in candidates:
+        if value.lower().endswith(".md"):
+            extended.add(value[:-3])
+
+    return any(value == target.name or value == target.stem for value in extended)
 
 
 def slugify(text: str) -> str:
@@ -208,7 +287,7 @@ def check_links(files: Iterable[Path], root: Path, timeout: float, max_workers: 
     """全リンクを走査し、問題があれば (ファイル, 元リンク, 理由, 行) を返す。"""
     # HTTP リンクはまとめて並列処理し、ローカルリンクは逐次検証する。
     broken: List[Tuple[Path, str, str, int]] = []
-    http_links: Dict[str, List[Tuple[Path, str, int]]] = {}
+    http_links: Dict[str, List[Tuple[Path, str, int, Optional[str]]]] = {}
 
     for file_path in files:
         try:
@@ -217,14 +296,18 @@ def check_links(files: Iterable[Path], root: Path, timeout: float, max_workers: 
             broken.append((file_path, "", f"unable to read file: {error}"))
             continue
 
-        for raw_link, link, line in extract_links(content):
+        for occurrence in extract_links(content):
+            raw_link = occurrence.raw_target
+            link = occurrence.normalized_target
+            line = occurrence.line
+            display = occurrence.display_text
             if is_ignored(link):
                 continue
             kind = classify_link(link)
             if kind == "http":
-                http_links.setdefault(link, []).append((file_path, raw_link, line))
+                http_links.setdefault(link, []).append((file_path, raw_link, line, display))
             elif kind == "local":
-                reason = check_local_link(file_path, root, link)
+                reason = check_local_link(file_path, root, link, display)
                 if reason:
                     broken.append((file_path, raw_link, reason, line))
             else:
@@ -234,7 +317,7 @@ def check_links(files: Iterable[Path], root: Path, timeout: float, max_workers: 
     return broken
 
 
-def check_http_links_concurrently(http_links: Dict[str, List[Tuple[Path, str, int]]], timeout: float, max_workers: int) -> List[Tuple[Path, str, str, int]]:
+def check_http_links_concurrently(http_links: Dict[str, List[Tuple[Path, str, int, Optional[str]]]], timeout: float, max_workers: int) -> List[Tuple[Path, str, str, int]]:
     """HTTP リンクはスレッドプールで並列に検査する。"""
     # 同じ URL が複数回登場する場合は一度だけアクセスし、結果を全ての出現箇所へ反映する。
     broken: List[Tuple[Path, str, str, int]] = []
@@ -252,7 +335,7 @@ def check_http_links_concurrently(http_links: Dict[str, List[Tuple[Path, str, in
     for url, locations in http_links.items():
         message = results.get(url)
         if message:
-            for file_path, raw_link, line in locations:
+            for file_path, raw_link, line, _display in locations:
                 broken.append((file_path, raw_link, message, line))
 
     return broken
@@ -271,7 +354,8 @@ def main() -> int:
         print("Broken links detected:")
         for file_path, raw_link, reason, line in broken:
             rel_path = file_path.resolve().relative_to(root)
-            print(f"- {rel_path}:{line}: '{raw_link}' -> {reason}")
+            line_display = line if line else "?"
+            print(f"- {rel_path}:{line_display}: '{raw_link}' -> {reason}")
         return 1
 
     print(f"Checked {len(files)} Markdown files; all links look good.")
