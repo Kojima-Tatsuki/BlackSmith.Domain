@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "unityMCP-blacksmith-domain": {
+      "command": "C:\\Users\\sona1\\.local\\bin\\uv.exe",
+      "args": [
+        "run",
+        "--directory",
+        "C:\\Users\\sona1\\AppData\\Local\\UnityMCP\\UnityMcpServer\\src",
+        "server.py"
+      ],
+      "type": "stdio"
+    }
+  }
+}
