@@ -17,7 +17,7 @@ namespace BlackSmith.Usecase.Inventory
             if (!fromInventory.Contains(item))
                 throw new ArgumentException("itemがfromInventoryに存在しません");
 
-            if (!toInventory.IsAddable(item))
+            if (!toInventory.IsAddableItem(item))
                 throw new ArgumentException("itemは移動先のインベントリに追加できません");
 
             fromInventory.RemoveItem(item);

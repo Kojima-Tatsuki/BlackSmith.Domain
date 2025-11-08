@@ -28,7 +28,7 @@ namespace BlackSmith.Domain.Inventory
 
         public IItem AddItem(IItem item, int count = 1!)
         {
-            if (!IsAddable(item, count))
+            if (!IsAddableItem(item, count))
                 throw new ArgumentException($"そのアイテムはこのインベントリに追加できません, item: {item}");
 
             var num = new ItemCountNumber(count);
@@ -48,7 +48,7 @@ namespace BlackSmith.Domain.Inventory
 
         public IItem RemoveItem(IItem item, int count = 1!)
         {
-            if (item is null)
+            if (IsRemovableItem(item, count))
                 throw new ArgumentNullException(nameof(item));
 
             var num = new ItemCountNumber(count);
@@ -69,11 +69,19 @@ namespace BlackSmith.Domain.Inventory
             return ItemSlots.ContainsKey(item);
         }
 
-        public bool IsAddable(IItem item, int count = 1)
+        public bool IsAddableItem(IItem item, int count = 1)
         {
             if (item is null)
                 return false;
 
+            return true;
+        }
+
+        public bool IsRemovableItem(IItem item, int count = 1)
+        {
+            if (item is null)
+                return false;
+                
             return true;
         }
 

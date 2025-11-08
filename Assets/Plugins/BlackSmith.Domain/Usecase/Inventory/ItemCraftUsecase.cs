@@ -41,7 +41,7 @@ namespace BlackSmith.Usecase.Inventory
                 //throw new ArgumentException("一部、素材がたりません");
                 return false;
 
-            if (!command.ToInventory.IsAddable(command.Recipe.Craftable))
+            if (!command.ToInventory.IsAddableItem(command.Recipe.Craftable))
                 //throw new ArgumentException("作成したアイテムがインベントリに追加できません");
                 return false;
 

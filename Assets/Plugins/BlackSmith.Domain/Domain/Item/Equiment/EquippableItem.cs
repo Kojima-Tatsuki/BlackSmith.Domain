@@ -5,14 +5,14 @@ using System;
 
 namespace BlackSmith.Domain.Item.Equipment
 {
-    public interface IEquippableItem : IItem
+    public interface IEquipableItem : IItem
     {
-        IEquippableItem Enchant(EnhancementParameter parameter);
+        IEquipableItem Enchant(EnhancementParameter parameter);
 
-        IEquippableItem Repair();
+        IEquipableItem Repair();
     }
 
-    public record EquippableItem : Item, IEquippableItem
+    public record EquipableItem : Item, IEquipableItem
     {
         public EquipmentType EquipType { get; }
 
@@ -26,7 +26,7 @@ namespace BlackSmith.Domain.Item.Equipment
 
         public RequireParameter RequireParameter { get; }
 
-        internal EquippableItem(CreateCommand command) : base(command.ItemName)
+        internal EquipableItem(CreateCommand command) : base(command.ItemName)
         {
             Attack = command.Attack;
             Defense = command.Defense;
@@ -38,7 +38,7 @@ namespace BlackSmith.Domain.Item.Equipment
 
         // Serialize/Deserialize用のコンストラクタ
         [JsonConstructor]
-        private EquippableItem(
+        private EquipableItem(
             string itemName,
             EquipmentType equipType,
             EquipmentAttack attack,
@@ -55,10 +55,10 @@ namespace BlackSmith.Domain.Item.Equipment
             RequireParameter = requireParameter;
         }
 
-        IEquippableItem IEquippableItem.Enchant(EnhancementParameter parameter) => Enchant(parameter);
-        internal EquippableItem Enchant(EnhancementParameter parameter)
+        IEquipableItem IEquipableItem.Enchant(EnhancementParameter parameter) => Enchant(parameter);
+        internal EquipableItem Enchant(EnhancementParameter parameter)
         {
-            return new EquippableItem(
+            return new EquipableItem(
                 new CreateCommand(
                     ItemName,
                     EquipType,
@@ -70,8 +70,8 @@ namespace BlackSmith.Domain.Item.Equipment
                     ));
         }
 
-        IEquippableItem IEquippableItem.Repair() => Repair();
-        internal IEquippableItem Repair()
+        IEquipableItem IEquipableItem.Repair() => Repair();
+        internal IEquipableItem Repair()
         {
             throw new NotImplementedException();
         }
@@ -112,7 +112,7 @@ namespace BlackSmith.Domain.Item.Equipment
     {
         Weapon,     // 武器
         Armor,      // 防具
-        Accessary,  // アクセサリ
+        Accessory,  // アクセサリ
 
         /*
         None,       = 0x00,

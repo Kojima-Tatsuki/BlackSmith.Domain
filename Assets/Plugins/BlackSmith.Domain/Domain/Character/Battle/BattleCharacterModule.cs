@@ -50,7 +50,7 @@ namespace BlackSmith.Domain.Character.Battle
             return new CharacterBattleModule(health, LevelDependentParameters, EquipmentModule, StatusEffectModule);
         }
 
-        internal ChangeEquipmentResult ChangeBattleEquipment(EquippableItem? item, EquipmentType changeType)
+        internal ChangeEquipmentResult ChangeBattleEquipment(EquipableItem? item, EquipmentType changeType)
         {
             var currentModule = item is null ? EquipmentModule.RemoveEquipment(changeType) : EquipmentModule.ChangeEquipment(item);
 
@@ -67,9 +67,9 @@ namespace BlackSmith.Domain.Character.Battle
         internal record ChangeEquipmentResult
         {
             public CharacterBattleModule Module { get; }
-            public EquippableItem? RemovedItem { get; }
+            public EquipableItem? RemovedItem { get; }
 
-            internal ChangeEquipmentResult(CharacterBattleModule module, EquippableItem? item)
+            internal ChangeEquipmentResult(CharacterBattleModule module, EquipableItem? item)
             {
                 Module = module;
                 RemovedItem = item;

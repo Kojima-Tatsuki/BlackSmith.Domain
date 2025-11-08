@@ -40,7 +40,7 @@ namespace BlackSmith.Domain.Character.Battle
         }
 
         // 現状の変更結果は、外部から観測できる範囲に限られるため、Resultクラスの必要性が無い
-        internal ChangeBattleEquipmentResult ChangeBattleEquipment(EquippableItem item)
+        internal ChangeBattleEquipmentResult ChangeBattleEquipment(EquipableItem item)
         {
             var prev = item.EquipType switch
             {

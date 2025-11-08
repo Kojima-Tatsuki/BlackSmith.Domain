@@ -13,7 +13,7 @@ namespace BlackSmith.Domain.Item.Equipment
         /// <param name="enchanceType">追加付与を試みるパラメータ</param>
         /// <param name="parameters">強化を試みるキャラクターのステータス</param>
         /// <returns>強化結果</returns>
-        internal EnhancedResult Enhance(EquippableItem item, EnhancementParameter.EnhanceType enchanceType, DependentParametersForEnhancement parameters)
+        internal EnhancedResult Enhance(EquipableItem item, EnhancementParameter.EnhanceType enchanceType, DependentParametersForEnhancement parameters)
         {
             var random = new Random();
 
@@ -38,7 +38,7 @@ namespace BlackSmith.Domain.Item.Equipment
 
         /// <summary>強化時の成功確率</summary>
         /// <returns>確率は 0.0 ~ 1.0 で返される</returns>
-        internal float GetSuccessProbabilityWhenEnhancement(EquippableItem item, DependentParametersForEnhancement parameters)
+        internal float GetSuccessProbabilityWhenEnhancement(EquipableItem item, DependentParametersForEnhancement parameters)
         {
             var baseLevel = Math.Max(item.RequireParameter.Level.Value - 5, 0);
 
@@ -52,9 +52,9 @@ namespace BlackSmith.Domain.Item.Equipment
         public class EnhancedResult
         {
             public EnhancedResultType ResultType { get; }
-            public EquippableItem EquippableItem { get; }
+            public EquipableItem EquippableItem { get; }
 
-            internal EnhancedResult(EnhancedResultType resultType, EquippableItem equippableItem)
+            internal EnhancedResult(EnhancedResultType resultType, EquipableItem equippableItem)
             {
                 ResultType = resultType;
                 EquippableItem = equippableItem;

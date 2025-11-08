@@ -21,14 +21,14 @@ namespace BlackSmith.Usecase.Character.Battle
             InventoryRepository = inventoryRepository;
         }
 
-        public async UniTask ChengeEquipment(CharacterID playerId, InventoryID inventoryId, EquippableItem equipment, EquippableItem remove)
+        public async UniTask ChengeEquipment(CharacterID playerId, InventoryID inventoryId, EquipableItem equipment, EquipableItem remove)
         {
             var player = await PlayerRepository.FindByID(playerId) ?? throw new InvalidOperationException($"Player not found. playerId: {playerId}. (h2J7h7Ge)");
             var inventoryService = InventoryRepository.FindByID(inventoryId) ?? throw new InvalidOperationException($"InventoryService not found. inventoryId: {inventoryId}. (g098fssI)");
 
-            var inventory = (inventoryService as IOneByInventoryService<EquippableItem>) ?? throw new InvalidCastException($"Id does not fill the requirement. inventoryId: {inventoryId}. (Hb3rQlG9)");
+            var inventory = (inventoryService as IOneByInventoryService<EquipableItem>) ?? throw new InvalidCastException($"Id does not fill the requirement. inventoryId: {inventoryId}. (Hb3rQlG9)");
 
-            EquippableItem? removed = null;
+            EquipableItem? removed = null;
 
             if (!inventory.IsAddable(equipment))
             {
@@ -49,12 +49,12 @@ namespace BlackSmith.Usecase.Character.Battle
                 throw new InvalidOperationException("インベントリとBattleModuleから新たに装着したアイテムが一致しません. (MCqvxN67)");
         }
 
-        public async UniTask RemoveEquipment(CharacterID playerId, InventoryID inventoryId, EquippableItem remove)
+        public async UniTask RemoveEquipment(CharacterID playerId, InventoryID inventoryId, EquipableItem remove)
         {
             var player = await PlayerRepository.FindByID(playerId) ?? throw new InvalidOperationException($"Player not found. playerId: {playerId}. (VrpFXAQ9)");
             var inventoryService = InventoryRepository.FindByID(inventoryId) ?? throw new InvalidOperationException($"InventoryService not found. inventoryId: {inventoryId}. (DjmTPN5D)");
 
-            var inventory = (inventoryService as IOneByInventoryService<EquippableItem>) ?? throw new InvalidCastException($"Id does not fill the requirement. inventoryId: {inventoryId}. (JbmZeDf5)");
+            var inventory = (inventoryService as IOneByInventoryService<EquipableItem>) ?? throw new InvalidCastException($"Id does not fill the requirement. inventoryId: {inventoryId}. (JbmZeDf5)");
 
             var removed = inventory.RemoveItem(remove);
             var changeResult = player.RemoveBattleEquipment(remove.EquipType);

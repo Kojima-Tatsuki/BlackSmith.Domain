@@ -7,20 +7,20 @@ using System.Linq;
 namespace BlackSmith.Domain.Inventory
 {
     /// <summary>装備中のアイテムを格納するインベントリ</summary>
-    internal class EquipmentInventory : IOneByInventoryService<EquippableItem>
+    internal class EquipmentInventory : IOneByInventoryService<EquipableItem>
     {
         internal InventoryID ID { get; }
 
-        private readonly Dictionary<EquipmentType, EquippableItem> Equipments;
+        private readonly Dictionary<EquipmentType, EquipableItem> Equipments;
 
         internal EquipmentInventory(InventoryID id)
         {
             ID = id ?? throw new ArgumentNullException(nameof(id));
 
-            Equipments = new Dictionary<EquipmentType, EquippableItem>();
+            Equipments = new Dictionary<EquipmentType, EquipableItem>();
         }
 
-        public EquippableItem AddItem(EquippableItem item)
+        public EquipableItem AddItem(EquipableItem item)
         {
             if (IsOccupiedType(item.EquipType))
                 throw new ArgumentException("既に別のアイテムが装備されています");
@@ -30,7 +30,7 @@ namespace BlackSmith.Domain.Inventory
             return item;
         }
 
-        public EquippableItem RemoveItem(EquippableItem item)
+        public EquipableItem RemoveItem(EquipableItem item)
         {
             if (!Contains(item))
                 throw new ArgumentException("指定のアイテムは装備されていません");
@@ -40,7 +40,7 @@ namespace BlackSmith.Domain.Inventory
             return item;
         }
 
-        public int GetContainItemCount(EquippableItem item)
+        public int GetContainItemCount(EquipableItem item)
         {
             if (!IsOccupiedType(item.EquipType))
                 return 0;
@@ -51,18 +51,18 @@ namespace BlackSmith.Domain.Inventory
             return 0;
         }
 
-        public IReadOnlyCollection<EquippableItem> GetContainItems()
+        public IReadOnlyCollection<EquipableItem> GetContainItems()
         {
             return Equipments.Values;
         }
 
-        public IReadOnlyDictionary<EquippableItem, int> GetInventory()
+        public IReadOnlyDictionary<EquipableItem, int> GetInventory()
         {
-            return new Dictionary<EquippableItem, int>(
-                Equipments.Select(typeAndItem => new KeyValuePair<EquippableItem, int>(typeAndItem.Value, 1)));
+            return new Dictionary<EquipableItem, int>(
+                Equipments.Select(typeAndItem => new KeyValuePair<EquipableItem, int>(typeAndItem.Value, 1)));
         }
 
-        public bool Contains(EquippableItem item)
+        public bool Contains(EquipableItem item)
         {
             if (!IsOccupiedType(item.EquipType))
                 return false;
@@ -73,7 +73,7 @@ namespace BlackSmith.Domain.Inventory
             return false;
         }
 
-        public bool IsAddable(EquippableItem item)
+        public bool IsAddable(EquipableItem item)
         {
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
@@ -82,6 +82,11 @@ namespace BlackSmith.Domain.Inventory
                 return false;
 
             return true;
+        }
+
+        public bool IsRemovableItem(EquipableItem item)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

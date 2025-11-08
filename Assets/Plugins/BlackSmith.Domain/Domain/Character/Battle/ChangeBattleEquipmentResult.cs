@@ -6,10 +6,10 @@ namespace BlackSmith.Domain.Character.Battle
 {
     internal record ChangeBattleEquipmentResult
     {
-        public EquippableItem? CurrentEquipment { get; }
-        public EquippableItem? PrevEquipment { get; }
+        public EquipableItem? CurrentEquipment { get; }
+        public EquipableItem? PrevEquipment { get; }
 
-        internal ChangeBattleEquipmentResult(EquippableItem? currentEquipment, EquippableItem? prevEquipment)
+        internal ChangeBattleEquipmentResult(EquipableItem? currentEquipment, EquipableItem? prevEquipment)
         {
             CurrentEquipment = currentEquipment;
             PrevEquipment = prevEquipment;

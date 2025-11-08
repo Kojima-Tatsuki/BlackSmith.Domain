@@ -8,11 +8,11 @@ namespace BlackSmith.Domain.Character.Battle
 {
     public record BattleEquipmentModule
     {
-        public EquippableItem? Weapon { get; }
-        public EquippableItem? Armor { get; }
+        public EquipableItem? Weapon { get; }
+        public EquipableItem? Armor { get; }
 
         [JsonConstructor]
-        internal BattleEquipmentModule(EquippableItem? weapon, EquippableItem? armor)
+        internal BattleEquipmentModule(EquipableItem? weapon, EquipableItem? armor)
         {
             if (weapon != null && weapon.EquipType != EquipmentType.Weapon)
                 throw new ArgumentException($"Unexpected type of equipment. {weapon?.EquipType}. (lJTQ1VIJ)");
@@ -23,7 +23,7 @@ namespace BlackSmith.Domain.Character.Battle
             Armor = armor;
         }
 
-        internal BattleEquipmentModule ChangeEquipment(EquippableItem item)
+        internal BattleEquipmentModule ChangeEquipment(EquipableItem item)
         {
             switch (item.EquipType)
             {

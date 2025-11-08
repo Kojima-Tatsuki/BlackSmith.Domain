@@ -13,12 +13,12 @@ namespace BlackSmith.Domain.Item.Equipment
         public void EquippableItemSerializeTestPasses()
         {
             var requireParams = new RequireParameter(new CharacterLevel(Experience.RequiredCumulativeExp(1)), new Strength(1), new Agility(1));
-            var command = new EquippableItem.CreateCommand("TestName", EquipmentType.Weapon, new EquipmentAttack(10), new EquipmentDefense(5), new EnhancementParameter(), new AdditionalParameter(), requireParams);
-            var item = new EquippableItem(command);
+            var command = new EquipableItem.CreateCommand("TestName", EquipmentType.Weapon, new EquipmentAttack(10), new EquipmentDefense(5), new EnhancementParameter(), new AdditionalParameter(), requireParams);
+            var item = new EquipableItem(command);
 
             
             var serialized = JsonConvert.SerializeObject(item);
-            var deserialized = JsonConvert.DeserializeObject<EquippableItem>(serialized);
+            var deserialized = JsonConvert.DeserializeObject<EquipableItem>(serialized);
 
             Assert.That(item, Is.EqualTo(deserialized));
         }
@@ -29,10 +29,10 @@ namespace BlackSmith.Domain.Item.Equipment
             public void CreateCommandSerializeTestPasses()
             {
                 var requireParams = new RequireParameter(new CharacterLevel(Experience.RequiredCumulativeExp(1)), new Strength(1), new Agility(1));
-                var command = new EquippableItem.CreateCommand("TestName", EquipmentType.Weapon, new EquipmentAttack(10), new EquipmentDefense(5), new EnhancementParameter(), new AdditionalParameter(), requireParams);
+                var command = new EquipableItem.CreateCommand("TestName", EquipmentType.Weapon, new EquipmentAttack(10), new EquipmentDefense(5), new EnhancementParameter(), new AdditionalParameter(), requireParams);
 
                 var serialized = JsonConvert.SerializeObject(command);
-                var deserialized = JsonConvert.DeserializeObject<EquippableItem.CreateCommand>(serialized);
+                var deserialized = JsonConvert.DeserializeObject<EquipableItem.CreateCommand>(serialized);
 
                 Assert.That(command, Is.EqualTo(deserialized));
             }
