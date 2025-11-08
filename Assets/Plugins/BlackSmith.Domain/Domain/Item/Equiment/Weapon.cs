@@ -1,6 +1,6 @@
 ﻿namespace BlackSmith.Domain.Item.Equipment
 {
-    public record Weapon : EquippableItem
+    public record Weapon : EquipableItem
     {
         // 要らない？
         internal Weapon(WeaponCreateCommand command) 

@@ -23,7 +23,7 @@ namespace BlackSmith.Domain.Inventory
         /// <param name="item">追加するアイテム</param>
         /// <param name="count">追加する個数</param>
         /// <returns>追加したアイテム</returns>
-        T AddItem(T item, int count = 1!);
+        T AddItem(T item, int count = 1);
 
         /// <summary>
         /// アイテムを取り除く
@@ -31,7 +31,7 @@ namespace BlackSmith.Domain.Inventory
         /// <param name="item">取り除くアイテム</param>
         /// <param name="count">取り除く個数</param>
         /// <returns>取り除いたアイテム</returns>
-        T RemoveItem(T item, int count = 1!);
+        T RemoveItem(T item, int count = 1);
 
         /// <summary>
         /// アイテムがインベントリ内にあるかを返す
@@ -40,7 +40,21 @@ namespace BlackSmith.Domain.Inventory
         /// <returns>存在すれば真を返す</returns>
         bool Contains(T item);
 
-        bool IsAddable(T item, int count = 1!);
+        /// <summary>
+        /// アイテムが追加できるかを返す
+        /// </summary>
+        /// <param name="item">追加するアイテム</param>
+        /// <param name="count">追加する個数</param>
+        /// <returns>追加できるなら真を返す</returns>
+        bool IsAddableItem(T item, int count = 1);
+
+        /// <summary>
+        /// アイテムが取り除けるか返す
+        /// </summary>
+        /// <param name="item">取り除くアイテム</param>
+        /// <param name="count">取り除く個数</param>
+        /// <returns>取り除けるなら真を返す</returns>
+        bool IsRemovableItem(T item, int count = 1);
     }
 
     /// <summary>1つずつしか操作が行えないインベントリ</summary>
@@ -67,7 +81,19 @@ namespace BlackSmith.Domain.Inventory
         /// <returns>存在すれば真を返す</returns>
         bool Contains(T item);
 
+        /// <summary>
+        /// アイテムが追加できるかを返す
+        /// </summary>
+        /// <param name="item">追加するアイテム</param>
+        /// <returns>追加できるなら真を返す</returns>
         bool IsAddable(T item);
+
+        /// <summary>
+        /// アイテムが取り除けるか返す
+        /// </summary>
+        /// <param name="item">取り除くアイテム</param>
+        /// <returns>取り除けるなら真を返す</returns>
+        bool IsRemovableItem(T item);
     }
 
     /// <summary>

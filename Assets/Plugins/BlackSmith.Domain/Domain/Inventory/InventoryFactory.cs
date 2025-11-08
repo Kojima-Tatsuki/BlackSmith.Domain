@@ -12,7 +12,7 @@ namespace BlackSmith.Domain.Inventory
             return inventory;
         }
 
-        public IOneByInventoryService<EquippableItem> CreateEquipInventory()
+        public IOneByInventoryService<EquipableItem> CreateEquipInventory()
         {
             InventoryID id = new InventoryID();
 

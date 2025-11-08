@@ -17,9 +17,9 @@ namespace BlackSmith.Domain.Character.Battle
         }
 
         // 正常系用モックデータ
-        private static EquippableItem?[][] CorrectMockDatas()
+        private static EquipableItem?[][] CorrectMockDatas()
         {
-            var weapon = new EquippableItem(new(
+            var weapon = new EquipableItem(new(
                 itemName: "MockWeapon",
                 type: EquipmentType.Weapon,
                 attack: new EquipmentAttack(1),
@@ -28,7 +28,7 @@ namespace BlackSmith.Domain.Character.Battle
                 additionalParameter: new AdditionalParameter(),
                 requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
-            var armor = new EquippableItem(new(
+            var armor = new EquipableItem(new(
                 itemName: "MockArmor",
                 type: EquipmentType.Armor,
                 attack: new EquipmentAttack(1),
@@ -37,18 +37,18 @@ namespace BlackSmith.Domain.Character.Battle
                 additionalParameter: new AdditionalParameter(),
                 requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
-            return new EquippableItem?[][] {
-            new EquippableItem?[] { null, null },
-            new EquippableItem?[] { weapon, null },
-            new EquippableItem?[] { null, armor },
-            new EquippableItem?[] { weapon, armor }
+            return new EquipableItem?[][] {
+            new EquipableItem?[] { null, null },
+            new EquipableItem?[] { weapon, null },
+            new EquipableItem?[] { null, armor },
+            new EquipableItem?[] { weapon, armor }
         };
         }
 
         // 異常系用モックデータ
-        private static EquippableItem?[][] IncorrectMockDatas()
+        private static EquipableItem?[][] IncorrectMockDatas()
         {
-            var currectWeapon = new EquippableItem(new(
+            var currectWeapon = new EquipableItem(new(
                 itemName: "MockWeapon",
                 type: EquipmentType.Weapon,
                 attack: new EquipmentAttack(1),
@@ -57,7 +57,7 @@ namespace BlackSmith.Domain.Character.Battle
                 additionalParameter: new AdditionalParameter(),
                 requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
-            var inCorrectWeapon = new EquippableItem(new(
+            var inCorrectWeapon = new EquipableItem(new(
                 itemName: "MockWeapon",
                 type: EquipmentType.Armor,
                 attack: new EquipmentAttack(1),
@@ -66,7 +66,7 @@ namespace BlackSmith.Domain.Character.Battle
                 additionalParameter: new AdditionalParameter(),
                 requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
-            var armor = new EquippableItem(new(
+            var armor = new EquipableItem(new(
                 itemName: "MockArmor",
                 type: EquipmentType.Armor,
                 attack: new EquipmentAttack(1),
@@ -75,16 +75,16 @@ namespace BlackSmith.Domain.Character.Battle
                 additionalParameter: new AdditionalParameter(),
                 requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
-            return new EquippableItem?[][] {
-            new EquippableItem?[] { currectWeapon, currectWeapon },
-            new EquippableItem?[] { inCorrectWeapon, null },
-            new EquippableItem?[] { inCorrectWeapon, armor }
+            return new EquipableItem?[][] {
+            new EquipableItem?[] { currectWeapon, currectWeapon },
+            new EquipableItem?[] { inCorrectWeapon, null },
+            new EquipableItem?[] { inCorrectWeapon, armor }
         };
         }
 
         [Test(Description = "装備モジュールのインスタンスを生成するテスト")]
         [TestCaseSource(nameof(CorrectMockDatas), Category = "正常系")]
-        public void ModuleInstancePasses(EquippableItem? weapon, EquippableItem? armor)
+        public void ModuleInstancePasses(EquipableItem? weapon, EquipableItem? armor)
         {
             try
             {
@@ -98,7 +98,7 @@ namespace BlackSmith.Domain.Character.Battle
 
         [Test(Description = "装備モジュールのインスタンスを生成するテスト")]
         [TestCaseSource(nameof(IncorrectMockDatas), Category = "異常系")]
-        public void ModuleInstanceFail(EquippableItem? weapon, EquippableItem? armor)
+        public void ModuleInstanceFail(EquipableItem? weapon, EquipableItem? armor)
         {
             Assert.Throws<ArgumentException>(() =>
             {
@@ -109,7 +109,7 @@ namespace BlackSmith.Domain.Character.Battle
         [Test(Description = "BattleEquipmentModuleのシリアライズ・デシリアライズテスト")]
         public void BattleEquipmentModuleSerializeTestPasses()
         {
-            var weapon = new EquippableItem(new(
+            var weapon = new EquipableItem(new(
                 itemName: "MockWeapon",
                 type: EquipmentType.Weapon,
                 attack: new EquipmentAttack(1),
@@ -118,7 +118,7 @@ namespace BlackSmith.Domain.Character.Battle
                 additionalParameter: new AdditionalParameter(),
                 requireParameter: new RequireParameter(new CharacterLevel(), new Strength(1), new Agility(1))));
 
-            var armor = new EquippableItem(new(
+            var armor = new EquipableItem(new(
                 itemName: "MockArmor",
                 type: EquipmentType.Armor,
                 attack: new EquipmentAttack(1),

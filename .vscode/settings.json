@@ -61,5 +61,10 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "BlackSmith.Domain.slnx"
+    "dotnet.defaultSolution": "BlackSmith.Domain.slnx",
+    "cSpell.words": [
+        "Pfgr",
+        "SNBXC",
+        "Usecase"
+    ]
 }
