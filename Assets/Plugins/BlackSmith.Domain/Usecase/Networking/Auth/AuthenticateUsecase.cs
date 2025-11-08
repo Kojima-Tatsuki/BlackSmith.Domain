@@ -33,7 +33,7 @@ namespace BlackSmith.Usecase.Networking.Auth
         {
             if (userName == null) throw new ArgumentNullException(nameof(userName));
             if (password == null) throw new ArgumentNullException(nameof(password));
-            
+
             if (authController.IsSignedIn())
             {
                 throw new InvalidOperationException("既に認証済みです。サインアップ前にサインアウトしてください。");
@@ -62,7 +62,7 @@ namespace BlackSmith.Usecase.Networking.Auth
         {
             if (userName == null) throw new ArgumentNullException(nameof(userName));
             if (password == null) throw new ArgumentNullException(nameof(password));
-            
+
             if (authController.IsSignedIn())
             {
                 throw new InvalidOperationException("既に認証済みです。サインイン前にサインアウトしてください。");
