@@ -21,12 +21,14 @@ namespace BlackSmith.Usecase.Networking.Auth
         private readonly IAuthenticationController authController;
         private readonly ICommonCharacterEntityRepository characterRepository;
         private readonly ISessionPlayerDataRepository sessionRepository;
+        private readonly IPlayerCharacterIdResolver playerCharacterIdResolver;
 
-        public AuthenticationUsecase(IAuthenticationController authController, ICommonCharacterEntityRepository characterRepository, ISessionPlayerDataRepository sessionRepository)
+        public AuthenticationUsecase(IAuthenticationController authController, ICommonCharacterEntityRepository characterRepository, ISessionPlayerDataRepository sessionRepository, IPlayerCharacterIdResolver playerCharacterIdResolver)
         {
             this.authController = authController ?? throw new ArgumentNullException(nameof(authController));
             this.characterRepository = characterRepository ?? throw new ArgumentNullException(nameof(characterRepository));
             this.sessionRepository = sessionRepository ?? throw new ArgumentNullException(nameof(sessionRepository));
+            this.playerCharacterIdResolver = playerCharacterIdResolver ?? throw new ArgumentNullException(nameof(playerCharacterIdResolver));
         }
 
         /// <summary>
@@ -43,9 +45,7 @@ namespace BlackSmith.Usecase.Networking.Auth
             if (password == null) throw new ArgumentNullException(nameof(password));
 
             if (authController.IsSignedIn())
-            {
                 throw new InvalidOperationException("既に認証済みです。サインアップ前にサインアウトしてください。");
-            }
 
             try
             {
@@ -77,13 +77,22 @@ namespace BlackSmith.Usecase.Networking.Auth
             if (password == null) throw new ArgumentNullException(nameof(password));
 
             if (authController.IsSignedIn())
-            {
                 throw new InvalidOperationException("既に認証済みです。サインイン前にサインアウトしてください。");
-            }
 
             try
             {
                 var playerId = await authController.SignInForUserNameAndPassword(userName, password);
+
+                var characterId = await playerCharacterIdResolver.GetCharacterIdByPlayerAuthId(playerId);
+                if (characterId == null)
+                    throw new InvalidOperationException("サインインに失敗しました。対応するキャラクターが見つかりません。");
+                
+                var characterEntity = await characterRepository.FindByID(characterId);
+                if (characterEntity == null)
+                    throw new InvalidOperationException("サインインに失敗しました。対応するキャラクターが見つかりません。");
+
+                sessionRepository.Update(new SessionPlayerData(playerId, characterEntity.ID, characterEntity.Name));
+
                 return playerId;
             }
             catch (Exception ex)
@@ -99,13 +108,12 @@ namespace BlackSmith.Usecase.Networking.Auth
         public async UniTask SignOutAsync()
         {
             if (!authController.IsSignedIn())
-            {
                 throw new InvalidOperationException("認証されていません。サインアウトできません。");
-            }
 
             try
             {
                 await authController.SignOutForAccount();
+                sessionRepository.Logout();
             }
             catch (Exception ex)
             {
