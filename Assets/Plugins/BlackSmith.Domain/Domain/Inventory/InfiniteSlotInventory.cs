@@ -48,7 +48,7 @@ namespace BlackSmith.Domain.Inventory
 
         public IItem RemoveItem(IItem item, int count = 1!)
         {
-            if (IsRemovableItem(item, count))
+            if (!IsRemovableItem(item, count))
                 throw new ArgumentNullException(nameof(item));
 
             var num = new ItemCountNumber(count);

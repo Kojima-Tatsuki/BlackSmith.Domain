@@ -32,7 +32,7 @@ namespace BlackSmith.Domain.Inventory
 
         public EquipableItem RemoveItem(EquipableItem item)
         {
-            if (!Contains(item))
+            if (!IsRemovableItem(item))
                 throw new ArgumentException("指定のアイテムは装備されていません");
 
             Equipments.Remove(item.EquipType);
@@ -86,7 +86,9 @@ namespace BlackSmith.Domain.Inventory
 
         public bool IsRemovableItem(EquipableItem item)
         {
-            throw new NotImplementedException();
+            if (Contains(item))
+                return true;
+            return false;
         }
 
         /// <summary>
