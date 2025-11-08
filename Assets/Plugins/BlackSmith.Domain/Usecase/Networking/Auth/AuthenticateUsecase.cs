@@ -3,6 +3,10 @@ using BlackSmith.Domain.Networking.Auth;
 using BlackSmith.Usecase.Interface.Networking.Auth;
 using System;
 using System.Collections.Generic;
+using BlackSmith.Usecase.Character;
+using BlackSmith.Domain.Character;
+using BlackSmith.Usecase.Interface;
+using BlackSmith.Domain.Usecase.Networking.Auth;
 
 #nullable enable
 
@@ -15,10 +19,14 @@ namespace BlackSmith.Usecase.Networking.Auth
     public class AuthenticationUsecase
     {
         private readonly IAuthenticationController authController;
+        private readonly ICommonCharacterEntityRepository characterRepository;
+        private readonly ISessionPlayerDataRepository sessionRepository;
 
-        public AuthenticationUsecase(IAuthenticationController authController)
+        public AuthenticationUsecase(IAuthenticationController authController, ICommonCharacterEntityRepository characterRepository, ISessionPlayerDataRepository sessionRepository)
         {
             this.authController = authController ?? throw new ArgumentNullException(nameof(authController));
+            this.characterRepository = characterRepository ?? throw new ArgumentNullException(nameof(characterRepository));
+            this.sessionRepository = sessionRepository ?? throw new ArgumentNullException(nameof(sessionRepository));
         }
 
         /// <summary>
@@ -29,7 +37,7 @@ namespace BlackSmith.Usecase.Networking.Auth
         /// <returns>認証されたプレイヤーID</returns>
         /// <exception cref="ArgumentNullException">引数がnullの場合</exception>
         /// <exception cref="InvalidOperationException">すでに認証済みの場合、またはサインアップに失敗した場合</exception>
-        public async UniTask<AuthPlayerId> SignupAsync(UserName userName, Password password)
+        public async UniTask<AuthPlayerId> SignUpAsync(UserName userName, Password password)
         {
             if (userName == null) throw new ArgumentNullException(nameof(userName));
             if (password == null) throw new ArgumentNullException(nameof(password));
@@ -41,7 +49,12 @@ namespace BlackSmith.Usecase.Networking.Auth
 
             try
             {
-                var playerId = await authController.SignupForUserNameAndPassword(userName, password);
+                var playerId = await authController.SignUpForUserNameAndPassword(userName, password);
+
+                var adjustUsecase = new AdjustCommonCharacterEntityUsecase(characterRepository);
+                var characterEntity = await adjustUsecase.CreateCharacter(new CharacterName(userName.Value));
+
+                sessionRepository.Update(new SessionPlayerData(playerId, characterEntity.ID, characterEntity.Name));
                 return playerId;
             }
             catch (Exception ex)

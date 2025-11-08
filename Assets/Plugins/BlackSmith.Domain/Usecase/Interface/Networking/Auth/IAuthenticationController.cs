@@ -14,7 +14,7 @@ namespace BlackSmith.Usecase.Interface.Networking.Auth
         /// <param name="userName">ユーザー名</param>
         /// <param name="password">パスワード</param>
         /// <returns>サインアップ処理の完了</returns>
-        UniTask<AuthPlayerId> SignupForUserNameAndPassword(UserName userName, Password password);
+        UniTask<AuthPlayerId> SignUpForUserNameAndPassword(UserName userName, Password password);
 
         /// <summary>
         /// ユーザー名とパスワードでサインインを実行
