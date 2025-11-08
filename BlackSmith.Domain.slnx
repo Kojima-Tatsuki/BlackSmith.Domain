@@ -1,0 +1,5 @@
+﻿<Solution>
+  <Project Path="BlackSmith.Domain.csproj" />
+  <Project Path="BlackSmith.Domain.Test.csproj" />
+  <Project Path="Assembly-CSharp-Editor.csproj" />
+</Solution>
