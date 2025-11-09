@@ -13,6 +13,8 @@ namespace BlackSmith.Usecase.Interface.Networking.CloudSave
         public float X { get; init; }
         public float Y { get; init; }
         public float Z { get; init; }
+
+        public static PositionModel Zero => new PositionModel { X = 0f, Y = 0f, Z = 0f };
     }
 
     /// <summary>
