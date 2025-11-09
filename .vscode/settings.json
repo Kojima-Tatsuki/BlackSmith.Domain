@@ -63,6 +63,7 @@
     },
     "dotnet.defaultSolution": "BlackSmith.Domain.slnx",
     "cSpell.words": [
+        "Cysharp",
         "Pfgr",
         "SNBXC",
         "Usecase"
