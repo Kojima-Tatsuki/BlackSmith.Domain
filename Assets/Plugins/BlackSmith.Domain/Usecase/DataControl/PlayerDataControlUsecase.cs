@@ -2,6 +2,8 @@
 using BlackSmith.Usecase.Interface;
 using BlackSmith.Usecase.Interface.Networking.Auth;
 
+#nullable enable
+
 // AuthPlayerIdからCharacterEntityを取得するユースケース
 namespace BlackSmith.Domain.Usecase.DataControl
 {

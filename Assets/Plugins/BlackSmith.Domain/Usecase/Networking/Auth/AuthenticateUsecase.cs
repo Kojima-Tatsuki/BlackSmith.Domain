@@ -18,13 +18,15 @@ namespace BlackSmith.Usecase.Networking.Auth
     public class AuthenticationUsecase
     {
         private readonly IAuthenticationController authController;
+        private readonly IAuthenticationStateProvider authStateProvider;
         private readonly ICommonCharacterEntityRepository characterRepository;
         private readonly ISessionPlayerDataRepository sessionRepository;
         private readonly IPlayerCharacterIdResolver playerCharacterIdResolver;
 
-        public AuthenticationUsecase(IAuthenticationController authController, ICommonCharacterEntityRepository characterRepository, ISessionPlayerDataRepository sessionRepository, IPlayerCharacterIdResolver playerCharacterIdResolver)
+        public AuthenticationUsecase(IAuthenticationController authController, IAuthenticationStateProvider authStateProvider, ICommonCharacterEntityRepository characterRepository, ISessionPlayerDataRepository sessionRepository, IPlayerCharacterIdResolver playerCharacterIdResolver)
         {
             this.authController = authController ?? throw new ArgumentNullException(nameof(authController));
+            this.authStateProvider = authStateProvider ?? throw new ArgumentNullException(nameof(authStateProvider));
             this.characterRepository = characterRepository ?? throw new ArgumentNullException(nameof(characterRepository));
             this.sessionRepository = sessionRepository ?? throw new ArgumentNullException(nameof(sessionRepository));
             this.playerCharacterIdResolver = playerCharacterIdResolver ?? throw new ArgumentNullException(nameof(playerCharacterIdResolver));
@@ -43,7 +45,7 @@ namespace BlackSmith.Usecase.Networking.Auth
             if (userName == null) throw new ArgumentNullException(nameof(userName));
             if (password == null) throw new ArgumentNullException(nameof(password));
 
-            if (authController.IsSignedIn())
+            if (authStateProvider.IsSignedIn)
                 throw new InvalidOperationException("既に認証済みです。サインアップ前にサインアウトしてください。");
 
             try
@@ -75,7 +77,7 @@ namespace BlackSmith.Usecase.Networking.Auth
             if (userName == null) throw new ArgumentNullException(nameof(userName));
             if (password == null) throw new ArgumentNullException(nameof(password));
 
-            if (authController.IsSignedIn())
+            if (authStateProvider.IsSignedIn)
                 throw new InvalidOperationException("既に認証済みです。サインイン前にサインアウトしてください。");
 
             try
@@ -106,7 +108,7 @@ namespace BlackSmith.Usecase.Networking.Auth
         /// <exception cref="InvalidOperationException">認証されていない場合</exception>
         public async UniTask SignOutAsync()
         {
-            if (!authController.IsSignedIn())
+            if (!authStateProvider.IsSignedIn)
                 throw new InvalidOperationException("認証されていません。サインアウトできません。");
 
             try
