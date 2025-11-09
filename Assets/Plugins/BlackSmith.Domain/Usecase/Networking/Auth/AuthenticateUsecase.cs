@@ -2,7 +2,6 @@
 using BlackSmith.Domain.Networking.Auth;
 using BlackSmith.Usecase.Interface.Networking.Auth;
 using System;
-using System.Collections.Generic;
 using BlackSmith.Usecase.Character;
 using BlackSmith.Domain.Character;
 using BlackSmith.Usecase.Interface;
@@ -86,7 +85,7 @@ namespace BlackSmith.Usecase.Networking.Auth
                 var characterId = await playerCharacterIdResolver.GetCharacterIdByPlayerAuthId(playerId);
                 if (characterId == null)
                     throw new InvalidOperationException("サインインに失敗しました。対応するキャラクターが見つかりません。");
-                
+
                 var characterEntity = await characterRepository.FindByID(characterId);
                 if (characterEntity == null)
                     throw new InvalidOperationException("サインインに失敗しました。対応するキャラクターが見つかりません。");
@@ -119,36 +118,6 @@ namespace BlackSmith.Usecase.Networking.Auth
             {
                 throw new InvalidOperationException($"サインアウトに失敗しました: {ex.Message}", ex);
             }
-        }
-
-        /// <summary>
-        /// 現在サインイン中かどうかを取得する
-        /// </summary>
-        public bool IsSignedIn => authController.IsSignedIn();
-
-        /// <summary>
-        /// 現在のプレイヤーIDを取得する
-        /// </summary>
-        public AuthPlayerId? GetCurrentPlayerId() => authController.GetPlayerId();
-
-        /// <summary>
-        /// ユーザー名のバリデーション結果を取得する
-        /// </summary>
-        /// <param name="userName">検証するユーザー名</param>
-        /// <returns>バリデーションエラーのリスト</returns>
-        public static IReadOnlyList<UserName.Validator.ValidationError> ValidateUserName(string userName)
-        {
-            return UserName.Validator.ValidateUserName(userName);
-        }
-
-        /// <summary>
-        /// パスワードのバリデーション結果を取得する
-        /// </summary>
-        /// <param name="password">検証するパスワード</param>
-        /// <returns>バリデーションエラーのリスト</returns>
-        public static IReadOnlyList<Password.Validator.ValidationError> ValidatePassword(string password)
-        {
-            return Password.Validator.ValidatePassword(password);
         }
     }
 }

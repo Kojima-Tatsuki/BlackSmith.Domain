@@ -28,13 +28,5 @@ namespace BlackSmith.Usecase.Interface.Networking.Auth
         /// アカウントからサインアウトを実行
         /// </summary>
         UniTask SignOutForAccount();
-
-        bool IsSignedIn();
-
-        /// <summary>
-        /// 現在ログイン中のプレイヤーIDを取得
-        /// </summary>
-        /// <returns>プレイヤーID（未ログインの場合はnull）</returns>
-        AuthPlayerId? GetPlayerId();
     }
 }

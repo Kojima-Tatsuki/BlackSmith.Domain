@@ -26,10 +26,10 @@ namespace BlackSmith.Usecase.Character.Battle
 
             var health = new HealthPoint(entity.Level);
             var levelDependParams = new LevelDependentParameters(entity.Level, new Strength(1), new Agility(1));
-            var equimentModule = new BattleEquipmentModule(null, null);
+            var equipmentModule = new BattleEquipmentModule(null, null);
             var statusModule = new BattleStatusEffectModule(null);
 
-            var battleModule = new CharacterBattleModule(health, levelDependParams, equimentModule, statusModule);
+            var battleModule = new CharacterBattleModule(health, levelDependParams, equipmentModule, statusModule);
             var command = new PlayerBattleReconstructCommand(entity.ID, battleModule);
 
             var battleEntity = new BattleCharacterEntity(command);
