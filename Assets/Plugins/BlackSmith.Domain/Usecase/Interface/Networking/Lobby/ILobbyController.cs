@@ -3,6 +3,7 @@ using BlackSmith.Domain.Character;
 using BlackSmith.Domain.Networking.Auth;
 using System;
 using System.Collections.Generic;
+using BlackSmith.Domain.Networking.Lobby;
 
 #nullable enable
 
@@ -20,7 +21,7 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
         // - string LobbyName → LobbyName (ValueObject)
         // - int CurrentPlayerCount → PlayerCount (ValueObject)
         // - int MaxPlayerCount → MaxPlayerCount (ValueObject)
-        public string LobbyId { get; init; } = string.Empty;
+        public LobbyId LobbyId { get; init; } = new LobbyId(string.Empty);
         public string LobbyCode { get; init; } = string.Empty;
         public string JoinCode { get; init; } = string.Empty;
         public string LobbyName { get; init; } = string.Empty;
@@ -56,7 +57,7 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
         /// <param name="isPrivate">プライベートロビーかどうか</param>
         /// <returns>作成されたロビー情報</returns>
         /// <exception cref="InvalidOperationException">ロビー作成に失敗した場合</exception>
-        UniTask<LobbyInfo> CreateLobbyAsync(AuthPlayerId authPlayerId, string lobbyName, bool isPrivate);
+        UniTask<LobbyInfo> CreateLobbyAsync(AuthPlayerId authPlayerId, CharacterName characterName, LobbyName lobbyName, bool isPrivate);
 
         /// <summary>
         /// ロビーに参加する
@@ -65,7 +66,14 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
         /// <param name="lobbyCode">参加するロビーコード</param>
         /// <returns>参加したロビー情報</returns>
         /// <exception cref="ArgumentException">ロビーが存在しない、または満員の場合</exception>
-        UniTask<LobbyInfo> JoinLobbyAsync(AuthPlayerId authPlayerId, string lobbyCode);
+        UniTask<LobbyInfo> JoinLobbyByCodeAsync(AuthPlayerId authPlayerId, CharacterName characterName, LobbyName lobbyCode);
+
+        /// <summary>
+        /// ロビーに再接続する
+        /// </summary>
+        /// <param name="authPlayerId">認証されたプレイヤーID</param>
+        /// <returns></returns>
+        UniTask<LobbyInfo> ReconnectToLobbyAsync(AuthPlayerId authPlayerId);
 
         /// <summary>
         /// ロビーから退出する
