@@ -12,11 +12,11 @@ namespace BlackSmith.Domain.Networking.Lobby
         public Observable<LocalLobbyUser> OnChanged => onChanged;
         private Subject<LocalLobbyUser> onChanged;
 
-        public LocalLobbyUserModel Model { get; private set; }
+        public LocalLobbyUserModel? Model { get; private set; }
 
         internal LocalLobbyUser(LocalLobbyUserModel? model = null)
         {
-            Model = model ?? new LocalLobbyUserModel();
+            Model = model;
             onChanged = new Subject<LocalLobbyUser>();
         }
 
@@ -38,15 +38,15 @@ namespace BlackSmith.Domain.Networking.Lobby
         public DateTime JoinedAt { get; init; }
         public DateTime UpdatedAt { get; init; }
 
-        internal LocalLobbyUserModel()
+        public LocalLobbyUserModel(AuthPlayerId userId, UserName userName, bool isHost, string connectionInfo, string allocationId, DateTime joinedAt, DateTime updatedAt)
         {
-            UserId = AuthPlayerId.CreateId("0000000000000000000000000000"); // このマジックナンバーは、怖い
-            UserName = new UserName("NoName");
-            IsHost = false;
-            ConnectionInfo = "";
-            AllocationId = "";
-            JoinedAt = DateTime.MinValue;
-            UpdatedAt = DateTime.MinValue;
+            UserId = userId;
+            UserName = userName;
+            IsHost = isHost;
+            ConnectionInfo = connectionInfo;
+            AllocationId = allocationId;
+            JoinedAt = joinedAt;
+            UpdatedAt = updatedAt;
         }
     }
 }

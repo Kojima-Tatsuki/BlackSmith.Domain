@@ -40,7 +40,7 @@ namespace BlackSmith.Domain.Networking.Lobby
             lobbyUsers = model.Users.Select(userModel =>
             {
                 // 既存ユーザーの場合
-                var old = lobbyUsers.Find(oldUser => oldUser.Model.UserId == userModel.UserId);
+                var old = lobbyUsers.Find(oldUser => oldUser?.Model?.UserId == userModel.UserId);
                 if (old != null)
                     return old;
 
