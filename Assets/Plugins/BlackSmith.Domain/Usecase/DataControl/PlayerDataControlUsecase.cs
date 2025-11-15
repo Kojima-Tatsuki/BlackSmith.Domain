@@ -12,5 +12,12 @@ namespace BlackSmith.Domain.Usecase.DataControl
         private readonly IAuthenticationController authController;
         private readonly ICommonCharacterEntityRepository characterRepository;
         private readonly ISessionPlayerDataRepository sessionRepository;
+
+        public PlayerDataControlUsecase(IAuthenticationController authController, ICommonCharacterEntityRepository characterRepository, ISessionPlayerDataRepository sessionRepository)
+        {
+            this.authController = authController;
+            this.characterRepository = characterRepository;
+            this.sessionRepository = sessionRepository;
+        }
     }
 }

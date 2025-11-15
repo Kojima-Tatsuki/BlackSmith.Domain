@@ -21,13 +21,12 @@ namespace BlackSmith.Domain.Networking.Lobby
         public IReadOnlyList<LocalLobbyUser> LobbyUsers => lobbyUsers;
         private List<LocalLobbyUser> lobbyUsers;
 
-        public LocalLobbyModel Model { get; private set; }
+        public LocalLobbyModel? Model { get; private set; }
 
         public LocalLobby()
         {
             onUpdated = new Subject<LocalLobby>();
             lobbyUsers = new List<LocalLobbyUser>();
-            Model = new LocalLobbyModel();
         }
 
         /// <summary>
@@ -55,7 +54,7 @@ namespace BlackSmith.Domain.Networking.Lobby
 
         public void ResetLobbyData()
         {
-            Model = new LocalLobbyModel();
+            Model = null;
 
             onUpdated.OnNext(this);
         }
@@ -83,27 +82,24 @@ namespace BlackSmith.Domain.Networking.Lobby
         public string UnityProjectId { get; init; } // Unity Project Id
         public string EnvironmentId { get; init; }
 
-        internal LocalLobbyModel()
+        public LocalLobbyModel(string lobbyId, string lobbyCode, string lobbyName, string relayJoinCode, int maxUsers, int availableSlots, bool isPrivate, bool isLocked, bool hasPassword, IReadOnlyList<LocalLobbyUserModel> users, AuthPlayerId hostId, DateTime createdAt, DateTime updatedAt, int version, string unityProjectId, string environmentId)
         {
-            LobbyId = "";
-            LobbyCode = "";
-            LobbyName = "";
-            RelayJoinCode = "";
-
-            MaxUsers = 0;
-            AvailableSlots = 0;
-            IsPrivate = false;
-            IsLocked = false;
-            HasPassword = false;
-            Users = new List<LocalLobbyUserModel>();
-            HostId = AuthPlayerId.CreateId("0000000000000000000000000000");
-
-            CreatedAt = DateTime.MinValue;
-            UpdatedAt = DateTime.MinValue;
-            Version = 0;
-
-            UnityProjectId = "";
-            EnvironmentId = "";
+            LobbyId = lobbyId;
+            LobbyCode = lobbyCode;
+            LobbyName = lobbyName;
+            RelayJoinCode = relayJoinCode;
+            MaxUsers = maxUsers;
+            AvailableSlots = availableSlots;
+            IsPrivate = isPrivate;
+            IsLocked = isLocked;
+            HasPassword = hasPassword;
+            Users = users;
+            HostId = hostId;
+            CreatedAt = createdAt;
+            UpdatedAt = updatedAt;
+            Version = version;
+            UnityProjectId = unityProjectId;
+            EnvironmentId = environmentId;
         }
     }
 }
