@@ -62,9 +62,9 @@ namespace BlackSmith.Domain.Networking.Lobby
 
     public record LocalLobbyModel
     {
-        public string LobbyId { get; init; }
+        public LobbyId LobbyId { get; init; }
         public string LobbyCode { get; init; }
-        public string LobbyName { get; init; }
+        public LobbyName LobbyName { get; init; }
         public string RelayJoinCode { get; init; }
 
         public int MaxUsers { get; init; }
@@ -82,7 +82,7 @@ namespace BlackSmith.Domain.Networking.Lobby
         public string UnityProjectId { get; init; } // Unity Project Id
         public string EnvironmentId { get; init; }
 
-        public LocalLobbyModel(string lobbyId, string lobbyCode, string lobbyName, string relayJoinCode, int maxUsers, int availableSlots, bool isPrivate, bool isLocked, bool hasPassword, IReadOnlyList<LocalLobbyUserModel> users, AuthPlayerId hostId, DateTime createdAt, DateTime updatedAt, int version, string unityProjectId, string environmentId)
+        public LocalLobbyModel(LobbyId lobbyId, string lobbyCode, LobbyName lobbyName, string relayJoinCode, int maxUsers, int availableSlots, bool isPrivate, bool isLocked, bool hasPassword, IReadOnlyList<LocalLobbyUserModel> users, AuthPlayerId hostId, DateTime createdAt, DateTime updatedAt, int version, string unityProjectId, string environmentId)
         {
             LobbyId = lobbyId;
             LobbyCode = lobbyCode;
