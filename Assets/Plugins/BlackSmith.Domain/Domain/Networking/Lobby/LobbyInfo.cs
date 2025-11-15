@@ -10,10 +10,8 @@ namespace BlackSmith.Domain.Networking.Lobby
     public record LobbyInfo
     {
         // TODO: プリミティブ型をドメインオブジェクトに変更する
-        // - string LobbyId → LobbyId (ValueObject)
         // - string LobbyCode → LobbyCode (ValueObject)
         // - string JoinCode → JoinCode (ValueObject)
-        // - string LobbyName → LobbyName (ValueObject)
         // - int CurrentPlayerCount → PlayerCount (ValueObject)
         // - int MaxPlayerCount → MaxPlayerCount (ValueObject)
         public LobbyId LobbyId { get; init; } = new LobbyId(string.Empty);
