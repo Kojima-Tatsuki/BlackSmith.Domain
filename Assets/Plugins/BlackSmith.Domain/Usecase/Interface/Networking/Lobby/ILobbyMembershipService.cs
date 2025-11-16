@@ -32,5 +32,11 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
         /// <returns>再接続したロビー情報</returns>
         /// <exception cref="InvalidOperationException">ロビーに参加していない場合</exception>
         UniTask<LobbyInfo> ReconnectToLobbyAsync();
+
+        /// <summary>
+        /// ロビーから退出する
+        /// </summary>
+        /// <exception cref="InvalidOperationException">ロビーに参加していない場合</exception>
+        UniTask LeaveLobbyAsync();
     }
 }
