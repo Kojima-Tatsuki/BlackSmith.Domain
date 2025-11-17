@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using BlackSmith.Domain.Character;
 using System;
 using BlackSmith.Domain.Networking.Lobby;
 
@@ -16,7 +15,7 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
         /// <param name="isPrivate">プライベートロビーかどうか</param>
         /// <returns>作成されたロビー情報</returns>
         /// <exception cref="InvalidOperationException">ロビー作成に失敗した場合</exception>
-        UniTask<LobbyInfo> CreateLobbyAsync(CharacterName characterName, LobbyName lobbyName, bool isPrivate);
+        UniTask<LobbyInfo> CreateLobbyAsync(LobbyName lobbyName, bool isPrivate);
 
         /// <summary>
         /// ロビーに参加する
@@ -24,7 +23,7 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
         /// <param name="lobbyCode">参加するロビーコード</param>
         /// <returns>参加したロビー情報</returns>
         /// <exception cref="ArgumentException">ロビーが存在しない、または満員の場合</exception>
-        UniTask<LobbyInfo> JoinLobbyByCodeAsync(CharacterName characterName, LobbyCode lobbyCode);
+        UniTask<LobbyInfo> JoinLobbyByCodeAsync(LobbyCode lobbyCode);
 
         /// <summary>
         /// ロビーに再接続する
