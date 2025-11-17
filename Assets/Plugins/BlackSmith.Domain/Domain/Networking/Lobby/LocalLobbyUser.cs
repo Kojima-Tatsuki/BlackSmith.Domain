@@ -9,44 +9,30 @@ namespace BlackSmith.Domain.Networking.Lobby
 {
     public class LocalLobbyUser
     {
-        public Observable<LocalLobbyUser> OnChanged => onChanged;
-        private Subject<LocalLobbyUser> onChanged;
+        public Observable<LobbyPlayer> OnChanged => onChanged;
+        private Subject<LobbyPlayer> onChanged;
 
-        public LocalLobbyUserModel? Model { get; private set; }
+        public LobbyPlayer Model { get; private set; }
 
-        internal LocalLobbyUser(LocalLobbyUserModel? model = null)
+        internal LocalLobbyUser(LobbyPlayer model)
         {
             Model = model;
-            onChanged = new Subject<LocalLobbyUser>();
+            onChanged = new Subject<LobbyPlayer>();
         }
 
-        public void ApplyFromModel(LocalLobbyUserModel model)
+        public void ApplyFromModel(LobbyPlayer model)
         {
             Model = model;
 
-            onChanged.OnNext(this);
+            onChanged.OnNext(Model);
         }
-    }
 
-    public record LocalLobbyUserModel
-    {
-        public AuthPlayerId UserId { get; init; }
-        public UserName UserName { get; init; }
-        public bool IsHost { get; init; }
-        public string ConnectionInfo { get; init; }
-        public string AllocationId { get; init; }
-        public DateTime JoinedAt { get; init; }
-        public DateTime UpdatedAt { get; init; }
-
-        public LocalLobbyUserModel(AuthPlayerId userId, UserName userName, bool isHost, string connectionInfo, string allocationId, DateTime joinedAt, DateTime updatedAt)
+        public LobbyPlayer ToLobbyPlayer()
         {
-            UserId = userId;
-            UserName = userName;
-            IsHost = isHost;
-            ConnectionInfo = connectionInfo;
-            AllocationId = allocationId;
-            JoinedAt = joinedAt;
-            UpdatedAt = updatedAt;
+            if (Model == null)
+                throw new InvalidOperationException("LocalLobbyUserのModelが設定されていません");
+
+            return Model;
         }
     }
 }

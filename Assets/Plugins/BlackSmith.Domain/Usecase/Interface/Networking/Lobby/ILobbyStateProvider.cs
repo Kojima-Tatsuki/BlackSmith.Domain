@@ -6,7 +6,7 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
     public interface ILobbyStateProvider
     {
         bool IsInLobby { get; }
-        LocalLobbyModel LobbyModel { get; }
-        IReadOnlyList<LobbyPlayer> LobbyUsers { get; }
+        LobbyInfo GetLobby();
+        IReadOnlyList<LobbyPlayer> GetLobbyPlayers();
     }
 }

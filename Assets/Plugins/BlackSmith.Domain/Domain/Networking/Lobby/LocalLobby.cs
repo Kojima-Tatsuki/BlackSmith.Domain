@@ -15,48 +15,48 @@ namespace BlackSmith.Domain.Networking.Lobby
     /// </summary>
     public sealed class LocalLobby
     {
-        public Observable<LocalLobby> OnUpdated => onUpdated;
-        private Subject<LocalLobby> onUpdated;
+        public Observable<LobbyInfo?> OnUpdated => onUpdated;
+        private Subject<LobbyInfo?> onUpdated;
 
-        public IReadOnlyList<LocalLobbyUser> LobbyUsers => lobbyUsers;
-        private List<LocalLobbyUser> lobbyUsers;
+        public IReadOnlyList<LobbyPlayer> LobbyUsers => lobbyUsers;
+        private List<LobbyPlayer> lobbyUsers;
 
-        public LocalLobbyModel? Model { get; private set; }
+        public LobbyInfo? Model { get; private set; }
 
         public LocalLobby()
         {
-            onUpdated = new Subject<LocalLobby>();
-            lobbyUsers = new List<LocalLobbyUser>();
+            onUpdated = new Subject<LobbyInfo?>();
+            lobbyUsers = new List<LobbyPlayer>();
         }
 
         /// <summary>
-        /// <see cref="LocalLobbyModel"/>を元に更新する
+        /// <see cref="LobbyInfo"/>を元に更新する
         /// </summary>
         /// <remarks><see cref="LocalLobbyUser"/>はミュータブルなオブジェクトの為、破棄しないよう注意する</remarks>
         /// <param name="model"></param>
-        public void ApplyFromModel(LocalLobbyModel model)
+        public void ApplyFromModel(LobbyInfo model)
         {
             Model = model;
-            lobbyUsers = model.Users.Select(userModel =>
+            lobbyUsers = model.Players.Select(userModel =>
             {
                 // 既存ユーザーの場合
-                var old = lobbyUsers.Find(oldUser => oldUser?.Model?.UserId == userModel.UserId);
+                var old = lobbyUsers.Find(oldUser => oldUser.UserId == userModel.UserId);
                 if (old != null)
                     return old;
 
                 // 新規ユーザーの場合
-                return new LocalLobbyUser(userModel);
+                return userModel;
 
             }).ToList();
 
-            onUpdated.OnNext(this);
+            onUpdated.OnNext(Model);
         }
 
         public void ResetLobbyData()
         {
             Model = null;
 
-            onUpdated.OnNext(this);
+            onUpdated.OnNext(Model);
         }
     }
 
@@ -72,7 +72,7 @@ namespace BlackSmith.Domain.Networking.Lobby
         public bool IsPrivate { get; init; }
         public bool IsLocked { get; init; }
         public bool HasPassword { get; init; }
-        public IReadOnlyList<LocalLobbyUserModel> Users { get; init; }
+        public IReadOnlyList<LobbyPlayer> Users { get; init; }
         public AuthPlayerId HostId { get; init; }
 
         public DateTime CreatedAt { get; init; }
@@ -82,7 +82,7 @@ namespace BlackSmith.Domain.Networking.Lobby
         public string UnityProjectId { get; init; } // Unity Project Id
         public string EnvironmentId { get; init; }
 
-        public LocalLobbyModel(LobbyId lobbyId, string lobbyCode, LobbyName lobbyName, string relayJoinCode, int maxUsers, int availableSlots, bool isPrivate, bool isLocked, bool hasPassword, IReadOnlyList<LocalLobbyUserModel> users, AuthPlayerId hostId, DateTime createdAt, DateTime updatedAt, int version, string unityProjectId, string environmentId)
+        public LocalLobbyModel(LobbyId lobbyId, string lobbyCode, LobbyName lobbyName, string relayJoinCode, int maxUsers, int availableSlots, bool isPrivate, bool isLocked, bool hasPassword, IReadOnlyList<LobbyPlayer> users, AuthPlayerId hostId, DateTime createdAt, DateTime updatedAt, int version, string unityProjectId, string environmentId)
         {
             LobbyId = lobbyId;
             LobbyCode = lobbyCode;
