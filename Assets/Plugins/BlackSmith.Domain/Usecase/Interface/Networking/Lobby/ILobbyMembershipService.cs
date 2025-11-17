@@ -24,7 +24,7 @@ namespace BlackSmith.Usecase.Interface.Networking.Lobby
         /// <param name="lobbyCode">参加するロビーコード</param>
         /// <returns>参加したロビー情報</returns>
         /// <exception cref="ArgumentException">ロビーが存在しない、または満員の場合</exception>
-        UniTask<LobbyInfo> JoinLobbyByCodeAsync(CharacterName characterName, LobbyJoinCode lobbyCode);
+        UniTask<LobbyInfo> JoinLobbyByCodeAsync(CharacterName characterName, LobbyCode lobbyCode);
 
         /// <summary>
         /// ロビーに再接続する

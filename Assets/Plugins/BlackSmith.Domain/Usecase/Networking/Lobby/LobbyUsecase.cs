@@ -33,7 +33,7 @@ namespace BlackSmith.Usecase.Networking.Lobby
             lobbyHeartbeater.Start(lobby.LobbyId);
         }
 
-        public async UniTask JoinLobbyAsync(CharacterName characterName, LobbyJoinCode joinCode)
+        public async UniTask JoinLobbyAsync(CharacterName characterName, LobbyCode joinCode)
         {
             if (!authStateProvider.IsSignedIn)
                 throw new InvalidOperationException("User is not signed in.");
