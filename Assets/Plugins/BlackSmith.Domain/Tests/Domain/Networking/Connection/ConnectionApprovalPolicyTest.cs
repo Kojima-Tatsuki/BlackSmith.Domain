@@ -113,8 +113,8 @@ namespace BlackSmith.Domain.Tests.Networking.Connection
             // Arrange
             var policy = new ConnectionApprovalPolicy();
             var playerId = AuthPlayerId.CreateId("abcdefghijklmnopqrstuvwxyz12");
-            var otherPlayer1 = AuthPlayerId.CreateId("aaaaaaaaaa1111111111111111");
-            var otherPlayer2 = AuthPlayerId.CreateId("bbbbbbbbbb2222222222222222");
+            var otherPlayer1 = AuthPlayerId.CreateId("aaaaaaaaaa11111111111111111a");
+            var otherPlayer2 = AuthPlayerId.CreateId("bbbbbbbbbb22222222222222222b");
             var connectedPlayers = new List<AuthPlayerId> { otherPlayer1, otherPlayer2 };
 
             // Act
