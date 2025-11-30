@@ -139,12 +139,14 @@ namespace BlackSmith.Domain.Tests.Networking.Connection
             // Arrange
             var playerId = AuthPlayerId.CreateId("abcdefghijklmnopqrstuvwxyz12");
             var ev1 = new ClientConnectedEvent(playerId);
-            var ev2 = new ClientConnectedEvent(playerId);
+
+            // record型はwith式でコピーを作成できる
+            var ev2 = ev1 with { };
 
             // Act & Assert - record型は構造的等価性を持つ
-            // ただし、OccurredAtが異なるため等価にはならない
-            Assert.AreNotEqual(ev1, ev2);
+            Assert.AreEqual(ev1, ev2);
             Assert.AreEqual(ev1.PlayerId, ev2.PlayerId);
+            Assert.AreEqual(ev1.OccurredAt, ev2.OccurredAt);
         }
     }
 }
