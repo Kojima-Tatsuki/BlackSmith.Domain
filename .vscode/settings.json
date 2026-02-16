@@ -64,6 +64,8 @@
     "dotnet.defaultSolution": "BlackSmith.Domain.slnx",
     "cSpell.words": [
         "Cysharp",
+        "Heartbeater",
+        "Heartbeating",
         "Pfgr",
         "SNBXC",
         "Usecase"

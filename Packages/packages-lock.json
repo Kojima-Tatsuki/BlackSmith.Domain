@@ -7,7 +7,7 @@
       "dependencies": {
         "com.unity.nuget.newtonsoft-json": "3.0.2"
       },
-      "hash": "14b11ba073304b3aee5978dde4ac8ad32973de60"
+      "hash": "2126745713d08f1a52b6297e527799c99e5aa1f0"
     },
     "com.cysharp.r3": {
       "version": "1.3.0",
